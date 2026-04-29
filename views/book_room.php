@@ -10,7 +10,7 @@
     .progress-step-premium { width: 48px; height: 48px; border-radius: 18px; background: white; border: 3px solid #EBE6DA; display: flex; align-items: center; justify-content: center; z-index: 2; position: relative; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); font-weight: 800; color: #A79A8B; font-size: 1.125rem; }
     .progress-step-premium.active { border-color: #6A5243; background: #6A5243; color: white; transform: scale(1.1); box-shadow: 0 10px 25px rgba(106, 82, 67, 0.15); }
     .progress-step-premium.completed { border-color: #D4B59D; background: #D4B59D; color: white; }
-    .progress-label-premium { position: absolute; top: 60px; font-size: 0.8125rem; font-weight: 800; color: #A79A8B; white-space: nowrap; left: 50%; transform: translateX(-50%); letter-spacing: 0.05em; text-transform: uppercase; }
+    .progress-label-premium { position: absolute; top: 60px; font-size: 0.875rem; font-weight: 700; color: #A79A8B; white-space: nowrap; left: 50%; transform: translateX(-50%); letter-spacing: 0.05em; text-transform: uppercase; }
     .progress-step-premium.active .progress-label-premium { color: #6A5243; }
 
     /* Interactive Elements */
@@ -26,22 +26,22 @@
     .premium-input { width: 100%; padding: 1.25rem 1.5rem; border-radius: 1.5rem; background: #F9F8F6; border: 2px solid #F0EDE6; outline: none; transition: all 0.3s; color: #2D241E; font-weight: 600; font-size: 1.0625rem; }
     .premium-input:focus { border-color: #D4B59D; background: white; box-shadow: 0 0 0 5px rgba(212, 181, 157, 0.15); }
     
-    .label-premium { font-size: 0.9375rem; font-weight: 800; color: #4A3A2F; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
-    .label-premium i { color: #D4B59D; font-size: 1.1rem; }
+    .label-premium { font-size: 1rem; font-weight: 700; color: #4A3A2F; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
+    .label-premium i { color: #D4B59D; font-size: 1.25rem; }
 </style>
 
 <div class="max-w-[1100px] mx-auto py-12 px-6 md:px-10">
     <!-- Header Section -->
-    <div class="text-center mb-20">
-        <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#6A5243]/5 text-[#6A5243] text-[0.7rem] font-black uppercase tracking-[0.2em] mb-6 border border-[#6A5243]/10">
+    <div class="text-center mb-48">
+        <div class="inline-flex items-center gap-6 px-7 py-3 rounded-full bg-[#6A5243]/5 text-[#6A5243] text-[0.85rem] font-bold uppercase tracking-[0.25em] mb-12 border border-[#6A5243]/10">
             <i class="fas fa-bolt text-[#D4B59D]"></i> Instant Booking System
         </div>
-        <h2 class="text-4xl md:text-5xl font-bold text-[#6A5243] mb-6 tracking-tight">แบบฟอร์มการจอง</h2>
-        <p class="text-base md:text-lg text-[#A79A8B] font-medium max-w-3xl mx-auto leading-relaxed">กรุณาเลือกรายละเอียดตามขั้นตอนด้านล่าง เพื่อความรวดเร็วในการพิจารณาอนุมัติ</p>
+        <h2 class="text-4xl md:text-5xl font-bold text-[#6A5243] mb-12 tracking-tight leading-[1.4]">แบบฟอร์มการจอง</h2>
+        <p class="text-lg md:text-xl text-[#A79A8B] font-medium max-w-3xl mx-auto leading-[2.2] opacity-75">กรุณาเลือกรายละเอียดตามขั้นตอนด้านล่าง เพื่อความรวดเร็วในการพิจารณาอนุมัติ</p>
     </div>
 
     <!-- Progress Indicator -->
-    <div class="progress-bar-premium mb-24">
+    <div class="progress-bar-premium mb-32">
         <div class="progress-step-premium active" id="pstep-1">
             <i class="fas fa-door-open"></i>
             <span class="progress-label-premium">1. เลือกห้อง</span>
@@ -62,7 +62,7 @@
         <div class="absolute -bottom-32 -left-32 w-80 h-80 bg-[#6A5243]/5 rounded-full blur-3xl pointer-events-none"></div>
 
         <form id="bookingForm" enctype="multipart/form-data" class="relative z-10">
-            <div style="height: 20px !important;"></div> <!-- Subtler Spacer -->
+            <div style="height: 40px !important;"></div> <!-- Subtler Spacer -->
             
             <!-- Step 1: Room Selection & Title -->
             <div class="step-container active" id="step-1">
@@ -75,8 +75,8 @@
                         <input type="hidden" id="room_id" required>
                     </div>
                     
-                    <div class="pt-4">
-                        <label class="label-premium"><i class="fas fa-quote-left"></i> หัวข้อการประชุมหรือกิจกรรม <span class="text-red-500">*</span></label>
+                    <div class="pt-20">
+                        <label class="label-premium"><i class="fas fa-quote-left" style="padding: 8px"></i> หัวข้อการประชุมหรือกิจกรรม <span class="text-red-500">*</span></label>
                         <input type="text" id="title" class="premium-input placeholder:text-[#A79A8B]/50" placeholder="ตัวอย่าง: ประชุมติดตามงานประจำสัปดาห์..." required>
                     </div>
                 </div>
