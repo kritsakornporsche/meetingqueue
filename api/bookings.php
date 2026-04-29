@@ -7,49 +7,24 @@ require_once 'config.php';
  * POST: Create booking (Standard or External)
  */
 
+use App\Repository\BookingRepository;
+
 $method = $_SERVER['REQUEST_METHOD'];
+$repo = new BookingRepository();
 
 if (!isset($_SESSION['user_id'])) {
     jsonResponse(['success' => false, 'message' => 'ไม่มีสิทธิ์เข้าถึง'], 401);
 }
 
 try {
-    $pdo = getLocalDB();
-
     if ($method === 'GET') {
-        $userId = $_GET['user_id'] ?? null;
-        $roomId = $_GET['room_id'] ?? null;
-        $status = $_GET['status'] ?? null;
-        $bookingId = $_GET['booking_id'] ?? null;
+        $filters = [
+            'user_id' => $_GET['user_id'] ?? null,
+            'booking_id' => $_GET['booking_id'] ?? null,
+            'status' => $_GET['status'] ?? null
+        ];
         
-        $sql = "SELECT b.*, r.name as room_name, u.first_name, u.last_name, u.emp_code 
-                FROM bookings b 
-                LEFT JOIN rooms r ON b.room_id = r.id 
-                JOIN users u ON b.user_id = u.id 
-                WHERE 1=1";
-        $params = [];
-
-        if ($userId) {
-            $sql .= " AND b.user_id = :user_id";
-            $params[':user_id'] = $userId;
-        }
-        if ($roomId) {
-            $sql .= " AND b.room_id = :room_id";
-            $params[':room_id'] = $roomId;
-        }
-        if ($status) {
-            $sql .= " AND b.status = :status";
-            $params[':status'] = $status;
-        }
-        if ($bookingId) {
-            $sql .= " AND b.id = :booking_id";
-            $params[':booking_id'] = $bookingId;
-        }
-
-        $sql .= " ORDER BY b.start_time DESC";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
-        $bookings = $stmt->fetchAll();
+        $bookings = $repo->getAll($filters);
 
         jsonResponse([
             'success' => true,
@@ -57,9 +32,9 @@ try {
         ]);
 
     } elseif ($method === 'POST') {
-        // Handle multipart/form-data for file uploads
         $title = $_POST['title'] ?? null;
         $roomId = $_POST['room_id'] ?? null;
+        $meetingDate = $_POST['meeting_date'] ?? null;
         $startTime = $_POST['start_time'] ?? null;
         $endTime = $_POST['end_time'] ?? null;
         $participants = $_POST['participants_count'] ?? 0;
@@ -69,45 +44,13 @@ try {
         $externalOrg = $_POST['external_org'] ?? null;
         $department = $_SESSION['user_data']['dept_name'] ?? null;
 
-        // If JSON was sent (fallback)
-        if (!$title) {
-            $input = json_decode(file_get_contents('php://input'), true);
-            if ($input) {
-                $title = $input['title'] ?? null;
-                $roomId = $input['room_id'] ?? null;
-                $startTime = $input['start_time'] ?? null;
-                $endTime = $input['end_time'] ?? null;
-                $participants = $input['participants_count'] ?? 0;
-                $phone = $input['phone'] ?? null;
-                $description = $input['description'] ?? '';
-                $isExternal = $input['is_external'] ?? false;
-                $externalOrg = $input['external_org'] ?? null;
-            }
-        }
-        
         if (!$title || !$startTime || !$endTime) {
             jsonResponse(['success' => false, 'message' => "กรุณากรอกข้อมูลให้ครบถ้วน"], 400);
         }
 
-        // Check for conflicts if it's an internal room
-        if (!$isExternal && $roomId) {
-            $conflictSql = "SELECT COUNT(*) FROM bookings 
-                            WHERE room_id = :room_id 
-                            AND status NOT IN ('cancelled', 'rejected')
-                            AND (
-                                (start_time < :end_time AND end_time > :start_time)
-                            )";
-            $stmt = $pdo->prepare($conflictSql);
-            $stmt->execute([
-                ':room_id' => $roomId,
-                ':start_time' => $startTime,
-                ':end_time' => $endTime
-            ]);
-            
-            if ($stmt->fetchColumn() > 0) {
-                jsonResponse(['success' => false, 'message' => 'ห้องนี้ถูกจองไปแล้วในช่วงเวลาดังกล่าว'], 409);
-            }
-        }
+        // Full start/end times
+        $fullStart = $meetingDate . ' ' . $startTime;
+        $fullEnd = $meetingDate . ' ' . $endTime;
 
         // Handle File Upload
         $attachmentPath = null;
@@ -122,33 +65,55 @@ try {
             }
         }
 
-        $sql = "INSERT INTO bookings (room_id, user_id, title, description, start_time, end_time, participants_count, phone, attachment_path, department_name, is_external, external_org, status) 
-                VALUES (:room_id, :user_id, :title, :description, :start_time, :end_time, :participants_count, :phone, :attachment_path, :department_name, :is_external, :external_org, 'pending')";
+        $success = $repo->create([
+            'room_id' => $isExternal ? null : $roomId,
+            'user_id' => $_SESSION['user_id'],
+            'title' => $title,
+            'description' => $description,
+            'start_time' => $fullStart,
+            'end_time' => $fullEnd,
+            'participants_count' => $participants,
+            'phone' => $phone,
+            'attachment_path' => $attachmentPath,
+            'department_name' => $department,
+            'is_external' => $isExternal ? 1 : 0,
+            'external_org' => $externalOrg
+        ]);
+
+        if ($success) {
+            jsonResponse([
+                'success' => true,
+                'message' => 'ส่งคำขอจองห้องประชุมสำเร็จ รอเจ้าหน้าที่อนุมัติ',
+                'id' => \App\Core\Database::getInstance()->getConnection()->lastInsertId()
+            ]);
+        } else {
+            jsonResponse(['success' => false, 'message' => 'ไม่สามารถบันทึกข้อมูลได้'], 500);
+        }
+    } elseif ($method === 'PATCH') {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $id = $input['booking_id'] ?? null;
+        $status = $input['status'] ?? null;
+
+        if (!$id || !$status) {
+            jsonResponse(['success' => false, 'message' => 'ข้อมูลไม่ครบถ้วน'], 400);
+        }
+
+        // Only admins can approve/reject
+        if (($_SESSION['user_data']['role'] ?? 'user') !== 'admin') {
+            jsonResponse(['success' => false, 'message' => 'ไม่มีสิทธิ์ดำเนินการ'], 403);
+        }
+
+        $success = $repo->updateStatus($id, $status);
         
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            ':room_id' => $isExternal ? null : $roomId,
-            ':user_id' => $_SESSION['user_id'],
-            ':title' => $title,
-            ':description' => $description,
-            ':start_time' => $startTime,
-            ':end_time' => $endTime,
-            ':participants_count' => $participants,
-            ':phone' => $phone,
-            ':attachment_path' => $attachmentPath,
-            ':department_name' => $department,
-            ':is_external' => $isExternal ? 1 : 0,
-            ':external_org' => $externalOrg
-        ]);
-
-        jsonResponse([
-            'success' => true,
-            'message' => 'ส่งคำขอจองห้องประชุมสำเร็จ รอเจ้าหน้าที่อนุมัติ',
-            'id' => $pdo->lastInsertId()
-        ]);
+        if ($success) {
+            jsonResponse(['success' => true, 'message' => 'อัปเดตสถานะสำเร็จ']);
+        } else {
+            jsonResponse(['success' => false, 'message' => 'ไม่สามารถอัปเดตสถานะได้'], 500);
+        }
     }
-
 } catch (Exception $e) {
-    jsonResponse(['success' => false, 'message' => 'ข้อผิดพลาด: ' . $e->getMessage()], 500);
+    $code = $e->getCode();
+    if ($code < 400 || $code >= 600) $code = 500;
+    jsonResponse(['success' => false, 'message' => 'ข้อผิดพลาด: ' . $e->getMessage()], $code);
 }
 ?>

@@ -5,16 +5,16 @@
  */
 
 // Local Database (Meeting Queue)
-define('DB_HOST', '192.168.9.234');
-define('DB_USER', 'meetingqueue');
-define('DB_PASS', 'Meeting@11190');
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
 define('DB_NAME', 'meetingqueue_db');
 
-// External Database (ZK BioTime Authentication API)
-define('ZK_HOST', '192.168.9.7');
-define('ZK_USER', 'meeting7');
-define('ZK_PASS', 'meeting@11190');
-define('ZK_NAME', 'zkbiotime');
+// External Database (ZK BioTime Authentication API) - DISABLED (Offline)
+// define('ZK_HOST', '192.168.9.7');
+// define('ZK_USER', 'meeting7');
+// define('ZK_PASS', 'meeting@11190');
+// define('ZK_NAME', 'zkbiotime');
 
 /**
  * PDO Connection Factory for Local DB
@@ -37,6 +37,9 @@ function getLocalDB(): PDO {
  * PDO Connection Factory for ZK BioTime DB
  */
 function getZKDB(): PDO {
+    if (!defined('ZK_HOST')) {
+        throw new Exception("ZK BioTime connection is currently disabled (Offline mode).");
+    }
     $dsn = "mysql:host=" . ZK_HOST . ";dbname=" . ZK_NAME . ";charset=utf8mb4";
     $options = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -54,6 +57,11 @@ function getZKDB(): PDO {
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Core Classes
+require_once __DIR__ . '/core/Database.php';
+require_once __DIR__ . '/core/BookingRepository.php';
+require_once __DIR__ . '/core/RoomRepository.php';
 
 // Global Response Helper
 function jsonResponse($data, $status = 200) {

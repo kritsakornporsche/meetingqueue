@@ -1,68 +1,49 @@
-<?php
 require_once 'api/config.php';
+use App\Repository\BookingRepository;
 
-// Security Check
 if (!isset($_SESSION['user_id'])) {
     exit('Unauthorized');
 }
 
-try {
-    $pdo = getLocalDB();
-    
-    // Filter parameters
-    $month = $_GET['month'] ?? date('m');
-    $year = $_GET['year'] ?? date('Y');
-    
-    // Query all bookings for the selected month
-    $sql = "SELECT b.id, b.start_time, b.end_time, b.title, b.participants_count, b.department_name,
-            r.name as room_name, r.capacity, r.location,
-            u.first_name, u.last_name, u.dept_name as user_dept
-            FROM bookings b
-            LEFT JOIN rooms r ON b.room_id = r.id
-            LEFT JOIN users u ON b.user_id = u.id
-            WHERE MONTH(b.start_time) = :month 
-            AND YEAR(b.start_time) = :year 
-            AND b.status != 'cancelled'
-            ORDER BY b.start_time ASC";
-            
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([':month' => $month, ':year' => $year]);
-    $report_data = $stmt->fetchAll();
-    
-    // Thai months mapping
-    $thai_months = [
-        '01' => 'มกราคม', '02' => 'กุมภาพันธ์', '03' => 'มีนาคม', '04' => 'เมษายน',
-        '05' => 'พฤษภาคม', '06' => 'มิถุนายน', '07' => 'กรกฎาคม', '08' => 'สิงหาคม',
-        '09' => 'กันยายน', '10' => 'ตุลาคม', '11' => 'พฤศจิกายน', '12' => 'ธันวาคม'
-    ];
-    $thai_months_short = [
-        '01' => 'ม.ค.', '02' => 'ก.พ.', '03' => 'มี.ค.', '04' => 'เม.ย.',
-        '05' => 'พ.ค.', '06' => 'มิ.ย.', '07' => 'ก.ค.', '08' => 'ส.ค.',
-        '09' => 'ก.ย.', '10' => 'ต.ค.', '11' => 'พ.ย.', '12' => 'ธ.ค.'
-    ];
-    
-    $month_name = $thai_months[sprintf("%02d", $month)];
-    $month_short = $thai_months_short[sprintf("%02d", $month)];
-    $thai_year = $year + 543;
-    $thai_year_short = substr($thai_year, 2, 2);
-    
-    // Calculate last day of month
-    $last_day = date('t', strtotime("$year-$month-01"));
-    
-    // Calculate Room Usage Stats
-    $roomStats = [];
-    foreach($report_data as $row) {
-        $rname = $row['room_name'] ?? 'ภายนอกสถานที่';
-        if(!isset($roomStats[$rname])) $roomStats[$rname] = 0;
-        $roomStats[$rname]++;
-    }
-    arsort($roomStats);
-    $chartLabels = json_encode(array_keys($roomStats));
-    $chartData = json_encode(array_values($roomStats));
-    
-} catch (PDOException $e) {
-    die("Database error: " . $e->getMessage());
+$repo = new BookingRepository();
+$month = $_GET['month'] ?? date('m');
+$year = $_GET['year'] ?? date('Y');
+
+$report_data = $repo->getAll([
+    'month' => $month,
+    'year' => $year,
+    'exclude_status' => 'cancelled'
+]);
+
+// Thai months mapping
+$thai_months = [
+    '01' => 'มกราคม', '02' => 'กุมภาพันธ์', '03' => 'มีนาคม', '04' => 'เมษายน',
+    '05' => 'พฤษภาคม', '06' => 'มิถุนายน', '07' => 'กรกฎาคม', '08' => 'สิงหาคม',
+    '09' => 'กันยายน', '10' => 'ตุลาคม', '11' => 'พฤศจิกายน', '12' => 'ธันวาคม'
+];
+$thai_months_short = [
+    '01' => 'ม.ค.', '02' => 'ก.พ.', '03' => 'มี.ค.', '04' => 'เม.ย.',
+    '05' => 'พ.ค.', '06' => 'มิ.ย.', '07' => 'ก.ค.', '08' => 'ส.ค.',
+    '09' => 'ก.ย.', '10' => 'ต.ค.', '11' => 'พ.ย.', '12' => 'ธ.ค.'
+];
+
+$month_name = $thai_months[sprintf("%02d", $month)];
+$month_short = $thai_months_short[sprintf("%02d", $month)];
+$thai_year = $year + 543;
+$thai_year_short = substr($thai_year, 2, 2);
+
+$last_day = date('t', strtotime("$year-$month-01"));
+
+// Calculate Room Usage Stats
+$roomStats = [];
+foreach($report_data as $row) {
+    $rname = $row['room_name'] ?? 'ภายนอกสถานที่';
+    if(!isset($roomStats[$rname])) $roomStats[$rname] = 0;
+    $roomStats[$rname]++;
 }
+arsort($roomStats);
+$chartLabels = json_encode(array_keys($roomStats));
+$chartData = json_encode(array_values($roomStats));
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

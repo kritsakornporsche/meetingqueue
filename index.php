@@ -31,6 +31,9 @@ try {
     <!-- Choices.js CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <!-- Tailwind CSS v4 -->
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <style type="text/tailwindcss">
@@ -61,7 +64,7 @@ try {
 </head>
 <body class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-[url('assets/images/poster1.png')] bg-cover bg-center bg-no-repeat before:content-[''] before:absolute before:inset-0 before:bg-white/80 before:backdrop-blur-md">
     
-    <div class="w-full max-w-md bg-white/90 backdrop-blur-xl p-10 rounded-3xl shadow-xl shadow-primary/10 border border-border relative z-10">
+    <div class="w-full max-w-[min(420px,95vw)] bg-white/90 backdrop-blur-xl p-6 sm:p-10 rounded-[2.5rem] shadow-xl shadow-primary/10 border border-border relative z-10">
         
         <div class="flex items-center justify-center gap-3 mb-8">
             <div class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
@@ -136,7 +139,12 @@ try {
             const password = document.getElementById('password').value;
             
             if (!username) {
-                alert('กรุณาเลือกชื่อผู้ใช้งาน');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'แจ้งเตือน',
+                    text: 'กรุณาเลือกชื่อผู้ใช้งาน',
+                    confirmButtonColor: '#6A5243'
+                });
                 return;
             }
 
@@ -158,11 +166,21 @@ try {
                     localStorage.setItem('user', JSON.stringify(result.user));
                     window.location.href = 'dashboard.php';
                 } else {
-                    alert(result.message || 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เข้าสู่ระบบไม่สำเร็จ',
+                        text: result.message || 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง',
+                        confirmButtonColor: '#6A5243'
+                    });
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ข้อผิดพลาด',
+                    text: 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
+                    confirmButtonColor: '#6A5243'
+                });
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;

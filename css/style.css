@@ -40,6 +40,22 @@
     --radius-lg: 1.5rem;
     
     --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    /* Fluid Typography Scale */
+    --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.8rem);
+    --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.9rem);
+    --text-base: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
+    --text-lg: clamp(1.1rem, 1.05rem + 0.25vw, 1.25rem);
+    --text-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+    --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2.25rem);
+    --text-hero: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+
+    /* Fluid Spacing Scale */
+    --space-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem);
+    --space-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+    --space-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+    --space-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
+    --space-xl: clamp(2rem, 1.5rem + 2.5vw, 4rem);
 }
 
 * {
@@ -236,7 +252,7 @@ header {
 }
 
 .content-wrapper {
-    padding: 2.5rem;
+    padding: var(--space-lg);
     flex: 1;
     max-width: 1800px;
     margin: 0 auto;
@@ -258,7 +274,7 @@ header {
 }
 
 .card-header {
-    padding: 1.75rem;
+    padding: var(--space-md) var(--space-lg);
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
@@ -284,7 +300,7 @@ header {
 }
 
 .card-body {
-    padding: 2rem;
+    padding: var(--space-lg);
 }
 
 /* Filters */
@@ -551,7 +567,7 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 .hero-content h2 {
-    font-size: 2rem;
+    font-size: var(--text-2xl);
     font-weight: 700;
     margin-bottom: 0.5rem;
 }

@@ -6,10 +6,13 @@ require_once 'config.php';
  * Method: GET
  */
 
+use App\Repository\RoomRepository;
+
+$repo = new RoomRepository();
+$status = $_GET['status'] ?? 'available';
+
 try {
-    $pdo = getLocalDB();
-    $stmt = $pdo->query("SELECT * FROM rooms WHERE status = 'available' ORDER BY name ASC");
-    $rooms = $stmt->fetchAll();
+    $rooms = $repo->getAll($status);
 
     jsonResponse([
         'success' => true,

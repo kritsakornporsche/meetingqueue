@@ -6,34 +6,19 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+use App\Repository\BookingRepository;
+
+$repo = new BookingRepository();
+
 try {
-    $pdo = getLocalDB();
+    $filters = [
+        'start' => $_GET['start'] ?? null,
+        'end' => $_GET['end'] ?? null,
+        'room_id' => $_GET['room_id'] ?? null,
+        'exclude_status' => 'cancelled'
+    ];
     
-    $start = $_GET['start'] ?? null;
-    $end = $_GET['end'] ?? null;
-    $room_id = $_GET['room_id'] ?? null;
-    
-    $sql = "SELECT b.id, b.title, b.start_time as start, b.end_time as end, b.status, b.participants_count, r.name as room_name, r.id as room_id_val, u.first_name, u.last_name
-            FROM bookings b 
-            LEFT JOIN rooms r ON b.room_id = r.id 
-            JOIN users u ON b.user_id = u.id
-            WHERE b.status != 'cancelled'";
-    $params = [];
-    
-    if ($start && $end) {
-        $sql .= " AND b.start_time >= :start AND b.end_time <= :end";
-        $params[':start'] = $start;
-        $params[':end'] = $end;
-    }
-    
-    if ($room_id && $room_id !== 'all') {
-        $sql .= " AND b.room_id = :room_id";
-        $params[':room_id'] = $room_id;
-    }
-    
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-    $events = $stmt->fetchAll();
+    $events = $repo->getAll($filters);
     
     // Map status to colors
     $colors = [
@@ -47,14 +32,14 @@ try {
         return [
             'id' => $e['id'],
             'title' => ($e['room_name'] ?? 'ภายนอก') . ': ' . $e['title'],
-            'start' => $e['start'],
-            'end' => $e['end'],
+            'start' => $e['start_time'],
+            'end' => $e['end_time'],
             'backgroundColor' => $colors[$e['status']] ?? '#94a3b8',
             'borderColor' => $colors[$e['status']] ?? '#94a3b8',
             'extendedProps' => [
                 'status' => $e['status'],
                 'room' => $e['room_name'] ?? 'ภายนอกสถานที่',
-                'user' => $e['first_name'] . ' ' . $e['last_name'],
+                'user' => $e['first_name'] . ' ' . ($e['last_name'] ?? ''),
                 'original_title' => $e['title'],
                 'participants' => $e['participants_count'] ?? 0
             ]

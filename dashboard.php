@@ -24,6 +24,9 @@ $view = $_GET['view'] ?? 'calendar';
     <!-- Choices.js CSS for beautiful dropdowns -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <!-- Tailwind CSS v4 -->
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <style type="text/tailwindcss">
@@ -53,6 +56,8 @@ $view = $_GET['view'] ?? 'calendar';
             <div class="content-wrapper animate-fade">
                 <?php
                 switch ($view) {
+                    case 'requests':
+                    case 'results':
                     case 'approve_list':
                         include 'views/approve_list.php';
                         break;
@@ -82,20 +87,5 @@ $view = $_GET['view'] ?? 'calendar';
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="js/app.js"></script>
-    <script>
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-
-        function toggleMenu() {
-            sidebar?.classList.toggle('open');
-            sidebarOverlay?.classList.toggle('show');
-            document.body.style.overflow = sidebar?.classList.contains('open') ? 'hidden' : '';
-        }
-
-        mobileMenuBtn?.addEventListener('click', toggleMenu);
-        sidebarOverlay?.addEventListener('click', toggleMenu);
-    </script>
 </body>
 </html>

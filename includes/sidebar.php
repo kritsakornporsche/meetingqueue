@@ -29,7 +29,7 @@ $user = $_SESSION['user_data'];
             <li>
                 <a href="dashboard.php?view=results" class="<?php echo ($_GET['view'] ?? '') == 'results' ? 'active' : ''; ?>">
                     <i class="fas fa-clipboard-check"></i>
-                    <span>ผลการอนุมัติ</span>
+                    <span>สถานะการจอง</span>
                 </a>
             </li>
             <li>

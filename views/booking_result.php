@@ -120,8 +120,7 @@ if (!$bookingId) {
 document.addEventListener('DOMContentLoaded', async () => {
     const bookingId = <?php echo json_encode($bookingId); ?>;
     try {
-        const res = await fetch(`api/bookings.php?booking_id=${bookingId}`);
-        const data = await res.json();
+        const data = await MeetQueue.api.fetch(`api/bookings.php?booking_id=${bookingId}`);
         
         if (data.success && data.bookings && data.bookings.length > 0) {
             const booking = data.bookings[0];
@@ -196,13 +195,8 @@ function renderBookingResult(booking) {
     document.getElementById('displayTitle').textContent = booking.title;
     
     // Dates
-    const start = new Date(booking.start_time);
-    const end = new Date(booking.end_time);
-    
-    document.getElementById('displayDate').textContent = start.toLocaleDateString('th-TH', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    });
-    document.getElementById('displayTime').textContent = `${start.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})} - ${end.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})} น.`;
+    document.getElementById('displayDate').textContent = MeetQueue.utils.formatDate(booking.start_time);
+    document.getElementById('displayTime').textContent = `${MeetQueue.utils.formatTime(booking.start_time)} - ${MeetQueue.utils.formatTime(booking.end_time)} น.`;
     
     // Room
     document.getElementById('displayRoom').textContent = booking.is_external ? `(ภายนอก) ${booking.external_org}` : booking.room_name;
