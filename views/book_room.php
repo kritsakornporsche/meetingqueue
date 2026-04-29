@@ -120,10 +120,21 @@
 
                     <div>
                         <label class="label-premium"><i class="fas fa-users"></i> จำนวนผู้เข้าประชุมที่คาดการณ์ <span class="text-red-500">*</span></label>
-                        <div class="flex items-center gap-6 max-w-[300px]">
+                        <div class="flex items-center gap-6 max-w-[300px] mb-8">
                             <button type="button" onclick="adjustValue(-5)" class="w-16 h-16 rounded-2xl bg-white border-2 border-[#EBE6DA] flex items-center justify-center text-[#6A5243] hover:border-[#6A5243] hover:bg-[#FDFBF7] transition-all"><i class="fas fa-minus text-xl"></i></button>
                             <input type="number" id="participants_count" value="10" class="premium-input text-center text-3xl font-black py-4" required>
                             <button type="button" onclick="adjustValue(5)" class="w-16 h-16 rounded-2xl bg-white border-2 border-[#EBE6DA] flex items-center justify-center text-[#6A5243] hover:border-[#6A5243] hover:bg-[#FDFBF7] transition-all"><i class="fas fa-plus text-xl"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="label-premium"><i class="fas fa-tv"></i> ตัวเลือกอุปกรณ์ (Optional)</label>
+                        <div class="flex flex-wrap gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer p-3 bg-white border border-[#EBE6DA] rounded-xl hover:border-[#D4B59D] transition-colors"><input type="checkbox" name="equipments" value="โปรเจกเตอร์" class="w-5 h-5 accent-[#6A5243]"> <span class="text-sm font-semibold text-[#6A5243]">โปรเจกเตอร์</span></label>
+                            <label class="flex items-center gap-2 cursor-pointer p-3 bg-white border border-[#EBE6DA] rounded-xl hover:border-[#D4B59D] transition-colors"><input type="checkbox" name="equipments" value="ทีวี" class="w-5 h-5 accent-[#6A5243]"> <span class="text-sm font-semibold text-[#6A5243]">ทีวี</span></label>
+                            <label class="flex items-center gap-2 cursor-pointer p-3 bg-white border border-[#EBE6DA] rounded-xl hover:border-[#D4B59D] transition-colors"><input type="checkbox" name="equipments" value="คอมพิวเตอร์" class="w-5 h-5 accent-[#6A5243]"> <span class="text-sm font-semibold text-[#6A5243]">คอมพิวเตอร์</span></label>
+                            <label class="flex items-center gap-2 cursor-pointer p-3 bg-white border border-[#EBE6DA] rounded-xl hover:border-[#D4B59D] transition-colors"><input type="checkbox" name="equipments" value="ไมโครโฟน" class="w-5 h-5 accent-[#6A5243]"> <span class="text-sm font-semibold text-[#6A5243]">ไมโครโฟน</span></label>
+                            <label class="flex items-center gap-2 cursor-pointer p-3 bg-white border border-[#EBE6DA] rounded-xl hover:border-[#D4B59D] transition-colors"><input type="checkbox" name="equipments" value="อื่นๆ" class="w-5 h-5 accent-[#6A5243]"> <span class="text-sm font-semibold text-[#6A5243]">อื่นๆ</span></label>
                         </div>
                     </div>
                 </div>
@@ -219,6 +230,10 @@
     document.addEventListener('DOMContentLoaded', () => {
         initRoomSelection();
         
+        // Set default date to today
+        const today = new Date().toLocaleDateString('en-CA'); // Gets YYYY-MM-DD in local timezone safely
+        document.getElementById('meeting_date').value = today;
+        
         // Attachment UI
         document.getElementById('attachment').addEventListener('change', (e) => {
             if (e.target.files[0]) {
@@ -255,6 +270,11 @@
                 
                 const file = document.getElementById('attachment').files[0];
                 if (file) fd.append('attachment', file);
+                
+                // Get checked equipments
+                const eqs = [];
+                document.querySelectorAll('input[name="equipments"]:checked').forEach(cb => eqs.push(cb.value));
+                if (eqs.length > 0) fd.append('equipments', eqs.join(', '));
 
                 const res = await fetch('api/book_room.php', { method: 'POST', body: fd });
                 const json = await res.json();
@@ -268,7 +288,7 @@
                         confirmButtonColor: '#6A5243',
                         background: '#fff',
                         customClass: { popup: 'rounded-[3rem]', confirmButton: 'rounded-2xl px-10 py-4 font-black' }
-                    }).then(() => window.location.href = 'dashboard.php?view=calendar');
+                    }).then(() => window.location.href = 'dashboard.php?view=booking_result&id=' + json.booking_id);
                 } else {
                     throw new Error(json.error);
                 }
@@ -299,7 +319,7 @@
                 card.innerHTML = `
                     <div class="flex items-start gap-6">
                         <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-[#F9F8F6] group-hover:bg-white border border-[#EBE6DA] flex items-center justify-center text-[#D4B59D] transition-all">
-                            <i class="fas fa-building text-2xl"></i>
+                            ${room.room_number ? `<span class="text-xl font-black">${room.room_number}</span>` : `<i class="fas fa-building text-2xl"></i>`}
                         </div>
                         <div class="flex-grow pt-1">
                             <h4 class="font-black text-[#6A5243] text-[1.05rem] leading-snug mb-2 line-clamp-2">${room.name}</h4>

@@ -25,6 +25,7 @@ try {
     $participants_count = $_POST['participants_count'] ?? 0;
     $description = $_POST['description'] ?? '';
     $phone = $_POST['phone'] ?? '';
+    $equipments = $_POST['equipments'] ?? null;
     
     // Validate required fields
     if (!$room_id || !$title || !$meeting_date || !$start_time || !$end_time || !$participants_count || !$phone) {
@@ -61,8 +62,8 @@ try {
     }
     
     // Insert into database
-    $sql = "INSERT INTO bookings (room_id, user_id, title, description, start_time, end_time, participants_count, phone, attachment_path, status, is_external) 
-            VALUES (:room_id, :user_id, :title, :description, :start_time, :end_time, :participants_count, :phone, :attachment_path, 'pending', 0)";
+    $sql = "INSERT INTO bookings (room_id, user_id, title, description, start_time, end_time, participants_count, phone, attachment_path, status, is_external, equipments) 
+            VALUES (:room_id, :user_id, :title, :description, :start_time, :end_time, :participants_count, :phone, :attachment_path, 'pending', 0, :equipments)";
             
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
@@ -74,7 +75,8 @@ try {
         ':end_time' => $end_datetime,
         ':participants_count' => $participants_count,
         ':phone' => $phone,
-        ':attachment_path' => $attachment_path
+        ':attachment_path' => $attachment_path,
+        ':equipments' => $equipments
     ]);
     
     echo json_encode([

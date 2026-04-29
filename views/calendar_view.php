@@ -191,8 +191,8 @@ $recent_bookings = $statusStmt->fetchAll();
                 
                 <div class="room-card-header">
                     <div class="room-card-info">
-                        <div class="room-card-icon">
-                            <?= mb_substr($room['name'], 0, 2) ?>
+                        <div class="room-card-icon text-lg font-black">
+                            <?= !empty($room['room_number']) ? htmlspecialchars($room['room_number']) : '<i class="fas fa-building text-base"></i>' ?>
                         </div>
                         <div class="room-card-text">
                             <h4 class="room-card-title" title="<?= htmlspecialchars($room['name']) ?>"><?= htmlspecialchars($room['name']) ?></h4>
@@ -325,6 +325,25 @@ $recent_bookings = $statusStmt->fetchAll();
         font-weight: 700;
         color: #6A5243;
     }
+    
+    /* Weekend / Holiday Styling */
+    .fc-day-sun, .fc-day-public-holiday {
+        background-color: rgba(239, 68, 68, 0.03) !important;
+    }
+    .fc-day-sat {
+        background-color: rgba(59, 130, 246, 0.03) !important;
+    }
+    .fc-day-sun .fc-col-header-cell-cushion,
+    .fc-day-sun .fc-daygrid-day-number,
+    .fc-day-public-holiday .fc-col-header-cell-cushion,
+    .fc-day-public-holiday .fc-daygrid-day-number {
+        color: #ef4444 !important; /* Red for Sunday and Holidays */
+    }
+    .fc-day-sat .fc-col-header-cell-cushion,
+    .fc-day-sat .fc-daygrid-day-number {
+        color: #3b82f6 !important; /* Blue for Saturday */
+    }
+
     .fc-event {
         border: none !important;
         border-radius: 0.5rem !important;
@@ -421,6 +440,25 @@ $recent_bookings = $statusStmt->fetchAll();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        // รายการวันหยุดข้าราชการ (รูปแบบ MM-DD)
+        const publicHolidays = {
+            '01-01': 'วันขึ้นปีใหม่',
+            '04-06': 'วันจักรี',
+            '04-13': 'วันสงกรานต์',
+            '04-14': 'วันสงกรานต์',
+            '04-15': 'วันสงกรานต์',
+            '05-01': 'วันแรงงานแห่งชาติ',
+            '05-04': 'วันฉัตรมงคล',
+            '06-03': 'วันเฉลิมฯ พระราชินี',
+            '07-28': 'วันเฉลิมฯ ร.10',
+            '08-12': 'วันแม่แห่งชาติ',
+            '10-13': 'วันนวมินทรฯ',
+            '10-23': 'วันปิยมหาราช',
+            '12-05': 'วันพ่อแห่งชาติ',
+            '12-10': 'วันรัฐธรรมนูญ',
+            '12-31': 'วันสิ้นปี'
+        };
+
         var calendarEl = document.getElementById('calendar');
         calendarInstance = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
@@ -436,6 +474,55 @@ $recent_bookings = $statusStmt->fetchAll();
                 month: 'เดือน',
                 week: 'สัปดาห์',
                 day: 'วัน'
+            },
+            dayCellClassNames: function(arg) {
+                let month = String(arg.date.getMonth() + 1).padStart(2, '0');
+                let day = String(arg.date.getDate()).padStart(2, '0');
+                let md = month + '-' + day;
+                if (publicHolidays[md]) {
+                    return ['fc-day-public-holiday'];
+                }
+                return [];
+            },
+            dayCellDidMount: function(arg) {
+                let month = String(arg.date.getMonth() + 1).padStart(2, '0');
+                let day = String(arg.date.getDate()).padStart(2, '0');
+                let md = month + '-' + day;
+                if (publicHolidays[md]) {
+                    let label = document.createElement('div');
+                    label.style.fontSize = '0.65rem';
+                    label.style.color = '#ef4444';
+                    label.style.padding = '0 4px';
+                    label.style.whiteSpace = 'nowrap';
+                    label.style.overflow = 'hidden';
+                    label.style.textOverflow = 'ellipsis';
+                    label.style.width = '100%';
+                    label.style.textAlign = 'right';
+                    label.innerText = publicHolidays[md];
+                    
+                    let frame = arg.el.querySelector('.fc-daygrid-day-top');
+                    if (frame) {
+                        frame.style.flexDirection = 'column';
+                        frame.style.alignItems = 'flex-end';
+                        frame.appendChild(label);
+                    }
+                }
+            },
+            datesSet: function() {
+                var titleEl = document.querySelector('.fc-toolbar-title');
+                if (titleEl) {
+                    var text = titleEl.innerText;
+                    var newText = text.replace(/\d{4}/g, function(match) {
+                        var year = parseInt(match);
+                        if (year < 2500) {
+                            return year + 543;
+                        }
+                        return year;
+                    });
+                    if (text !== newText) {
+                        titleEl.innerText = newText;
+                    }
+                }
             },
             events: 'api/calendar_events.php',
             eventClick: function(info) {

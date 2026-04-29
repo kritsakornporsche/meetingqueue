@@ -417,26 +417,27 @@ input:focus, select:focus, textarea:focus {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 0.85rem 1.75rem;
-    border-radius: var(--radius);
+    padding: 0.85rem 2rem;
+    border-radius: 0.75rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
     border: 1px solid transparent;
     font-family: inherit;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
 }
 
 .btn-primary {
     background: var(--primary);
     color: white;
-    box-shadow: 0 4px 10px rgba(138, 154, 91, 0.3);
+    box-shadow: 0 4px 12px rgba(106, 82, 67, 0.2);
 }
 
 .btn-primary:hover {
     background: var(--primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(138, 154, 91, 0.4);
+    box-shadow: 0 6px 16px rgba(106, 82, 67, 0.3);
 }
 
 /* Pagination */
@@ -648,7 +649,7 @@ input[type="checkbox"], input[type="radio"] {
     }
     
     .content-wrapper {
-        padding: 1rem;
+        padding: 1.25rem;
     }
     
     .hero-banner {

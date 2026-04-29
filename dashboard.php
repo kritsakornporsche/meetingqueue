@@ -65,6 +65,9 @@ $view = $_GET['view'] ?? 'calendar';
                     case 'reports':
                         include 'views/reports.php';
                         break;
+                    case 'booking_result':
+                        include 'views/booking_result.php';
+                        break;
                     case 'calendar':
                     default:
                         include 'views/calendar_view.php';

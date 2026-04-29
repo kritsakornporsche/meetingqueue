@@ -6,6 +6,14 @@ if (isset($_SESSION['user_id'])) {
     header('Location: dashboard.php');
     exit;
 }
+
+try {
+    $pdo = getLocalDB();
+    $usersStmt = $pdo->query("SELECT username, first_name, last_name FROM users ORDER BY first_name");
+    $users = $usersStmt->fetchAll();
+} catch (Exception $e) {
+    $users = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -19,6 +27,9 @@ if (isset($_SESSION['user_id'])) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Choices.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     
     <!-- Tailwind CSS v4 -->
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
@@ -70,17 +81,16 @@ if (isset($_SESSION['user_id'])) {
         <form id="loginForm" class="space-y-5">
             <div>
                 <label for="username" class="block text-sm font-medium text-text-main mb-1.5">ชื่อผู้ใช้งาน (ชื่อจริง)</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                    <input type="text" id="username" placeholder="เช่น Somchai" required
-                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all">
-                </div>
+                <select id="username" required class="w-full">
+                    <option value="">-- เลือกหรือพิมพ์ค้นหาชื่อ --</option>
+                    <?php foreach($users as $u): ?>
+                        <option value="<?= htmlspecialchars($u['username']) ?>"><?= htmlspecialchars($u['first_name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             
             <div>
-                <label for="password" class="block text-sm font-medium text-text-main mb-1.5">รหัสผ่าน (เลขบัตรประชาชน/CID)</label>
+                <label for="password" class="block text-sm font-medium text-text-main mb-1.5">รหัสผ่าน</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
                         <i class="fas fa-lock"></i>
@@ -103,13 +113,33 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="js/app.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const usernameSelect = document.getElementById('username');
+            if (usernameSelect) {
+                new Choices(usernameSelect, {
+                    searchEnabled: true,
+                    searchPlaceholderValue: 'พิมพ์เพื่อค้นหา...',
+                    placeholder: true,
+                    itemSelectText: 'กดเพื่อเลือก',
+                    noResultsText: 'ไม่พบชื่อที่ค้นหา',
+                    shouldSort: false
+                });
+            }
+        });
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
+            if (!username) {
+                alert('กรุณาเลือกชื่อผู้ใช้งาน');
+                return;
+            }
+
             const btn = e.target.querySelector('button');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังตรวจสอบ...';

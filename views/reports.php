@@ -49,10 +49,23 @@ try {
     // Calculate last day of month
     $last_day = date('t', strtotime("$year-$month-01"));
     
+    // Calculate Room Usage Stats
+    $roomStats = [];
+    foreach($report_data as $row) {
+        $rname = $row['room_name'] ?? 'ภายนอกสถานที่';
+        if(!isset($roomStats[$rname])) $roomStats[$rname] = 0;
+        $roomStats[$rname]++;
+    }
+    arsort($roomStats);
+    $chartLabels = json_encode(array_keys($roomStats));
+    $chartData = json_encode(array_values($roomStats));
+    
 } catch (PDOException $e) {
     die("Database error: " . $e->getMessage());
 }
 ?>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
     /* Report Styling */
@@ -187,6 +200,46 @@ try {
             <h1 class="report-title">รายงานการใช้ห้องประชุม</h1>
             <p class="report-subtitle">ช่วงเวลาตั้งแต่วันที่ 1 <?= $month_short ?> <?= $thai_year_short ?> ถึงวันที่ <?= $last_day ?> <?= $month_short ?> <?= $thai_year_short ?></p>
         </div>
+        
+        <!-- Chart Section -->
+        <?php if(count($roomStats) > 0): ?>
+        <div class="mb-8 p-6 bg-white border border-[#EBE6DA] rounded-2xl shadow-sm no-print">
+            <h3 class="text-lg font-bold text-[#6A5243] mb-4 text-center">สถิติการใช้งานห้องประชุม (ครั้ง)</h3>
+            <div style="height: 300px; position: relative; margin: 0 auto; max-width: 800px;">
+                <canvas id="roomUsageChart"></canvas>
+            </div>
+        </div>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('roomUsageChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: <?= $chartLabels ?>,
+                    datasets: [{
+                        label: 'จำนวนครั้งที่ใช้งาน',
+                        data: <?= $chartData ?>,
+                        backgroundColor: '#D4B59D',
+                        borderColor: '#6A5243',
+                        borderWidth: 1,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
+        });
+        </script>
+        <?php endif; ?>
         
         <div class="report-table-wrapper">
             <table class="report-table">

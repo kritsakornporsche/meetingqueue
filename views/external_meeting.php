@@ -78,8 +78,64 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toLocaleDateString('en-CA');
+        document.getElementById('ext_date').value = today;
+    });
+
     document.getElementById('externalMeetingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        alert('บันทึกข้อมูลการประชุมภายนอกสำเร็จ!');
+        
+        try {
+            const fd = new FormData();
+            fd.append('is_external', 1);
+            fd.append('external_org', document.getElementById('external_org').value);
+            fd.append('title', document.getElementById('ext_title').value);
+            
+            // Format dates
+            const date = document.getElementById('ext_date').value;
+            const startTime = document.getElementById('ext_start_time').value;
+            const endTime = document.getElementById('ext_end_time').value;
+            fd.append('start_time', `${date} ${startTime}:00`);
+            fd.append('end_time', `${date} ${endTime}:00`);
+            
+            fd.append('participants_count', document.getElementById('ext_participants_count').value);
+            fd.append('description', document.getElementById('ext_description').value);
+            fd.append('phone', document.getElementById('ext_phone').value);
+            
+            const file = document.getElementById('ext_attachment').files[0];
+            if (file) {
+                fd.append('attachment', file);
+            }
+
+            const res = await fetch('api/bookings.php', {
+                method: 'POST',
+                body: fd
+            });
+            const json = await res.json();
+            
+            if (json.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'บันทึกข้อมูลสำเร็จ!',
+                    text: 'บันทึกการประชุมภายนอกเรียบร้อยแล้ว',
+                    confirmButtonColor: '#6A5243',
+                    confirmButtonText: 'ตกลง',
+                    background: '#fff',
+                    customClass: { popup: 'rounded-[3rem]', confirmButton: 'rounded-2xl px-10 py-4 font-black' }
+                }).then(() => {
+                    window.location.href = 'dashboard.php?view=booking_result&id=' + json.id;
+                });
+            } else {
+                throw new Error(json.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+            }
+        } catch (err) {
+            Swal.fire({ 
+                icon: 'error', 
+                title: 'ไม่สำเร็จ', 
+                text: err.message, 
+                confirmButtonColor: '#ef4444' 
+            });
+        }
     });
 </script>

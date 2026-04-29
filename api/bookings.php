@@ -20,6 +20,7 @@ try {
         $userId = $_GET['user_id'] ?? null;
         $roomId = $_GET['room_id'] ?? null;
         $status = $_GET['status'] ?? null;
+        $bookingId = $_GET['booking_id'] ?? null;
         
         $sql = "SELECT b.*, r.name as room_name, u.first_name, u.last_name, u.emp_code 
                 FROM bookings b 
@@ -39,6 +40,10 @@ try {
         if ($status) {
             $sql .= " AND b.status = :status";
             $params[':status'] = $status;
+        }
+        if ($bookingId) {
+            $sql .= " AND b.id = :booking_id";
+            $params[':booking_id'] = $bookingId;
         }
 
         $sql .= " ORDER BY b.start_time DESC";
