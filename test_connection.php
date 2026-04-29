@@ -11,17 +11,21 @@ $results = [
 try {
     $localPdo = getLocalDB();
     $results['local_db']['status'] = 'success';
-    $results['local_db']['message'] = 'เชื่อมต่อกับ 192.168.9.234 สำเร็จ';
+    $results['local_db']['message'] = 'เชื่อมต่อกับ ' . DB_HOST . ' สำเร็จ';
 } catch (Exception $e) {
     $results['local_db']['status'] = 'error';
-    $results['local_db']['message'] = 'เกิดข้อผิดพลาด: ' . $e->getMessage();
+    $message = $e->getMessage();
+    if (strpos($message, '1049') !== false) {
+        $message .= " (ฐานข้อมูลยังไม่ได้ถูกสร้าง กรุณารัน <a href='setup_db.php' style='color: #ef4444; text-decoration: underline;'>setup_db.php</a>)";
+    }
+    $results['local_db']['message'] = 'เกิดข้อผิดพลาด: ' . $message;
 }
 
 // Test ZK DB
 try {
     $zkPdo = getZKDB();
     $results['zk_db']['status'] = 'success';
-    $results['zk_db']['message'] = 'เชื่อมต่อกับ 192.168.9.7 สำเร็จ';
+    $results['zk_db']['message'] = 'เชื่อมต่อกับ ' . ZK_HOST . ' สำเร็จ';
 
     // Run the specific query provided by user
     $query = "
@@ -164,7 +168,7 @@ try {
         <div class="grid">
             <div class="card">
                 <h2>ฐานข้อมูลในเครื่อง (Meeting Queue)</h2>
-                <p>IP: 192.168.9.234</p>
+                <p>IP: <?php echo DB_HOST; ?></p>
                 <span class="status status-<?php echo $results['local_db']['status']; ?>">
                     <?php echo $results['local_db']['status'] === 'success' ? 'สำเร็จ' : 'ล้มเหลว'; ?>
                 </span>
@@ -173,7 +177,7 @@ try {
 
             <div class="card">
                 <h2>Authentication API (ZK BioTime)</h2>
-                <p>IP: 192.168.9.7</p>
+                <p>IP: <?php echo ZK_HOST; ?></p>
                 <span class="status status-<?php echo $results['zk_db']['status']; ?>">
                     <?php echo $results['zk_db']['status'] === 'success' ? 'สำเร็จ' : 'ล้มเหลว'; ?>
                 </span>

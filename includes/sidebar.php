@@ -69,6 +69,12 @@ $user = $_SESSION['user_data'];
                     <span>ข้อมูลห้องประชุม</span>
                 </a>
             </li>
+            <li>
+                <a href="dashboard.php?view=users" class="<?php echo ($_GET['view'] ?? '') == 'users' ? 'active' : ''; ?>">
+                    <i class="fas fa-users-gear"></i>
+                    <span>ข้อมูลผู้ใช้งาน</span>
+                </a>
+            </li>
         </ul>
     </div>
     <?php endif; ?>

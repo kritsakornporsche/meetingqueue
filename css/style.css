@@ -9,14 +9,14 @@
     --secondary: #D4B59D; /* Camel */
     --accent: #E6D6BD; /* Pale Sand */
     
-    --success: #84806A; /* Muted Sage for success */
-    --success-soft: rgba(132, 128, 106, 0.2);
+    --success: #166534;
+    --success-bg: #dcfce7;
     
-    --warning: #D4B59D; 
-    --warning-soft: rgba(212, 181, 157, 0.2);
+    --warning: #854d0e;
+    --warning-bg: #fef9c3;
     
-    --danger: #A79A8B; /* Taupe */
-    --danger-soft: rgba(167, 154, 139, 0.15);
+    --danger: #991b1b;
+    --danger-bg: #fee2e2;
     
     /* Layout Colors */
     --sidebar-bg: #EBE6DA; /* Warm Beige */
@@ -127,19 +127,22 @@ aside {
 .nav-links a {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0.875rem 1rem;
+    gap: 0.85rem;
+    padding: 0.75rem 1rem;
     text-decoration: none;
     color: var(--sidebar-text);
     border-radius: var(--radius);
     font-weight: 500;
     transition: var(--transition);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .nav-links a:hover {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.6);
     color: var(--text-main);
-    transform: translateX(4px);
+    transform: translateX(6px);
 }
 
 .nav-links a.active {
@@ -351,17 +354,22 @@ tr:hover td {
 
 /* Status Badges */
 .badge {
-    padding: 0.35rem 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 1rem;
     border-radius: 2rem;
     font-size: 0.75rem;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.02em;
+    min-width: 90px;
+    text-align: center;
 }
 
-.badge-success { background: var(--success-soft); color: #5e6c5b; border: 1px solid var(--success); }
-.badge-warning { background: var(--warning-soft); color: #8c763f; border: 1px solid var(--warning); }
-.badge-danger { background: var(--danger-soft); color: #9c4530; border: 1px solid var(--danger); }
-.badge-primary { background: var(--primary-soft); color: var(--primary); border: 1px solid var(--primary); }
+.badge-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.badge-warning { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+.badge-danger { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+.badge-primary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
 
 /* Form Elements */
 .form-group {
@@ -416,10 +424,10 @@ input:focus, select:focus, textarea:focus {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.85rem 2rem;
+    gap: 0.75rem;
+    padding: 0.85rem 3rem;
     border-radius: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: var(--transition);
     border: 1px solid transparent;
@@ -679,5 +687,27 @@ input[type="checkbox"], input[type="radio"] {
     .sidebar-overlay.show {
         display: block;
         opacity: 1;
+    }
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #ticketCard, #ticketCard * {
+        visibility: visible;
+    }
+    #ticketCard {
+        position: absolute;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    aside, header, .hero-banner, .sidebar-overlay, #mobileMenuBtn {
+        display: none !important;
     }
 }

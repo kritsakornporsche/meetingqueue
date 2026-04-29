@@ -19,7 +19,7 @@
     .room-card-premium.active { border-color: #6A5243; background: #FDFBF7; border-bottom-color: #4a3a2f; }
     .room-card-premium.active h4 { color: #6A5243; }
     
-    .quick-btn-premium { border: 2px solid #EBE6DA; padding: 0.75rem 1.5rem; border-radius: 1.25rem; font-size: 0.9375rem; font-weight: 700; transition: all 0.2s; background: white; color: #6A5243; border-bottom-width: 4px; }
+    .quick-btn-premium { border: 2px solid #EBE6DA; padding: 0.75rem 1.25rem; border-radius: 1.25rem; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; background: white; color: #6A5243; border-bottom-width: 4px; min-width: 100px; }
     .quick-btn-premium:hover { border-color: #D4B59D; transform: translateY(-2px); }
     .quick-btn-premium.active { border-color: #6A5243; background: #6A5243; color: white; border-bottom-color: #4a3a2f; }
 
@@ -36,8 +36,8 @@
         <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#6A5243]/5 text-[#6A5243] text-[0.7rem] font-black uppercase tracking-[0.2em] mb-6 border border-[#6A5243]/10">
             <i class="fas fa-bolt text-[#D4B59D]"></i> Instant Booking System
         </div>
-        <h2 class="text-5xl md:text-6xl font-black text-[#6A5243] mb-6 tracking-tight">แบบฟอร์มการจอง</h2>
-        <p class="text-lg md:text-xl text-[#A79A8B] font-semibold max-w-3xl mx-auto leading-relaxed">กรุณาเลือกรายละเอียดตามขั้นตอนด้านล่าง เพื่อความรวดเร็วในการพิจารณาอนุมัติ</p>
+        <h2 class="text-4xl md:text-5xl font-bold text-[#6A5243] mb-6 tracking-tight">แบบฟอร์มการจอง</h2>
+        <p class="text-base md:text-lg text-[#A79A8B] font-medium max-w-3xl mx-auto leading-relaxed">กรุณาเลือกรายละเอียดตามขั้นตอนด้านล่าง เพื่อความรวดเร็วในการพิจารณาอนุมัติ</p>
     </div>
 
     <!-- Progress Indicator -->
@@ -130,11 +130,18 @@
                     <div>
                         <label class="label-premium"><i class="fas fa-tv"></i> ตัวเลือกอุปกรณ์ (Optional)</label>
                         <div class="flex flex-wrap gap-4">
-                            <label class="flex items-center gap-2 cursor-pointer p-3 bg-white border border-[#EBE6DA] rounded-xl hover:border-[#D4B59D] transition-colors"><input type="checkbox" name="equipments" value="โปรเจกเตอร์" class="w-5 h-5 accent-[#6A5243]"> <span class="text-sm font-semibold text-[#6A5243]">โปรเจกเตอร์</span></label>
-                            <label class="flex items-center gap-2 cursor-pointer p-3 bg-white border border-[#EBE6DA] rounded-xl hover:border-[#D4B59D] transition-colors"><input type="checkbox" name="equipments" value="ทีวี" class="w-5 h-5 accent-[#6A5243]"> <span class="text-sm font-semibold text-[#6A5243]">ทีวี</span></label>
-                            <label class="flex items-center gap-2 cursor-pointer p-3 bg-white border border-[#EBE6DA] rounded-xl hover:border-[#D4B59D] transition-colors"><input type="checkbox" name="equipments" value="คอมพิวเตอร์" class="w-5 h-5 accent-[#6A5243]"> <span class="text-sm font-semibold text-[#6A5243]">คอมพิวเตอร์</span></label>
-                            <label class="flex items-center gap-2 cursor-pointer p-3 bg-white border border-[#EBE6DA] rounded-xl hover:border-[#D4B59D] transition-colors"><input type="checkbox" name="equipments" value="ไมโครโฟน" class="w-5 h-5 accent-[#6A5243]"> <span class="text-sm font-semibold text-[#6A5243]">ไมโครโฟน</span></label>
-                            <label class="flex items-center gap-2 cursor-pointer p-3 bg-white border border-[#EBE6DA] rounded-xl hover:border-[#D4B59D] transition-colors"><input type="checkbox" name="equipments" value="อื่นๆ" class="w-5 h-5 accent-[#6A5243]"> <span class="text-sm font-semibold text-[#6A5243]">อื่นๆ</span></label>
+                            <?php 
+                            $equipments = ['โปรเจกเตอร์' => 'fa-video', 'ทีวี' => 'fa-tv', 'คอมพิวเตอร์' => 'fa-desktop', 'ไมโครโฟน' => 'fa-microphone', 'อื่นๆ' => 'fa-ellipsis-h'];
+                            foreach($equipments as $name => $icon): 
+                            ?>
+                            <label class="flex items-center gap-3 cursor-pointer px-5 py-3 bg-white border-2 border-[#EBE6DA] rounded-2xl hover:border-[#6A5243] hover:bg-[#FDFBF7] transition-all group select-none">
+                                <input type="checkbox" name="equipments" value="<?php echo $name; ?>" class="w-5 h-5 accent-[#6A5243]"> 
+                                <span class="flex items-center gap-2">
+                                    <i class="fas <?php echo $icon; ?> text-[#A79A8B] group-hover:text-[#D4B59D] transition-colors"></i>
+                                    <span class="text-[0.95rem] font-bold text-[#6A5243]"><?php echo $name; ?></span>
+                                </span>
+                            </label>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
@@ -178,45 +185,47 @@
                     </div>
 
                     <!-- Booking Summary Panel -->
-                    <div class="lg:col-span-5 bg-[#6A5243] rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden">
+                    <div class="lg:col-span-5 bg-[#6A5243] rounded-[3rem] p-12 text-white shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[450px]">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16"></div>
-                        <h3 class="text-xl font-black mb-8 flex items-center gap-3">
-                            <i class="fas fa-check-double text-[#D4B59D]"></i> สรุปรายละเอียด
-                        </h3>
-                        
-                        <div class="space-y-6">
-                            <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
-                                <span class="text-[0.6rem] font-black text-white/50 uppercase tracking-[0.2em] block mb-1">ห้องที่เลือก</span>
-                                <div id="summary-room" class="font-black text-lg text-[#D4B59D]">โปรดเลือกห้อง...</div>
-                            </div>
-                            <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
-                                <span class="text-[0.6rem] font-black text-white/50 uppercase tracking-[0.2em] block mb-1">วันและเวลา</span>
-                                <div id="summary-datetime" class="font-black text-lg">โปรดระบุวันและเวลา...</div>
-                            </div>
-                            <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
-                                <span class="text-[0.6rem] font-black text-white/50 uppercase tracking-[0.2em] block mb-1">จำนวนผู้เข้าร่วม</span>
-                                <div id="summary-count" class="font-black text-lg">10 คน</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-10 flex items-center gap-4">
+                                <i class="fas fa-check-double text-[#D4B59D]"></i> สรุปรายละเอียดการจอง
+                            </h3>
+                            
+                            <div class="space-y-8">
+                                <div class="bg-white/5 p-6 rounded-[1.5rem] border border-white/10">
+                                    <span class="text-[0.65rem] font-bold text-white/50 uppercase tracking-[0.2em] block mb-2">ห้องประชุมที่เลือก</span>
+                                    <div id="summary-room" class="font-bold text-lg text-[#D4B59D] leading-tight">โปรดเลือกห้อง...</div>
+                                </div>
+                                <div class="bg-white/5 p-6 rounded-[1.5rem] border border-white/10">
+                                    <span class="text-[0.65rem] font-bold text-white/50 uppercase tracking-[0.2em] block mb-2">วันและเวลาที่เลือก</span>
+                                    <div id="summary-datetime" class="font-bold text-lg leading-tight">โปรดระบุวันและเวลา...</div>
+                                </div>
+                                <div class="bg-white/5 p-6 rounded-[1.5rem] border border-white/10">
+                                    <span class="text-[0.65rem] font-bold text-white/50 uppercase tracking-[0.2em] block mb-2">จำนวนผู้เข้าร่วมประชุม</span>
+                                    <div id="summary-count" class="font-bold text-lg">10 คน</div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="mt-8 p-4 rounded-2xl bg-[#D4B59D]/20 text-[#D4B59D] text-xs font-bold leading-relaxed border border-[#D4B59D]/30">
-                            * ข้อมูลทั้งหมดจะถูกส่งให้ผู้ดูแลระบบตรวจสอบ คุณสามารถติดตามสถานะได้ในเมนู "ผลการอนุมัติ"
+                        <div class="mt-10 p-6 rounded-[1.5rem] bg-[#D4B59D]/20 text-[#D4B59D] text-[0.75rem] font-medium leading-relaxed border border-[#D4B59D]/30">
+                            <i class="fas fa-info-circle mr-1"></i> ข้อมูลทั้งหมดจะถูกส่งให้ผู้ดูแลระบบตรวจสอบ คุณสามารถติดตามสถานะได้ในเมนู "ผลการอนุมัติ"
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Wizard Controls -->
-            <div class="flex justify-between items-center mt-16 pt-10 border-t-2 border-[#F9F8F6]">
-                <button type="button" id="prevBtn" onclick="moveStep(-1)" class="px-8 py-4 rounded-2xl border-2 border-[#EBE6DA] text-[#A79A8B] font-black hover:border-[#D4B59D] hover:text-[#6A5243] transition-all opacity-0 pointer-events-none flex items-center gap-2">
+            <div class="flex justify-between items-center mt-20 pt-12 border-t-2 border-[#F9F8F6]">
+                <button type="button" id="prevBtn" onclick="moveStep(-1)" class="px-10 py-4 rounded-2xl border-2 border-[#EBE6DA] text-[#A79A8B] font-bold hover:border-[#D4B59D] hover:text-[#6A5243] transition-all opacity-0 pointer-events-none flex items-center gap-3">
                     <i class="fas fa-arrow-left"></i> ย้อนกลับ
                 </button>
                 
-                <button type="button" id="nextBtn" onclick="moveStep(1)" class="px-12 py-4 rounded-2xl bg-gradient-to-br from-[#D4B59D] to-[#6A5243] text-white font-black shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center gap-3">
+                <button type="button" id="nextBtn" onclick="moveStep(1)" class="px-14 py-5 rounded-2xl bg-gradient-to-br from-[#D4B59D] to-[#6A5243] text-white font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center gap-4 min-w-[180px] justify-center">
                     ถัดไป <i class="fas fa-chevron-right"></i>
                 </button>
                 
-                <button type="submit" id="submitBtn" class="hidden px-14 py-4 rounded-2xl bg-[#22c55e] text-white font-black shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center gap-3">
+                <button type="submit" id="submitBtn" class="hidden px-16 py-5 rounded-2xl bg-[#22c55e] text-white font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center gap-4 min-w-[220px] justify-center">
                     ยืนยันการส่งข้อมูล <i class="fas fa-paper-plane"></i>
                 </button>
             </div>

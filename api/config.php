@@ -5,16 +5,19 @@
  */
 
 // Local Database (Meeting Queue)
-define('DB_HOST', '192.168.9.234');
-define('DB_USER', 'meetingqueue');
-define('DB_PASS', 'Meeting@11190');
+// define('DB_HOST', '192.168.9.234'); // Hospital IP
+define('DB_HOST', 'localhost');      // Local Development
+define('DB_USER', 'root');           // Default XAMPP user
+define('DB_PASS', '');               // Default XAMPP password (empty)
 define('DB_NAME', 'meetingqueue_db');
 
 // External Database (ZK BioTime Authentication API)
-define('ZK_HOST', '192.168.9.7');
-define('ZK_USER', 'meeting7');
-define('ZK_PASS', 'meeting@11190');
+// define('ZK_HOST', '192.168.9.7');   // Hospital IP
+define('ZK_HOST', 'localhost');        // Local Development (MOCK/Local)
+define('ZK_USER', 'root');
+define('ZK_PASS', '');
 define('ZK_NAME', 'zkbiotime');
+
 
 /**
  * PDO Connection Factory for Local DB

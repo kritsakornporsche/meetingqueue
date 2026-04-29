@@ -233,8 +233,8 @@ $recent_bookings = $statusStmt->fetchAll();
                     </h2>
                     <p class="text-xs text-[#A79A8B] mt-1">อัปเดตแบบ Real-time</p>
                 </div>
-                <a href="dashboard.php?view=book" class="px-5 py-2.5 rounded-xl bg-[#6A5243] text-white text-sm font-bold shadow-md hover:bg-[#523E32] hover:-translate-y-0.5 transition-all flex items-center gap-2 flex-shrink-0 whitespace-nowrap" style="box-sizing: border-box;">
-                    <i class="fas fa-plus"></i> จองห้องประชุม
+                <a href="dashboard.php?view=book" class="px-8 py-3.5 rounded-2xl bg-gradient-to-br from-[#6A5243] to-[#523E32] text-white text-sm font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3 flex-shrink-0 whitespace-nowrap border-b-4 border-[#4a3a2f]" style="box-sizing: border-box;">
+                    <i class="fas fa-plus-circle text-base"></i> จองห้องประชุม
                 </a>
             </div>
             <div id="calendar" class="relative z-10"></div>

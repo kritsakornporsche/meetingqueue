@@ -28,21 +28,21 @@
         </div>
 
         <div class="table-responsive">
-            <table>
+            <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr>
-                        <th style="width: 50px;">#</th>
-                        <th>หัวข้อ/เรื่อง</th>
-                        <th>ห้องประชุม</th>
-                        <th>วันที่</th>
-                        <th>ช่วงเวลา</th>
-                        <th>หน่วยงาน</th>
-                        <th style="text-align: center;">สถานะ</th>
+                    <tr class="bg-[#FAEDCD]">
+                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA] w-[60px]">ลำดับ</th>
+                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA]">หัวข้อการประชุม</th>
+                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA]">ห้องประชุม</th>
+                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA]">วันที่ใช้งาน</th>
+                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA]">ช่วงเวลา</th>
+                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA]">หน่วยงาน</th>
+                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA] text-center">สถานะ</th>
                     </tr>
                 </thead>
                 <tbody id="approveTableBody">
                     <tr>
-                        <td colspan="7" style="text-align: center;">กำลังโหลดข้อมูล...</td>
+                        <td colspan="7" class="p-10 text-center text-[#A79A8B]">กำลังโหลดข้อมูล...</td>
                     </tr>
                 </tbody>
             </table>
@@ -128,17 +128,17 @@
             const roomDisplay = booking.is_external ? `(ภายนอก) ${booking.external_org || ''}` : (booking.room_name || '-');
 
             return `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>
-                        <a href="#" style="color: var(--primary); font-weight: 500; text-decoration: none;">${escapeHtml(booking.title)}</a>
-                        ${booking.is_external ? '<span class="badge badge-primary" style="font-size: 0.7em;">ภายนอก</span>' : ''}
+                <tr class="hover:bg-white/40 transition-colors border-b border-[#EBE6DA]">
+                    <td class="p-4 text-[#A79A8B] font-bold text-sm">${index + 1}</td>
+                    <td class="p-4">
+                        <div class="font-bold text-[#6A5243]">${escapeHtml(booking.title)}</div>
+                        ${booking.is_external ? '<span class="inline-block mt-1 px-2 py-0.5 bg-[#D4B59D]/20 text-[#6A5243] text-[0.65rem] font-bold rounded-lg uppercase">ภายนอก</span>' : ''}
                     </td>
-                    <td>${escapeHtml(roomDisplay)}</td>
-                    <td>${dateStr}</td>
-                    <td>${timeStr}</td>
-                    <td>${escapeHtml(booking.department_name || '-')}</td>
-                    <td style="text-align: center;">
+                    <td class="p-4 text-sm font-medium text-[#6A5243]">${escapeHtml(roomDisplay)}</td>
+                    <td class="p-4 text-sm text-[#6A5243]">${dateStr}</td>
+                    <td class="p-4 text-sm font-mono text-[#A79A8B]">${timeStr}</td>
+                    <td class="p-4 text-sm text-[#A79A8B]">${escapeHtml(booking.department_name || '-')}</td>
+                    <td class="p-4 text-center">
                         <span class="badge ${badgeClass}">${statusText}</span>
                     </td>
                 </tr>
