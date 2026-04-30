@@ -61,6 +61,9 @@ $view = $_GET['view'] ?? 'calendar';
                     case 'approve_list':
                         include 'views/approve_list.php';
                         break;
+                    case 'room_status':
+                        include 'views/room_status.php';
+                        break;
                     case 'book':
                         include 'views/book_room.php';
                         break;
@@ -75,6 +78,12 @@ $view = $_GET['view'] ?? 'calendar';
                         break;
                     case 'rooms':
                         include 'views/rooms_management.php';
+                        break;
+                    case 'admin_management':
+                        include 'views/admin_management.php';
+                        break;
+                    case 'trash_management':
+                        include 'views/trash_management.php';
                         break;
                     case 'statistics':
                         include 'views/statistics.php';

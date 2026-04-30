@@ -5,16 +5,16 @@
  */
 
 // Local Database (Meeting Queue)
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', '192.168.9.234');
+define('DB_USER', 'meetingqueue');
+define('DB_PASS', 'Meeting@11190');
 define('DB_NAME', 'meetingqueue_db');
 
-// External Database (ZK BioTime Authentication API) - DISABLED (Offline)
-// define('ZK_HOST', '192.168.9.7');
-// define('ZK_USER', 'meeting7');
-// define('ZK_PASS', 'meeting@11190');
-// define('ZK_NAME', 'zkbiotime');
+// External Database (ZK BioTime Authentication API) - ENABLED
+define('ZK_HOST', '192.168.9.7');
+define('ZK_USER', 'meeting7');
+define('ZK_PASS', 'meeting@11190');
+define('ZK_NAME', 'zkbiotime');
 
 /**
  * PDO Connection Factory for Local DB

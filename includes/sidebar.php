@@ -29,6 +29,12 @@ $user = $_SESSION['user_data'];
             <li>
                 <a href="dashboard.php?view=results" class="<?php echo ($_GET['view'] ?? '') == 'results' ? 'active' : ''; ?>">
                     <i class="fas fa-clipboard-check"></i>
+                    <span>สถานะการประชุมของฉัน</span>
+                </a>
+            </li>
+            <li>
+                <a href="dashboard.php?view=room_status" class="<?php echo ($_GET['view'] ?? '') == 'room_status' ? 'active' : ''; ?>">
+                    <i class="fas fa-door-open"></i>
                     <span>สถานะการประชุม</span>
                 </a>
             </li>
@@ -57,6 +63,18 @@ $user = $_SESSION['user_data'];
     <div class="nav-section">
         <div class="nav-label">ผู้ดูแลระบบ</div>
         <ul class="nav-links">
+            <li>
+                <a href="dashboard.php?view=admin_management" class="<?php echo ($_GET['view'] ?? '') == 'admin_management' ? 'active' : ''; ?>">
+                    <i class="fas fa-tasks"></i>
+                    <span>จัดการการประชุม</span>
+                </a>
+            </li>
+            <li>
+                <a href="dashboard.php?view=trash_management" class="<?php echo ($_GET['view'] ?? '') == 'trash_management' ? 'active' : ''; ?>">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>ถังขยะ</span>
+                </a>
+            </li>
             <li>
                 <a href="dashboard.php?view=requests" class="<?php echo ($_GET['view'] ?? '') == 'requests' ? 'active' : ''; ?>">
                     <i class="fas fa-list-ul"></i>

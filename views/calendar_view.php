@@ -5,8 +5,8 @@ use App\Repository\BookingRepository;
 $repo = new BookingRepository();
 $rooms = \App\Core\Database::getInstance()->getConnection()->query("SELECT * FROM rooms")->fetchAll();
 
-// Get recent bookings using Repository
-$recent_bookings = $repo->getAll();
+// Get upcoming bookings using Repository
+$recent_bookings = $repo->getAll(['upcoming' => true]);
 $recent_bookings = array_slice($recent_bookings, 0, 9);
 ?>
 
@@ -241,7 +241,7 @@ $recent_bookings = array_slice($recent_bookings, 0, 9);
             <!-- Status / Timeline -->
             <div class="dash-card flex flex-col">
                 <div class="flex justify-between items-center mb-5">
-                    <h3 class="font-bold text-[#6A5243] text-lg">สถานะการจองล่าสุด</h3>
+                    <h3 class="font-bold text-[#6A5243] text-lg">การประชุมที่จะถึง</h3>
                     <a href="dashboard.php?view=approve_list" class="text-xs font-bold text-[#D4B59D] hover:text-[#6A5243] transition-colors">ดูทั้งหมด</a>
                 </div>
                 
@@ -262,8 +262,12 @@ $recent_bookings = array_slice($recent_bookings, 0, 9);
                         <div class="relative">
                             <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full <?= $color[0] ?> ring-4 ring-white"></div>
                             <h4 class="text-sm font-bold text-[#6A5243]"><?= htmlspecialchars($rb['title']) ?></h4>
+                            <p class="text-[0.7rem] font-bold text-[#D4B59D] mt-0.5">
+                                <i class="far fa-calendar-alt mr-1"></i> <?= date('j M Y', strtotime($rb['start_time'])) ?>
+                                <i class="far fa-clock ml-2 mr-1"></i> <?= date('H:i', strtotime($rb['start_time'])) ?> น.
+                            </p>
                             <p class="text-xs text-[#A79A8B] mt-0.5">
-                                <?= $rb['room_name'] ?? 'ภายนอก' ?> • จองโดย <?= $rb['first_name'] ?>
+                                <?= $rb['room_name'] ?? 'ภายนอก' ?> • <?= $rb['first_name'] ?>
                             </p>
                             <p class="text-[0.65rem] font-semibold <?= $color[1] ?> mt-1 uppercase tracking-wider">
                                 <?= $rb['status'] ?>

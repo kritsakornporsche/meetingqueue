@@ -12,12 +12,19 @@ class BookingRepository {
     }
 
     public function getAll(array $filters = []) {
-        $sql = "SELECT b.*, r.name as room_name, u.first_name, u.last_name, u.emp_code 
+        $sql = "SELECT b.*, r.name as room_name, r.location, u.first_name, u.last_name, u.emp_code, u.dept_name as user_dept 
                 FROM bookings b 
                 LEFT JOIN rooms r ON b.room_id = r.id 
                 JOIN users u ON b.user_id = u.id 
                 WHERE 1=1";
         $params = [];
+
+        // Trash logic
+        if (!empty($filters['only_trashed'])) {
+            $sql .= " AND b.deleted_at IS NOT NULL";
+        } else {
+            $sql .= " AND b.deleted_at IS NULL";
+        }
 
         if (!empty($filters['user_id'])) {
             $sql .= " AND b.user_id = :user_id";
@@ -55,12 +62,12 @@ class BookingRepository {
             $params[':year'] = $filters['year'];
         }
 
-        if (!empty($filters['exclude_status'])) {
-            $sql .= " AND b.status != :exclude_status";
-            $params[':exclude_status'] = $filters['exclude_status'];
+        if (!empty($filters['upcoming'])) {
+            $sql .= " AND b.start_time >= NOW() AND b.status IN ('approved', 'pending')";
         }
 
-        $sql .= " ORDER BY b.start_time DESC";
+        $order = (!empty($filters['upcoming'])) ? "ASC" : "DESC";
+        $sql .= " ORDER BY b.start_time $order";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
@@ -69,6 +76,7 @@ class BookingRepository {
     public function checkConflicts($roomId, $startTime, $endTime) {
         $sql = "SELECT COUNT(*) FROM bookings 
                 WHERE room_id = :room_id 
+                AND deleted_at IS NULL
                 AND status IN ('pending', 'approved')
                 AND (start_time < :end_time AND end_time > :start_time)";
         
@@ -118,10 +126,16 @@ class BookingRepository {
         ]);
     }
 
+    public function delete($id) {
+        $sql = "DELETE FROM bookings WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $id]);
+    }
+
     public function getRoomUsageStats() {
         $sql = "SELECT r.name, COUNT(b.id) as total_bookings, SUM(TIMESTAMPDIFF(MINUTE, b.start_time, b.end_time)) / 60 as total_hours 
                 FROM rooms r 
-                LEFT JOIN bookings b ON r.id = b.room_id AND b.status = 'approved'
+                LEFT JOIN bookings b ON r.id = b.room_id AND b.deleted_at IS NULL
                 GROUP BY r.id, r.name";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -131,8 +145,11 @@ class BookingRepository {
     public function getDepartmentStats() {
         $sql = "SELECT department_name, COUNT(*) as total_bookings 
                 FROM bookings 
-                WHERE status = 'approved' AND department_name IS NOT NULL
-                GROUP BY department_name";
-        return $this->db->query($sql)->fetchAll();
+                WHERE department_name IS NOT NULL AND deleted_at IS NULL
+                GROUP BY department_name 
+                ORDER BY total_bookings DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 }

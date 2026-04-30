@@ -21,7 +21,8 @@ try {
         $filters = [
             'user_id' => $_GET['user_id'] ?? null,
             'booking_id' => $_GET['booking_id'] ?? null,
-            'status' => $_GET['status'] ?? null
+            'status' => $_GET['status'] ?? null,
+            'only_trashed' => $_GET['only_trashed'] ?? null
         ];
         
         $bookings = $repo->getAll($filters);
@@ -96,23 +97,57 @@ try {
     } elseif ($method === 'PATCH') {
         $input = json_decode(file_get_contents('php://input'), true);
         $id = $input['booking_id'] ?? null;
-        $status = $input['status'] ?? null;
+        $action = $input['action'] ?? 'update_status';
 
-        if (!$id || !$status) {
+        if (!$id) {
             jsonResponse(['success' => false, 'message' => 'ข้อมูลไม่ครบถ้วน'], 400);
         }
 
-        // Only admins can approve/reject
+        // Only admins can approve/reject/restore
         if (($_SESSION['user_data']['role'] ?? 'user') !== 'admin') {
             jsonResponse(['success' => false, 'message' => 'ไม่มีสิทธิ์ดำเนินการ'], 403);
         }
 
-        $success = $repo->updateStatus($id, $status);
+        if ($action === 'restore') {
+            $success = $repo->restore($id);
+            $message = 'กู้คืนข้อมูลสำเร็จ';
+        } else {
+            $status = $input['status'] ?? null;
+            if (!$status) jsonResponse(['success' => false, 'message' => 'ไม่ระบุสถานะ'], 400);
+            $success = $repo->updateStatus($id, $status);
+            $message = 'อัปเดตสถานะสำเร็จ';
+        }
         
         if ($success) {
-            jsonResponse(['success' => true, 'message' => 'อัปเดตสถานะสำเร็จ']);
+            jsonResponse(['success' => true, 'message' => $message]);
         } else {
-            jsonResponse(['success' => false, 'message' => 'ไม่สามารถอัปเดตสถานะได้'], 500);
+            jsonResponse(['success' => false, 'message' => 'ไม่สามารถดำเนินการได้'], 500);
+        }
+    } elseif ($method === 'DELETE') {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $id = $input['booking_id'] ?? null;
+        $permanent = $input['permanent'] ?? false;
+
+        if (!$id) {
+            jsonResponse(['success' => false, 'message' => 'ไม่ระบุ ID'], 400);
+        }
+
+        if (($_SESSION['user_data']['role'] ?? 'user') !== 'admin') {
+            jsonResponse(['success' => false, 'message' => 'ไม่มีสิทธิ์ดำเนินการ'], 403);
+        }
+
+        if ($permanent) {
+            $success = $repo->permanentDelete($id);
+            $message = 'ลบข้อมูลถาวรสำเร็จ';
+        } else {
+            $success = $repo->delete($id);
+            $message = 'ย้ายไปถังขยะเรียบร้อย';
+        }
+        
+        if ($success) {
+            jsonResponse(['success' => true, 'message' => $message]);
+        } else {
+            jsonResponse(['success' => false, 'message' => 'ไม่สามารถลบข้อมูลได้'], 500);
         }
     }
 } catch (Exception $e) {
