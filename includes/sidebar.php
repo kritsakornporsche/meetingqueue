@@ -29,13 +29,25 @@ $user = $_SESSION['user_data'];
             <li>
                 <a href="dashboard.php?view=results" class="<?php echo ($_GET['view'] ?? '') == 'results' ? 'active' : ''; ?>">
                     <i class="fas fa-clipboard-check"></i>
-                    <span>สถานะการจอง</span>
+                    <span>สถานะการประชุม</span>
+                </a>
+            </li>
+            <li>
+                <a href="dashboard.php?view=statistics" class="<?php echo ($_GET['view'] ?? '') == 'statistics' ? 'active' : ''; ?>">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>สถิติการใช้งาน</span>
                 </a>
             </li>
             <li>
                 <a href="dashboard.php?view=reports" class="<?php echo ($_GET['view'] ?? '') == 'reports' ? 'active' : ''; ?>">
                     <i class="fas fa-chart-line"></i>
                     <span>รายงานการใช้ห้องประชุม</span>
+                </a>
+            </li>
+            <li>
+                <a href="dashboard.php?view=history" class="<?php echo ($_GET['view'] ?? '') == 'history' ? 'active' : ''; ?>">
+                    <i class="fas fa-history"></i>
+                    <span>ประวัติการประชุม</span>
                 </a>
             </li>
         </ul>

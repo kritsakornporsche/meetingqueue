@@ -40,6 +40,10 @@ try {
         $participants = $_POST['participants_count'] ?? 0;
         $phone = $_POST['phone'] ?? null;
         $description = $_POST['description'] ?? '';
+        $equipments = $_POST['equipments'] ?? '';
+        if (!empty($equipments)) {
+            $description .= ($description ? "\n\n" : "") . "อุปกรณ์ที่ต้องการ: " . $equipments;
+        }
         $isExternal = isset($_POST['is_external']) ? (bool)$_POST['is_external'] : false;
         $externalOrg = $_POST['external_org'] ?? null;
         $department = $_SESSION['user_data']['dept_name'] ?? null;

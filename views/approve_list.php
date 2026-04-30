@@ -4,8 +4,8 @@ $is_admin_view = ($current_view === 'approve_list' || $current_view === 'request
 $force_user_filter = ($current_view === 'results' || $current_view === 'status');
 
 // Page Metadata
-$page_title = 'สถานะการจองห้องประชุม';
-$page_subtitle = 'ติดตามสถานะการจองห้องประชุมของคุณ';
+$page_title = 'สถานะการประชุม';
+$page_subtitle = 'ติดตามสถานะการประชุมของคุณ';
 $icon = 'fa-clipboard-check';
 
 if ($is_admin_view) {
@@ -21,7 +21,7 @@ if ($is_admin_view) {
         $breadcrumb = 'รายการอนุมัติ';
     }
 } else {
-    $breadcrumb = 'สถานะการจอง';
+    $breadcrumb = 'สถานะการประชุม';
 }
 ?>
 

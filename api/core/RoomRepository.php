@@ -33,13 +33,30 @@ class RoomRepository {
     }
 
     public function update($id, array $data) {
-        $sql = "UPDATE rooms SET name = :name, capacity = :capacity, status = :status WHERE id = :id";
+        $sql = "UPDATE rooms SET name = :name, capacity = :capacity, location = :location, status = :status WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             ':id' => $id,
             ':name' => $data['name'],
             ':capacity' => $data['capacity'],
-            ':status' => $data['status']
+            ':location' => $data['location'] ?? '',
+            ':status' => $data['status'] ?? 'available'
         ]);
+    }
+
+    public function create(array $data) {
+        $sql = "INSERT INTO rooms (name, capacity, location, status) VALUES (:name, :capacity, :location, :status)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':name' => $data['name'],
+            ':capacity' => $data['capacity'],
+            ':location' => $data['location'] ?? '',
+            ':status' => $data['status'] ?? 'available'
+        ]);
+    }
+
+    public function delete($id) {
+        $stmt = $this->db->prepare("DELETE FROM rooms WHERE id = :id");
+        return $stmt->execute([':id' => $id]);
     }
 }

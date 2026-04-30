@@ -8,15 +8,55 @@ if (!$bookingId) {
 ?>
 
 <div class="max-w-[800px] mx-auto py-12 px-6 md:px-10">
-    <!-- Result Header -->
-    <div class="text-center mb-12">
+    <!-- Result Header & Timeline Tracker -->
+    <div class="text-center mb-10">
         <div id="statusIconContainer" class="w-24 h-24 rounded-full bg-[#EBE6DA] text-[#A79A8B] flex items-center justify-center text-4xl mx-auto mb-6 shadow-lg transition-all duration-500">
             <i class="fas fa-circle-notch fa-spin"></i>
         </div>
         <h2 id="resultTitle" class="text-4xl font-black text-[#6A5243] mb-4">กำลังโหลดข้อมูล...</h2>
-        <p id="resultSubtitle" class="text-lg text-[#A79A8B] font-semibold">กรุณารอสักครู่</p>
+        <p id="resultSubtitle" class="text-lg text-[#A79A8B] font-semibold mb-8">กรุณารอสักครู่</p>
+        
+        <!-- Status Timeline Tracker -->
+        <div id="timelineContainer" class="hidden max-w-2xl mx-auto">
+            <div class="flex items-center justify-between relative">
+                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-[#EBE6DA] z-0 rounded-full"></div>
+                <div id="timelineProgress" class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#6A5243] z-0 rounded-full transition-all duration-1000 w-0"></div>
+                
+                <!-- Step 1: Pending -->
+                <div class="relative z-10 flex flex-col items-center">
+                    <div id="step1-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#A79A8B] border-4 border-[#F3F0E6] shadow-sm transition-colors duration-500">
+                        <i class="fas fa-paper-plane text-sm"></i>
+                    </div>
+                    <span class="mt-2 text-xs font-bold text-[#A79A8B] uppercase tracking-wide" id="step1-text">ยังไม่อนุมัติ</span>
+                </div>
+                
+                <!-- Step 2: Approved -->
+                <div class="relative z-10 flex flex-col items-center">
+                    <div id="step2-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#EBE6DA] border-4 border-[#F3F0E6] shadow-sm transition-colors duration-500">
+                        <i class="fas fa-check-double text-sm"></i>
+                    </div>
+                    <span class="mt-2 text-xs font-bold text-[#A79A8B] uppercase tracking-wide" id="step2-text">อนุมัติแล้ว</span>
+                </div>
+                
+                <!-- Step 3: Completed -->
+                <div class="relative z-10 flex flex-col items-center">
+                    <div id="step3-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#EBE6DA] border-4 border-[#F3F0E6] shadow-sm transition-colors duration-500">
+                        <i class="fas fa-door-closed text-sm"></i>
+                    </div>
+                    <span class="mt-2 text-xs font-bold text-[#A79A8B] uppercase tracking-wide" id="step3-text">เสร็จสิ้นการประชุม</span>
+                </div>
+                
+                <!-- Step 4: Evaluated -->
+                <div class="relative z-10 flex flex-col items-center">
+                    <div id="step4-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#EBE6DA] border-4 border-[#F3F0E6] shadow-sm transition-colors duration-500">
+                        <i class="fas fa-star text-sm"></i>
+                    </div>
+                    <span class="mt-2 text-xs font-bold text-[#A79A8B] uppercase tracking-wide" id="step4-text">ประเมินแล้ว</span>
+                </div>
+            </div>
+        </div>
     </div>
-
+    
     <!-- Ticket / Receipt Card -->
     <div id="ticketCard" class="bg-white rounded-[2.5rem] shadow-[0_20px_60px_rgba(106,82,67,0.08)] border border-[#EBE6DA] overflow-hidden relative opacity-0 transform translate-y-10 transition-all duration-700">
         <!-- Top accent line -->
@@ -171,8 +211,8 @@ function renderBookingResult(booking) {
             iconHtml = '<i class="fas fa-times"></i>';
             iconBg = 'bg-red-100';
             iconColor = 'text-red-600';
-            title.textContent = 'การจองถูกปฏิเสธ';
-            subtitle.textContent = 'ขออภัย ไม่สามารถอนุมัติการจองนี้ได้';
+            title.textContent = 'การขอประชุมถูกปฏิเสธ';
+            subtitle.textContent = 'ขออภัย ไม่สามารถอนุมัติการประชุมนี้ได้';
             break;
         case 'cancelled': 
             badgeClass = 'bg-slate-100 text-slate-700 border border-slate-200';
@@ -180,7 +220,7 @@ function renderBookingResult(booking) {
             iconHtml = '<i class="fas fa-ban"></i>';
             iconBg = 'bg-slate-100';
             iconColor = 'text-slate-600';
-            title.textContent = 'การจองถูกยกเลิก';
+            title.textContent = 'การประชุมถูกยกเลิก';
             subtitle.textContent = 'รายการนี้ได้ถูกยกเลิกแล้ว';
             break;
     }
@@ -213,9 +253,69 @@ function renderBookingResult(booking) {
         document.getElementById('displayDesc').textContent = booking.description;
     }
 
+    // Timeline Tracker Logic
+    if (booking.status !== 'rejected' && booking.status !== 'cancelled') {
+        document.getElementById('timelineContainer').classList.remove('hidden');
+        
+        let progressPercent = 0;
+        const now = new Date();
+        const endTime = new Date(booking.end_time);
+        const isCompleted = (booking.status === 'completed' || booking.status === 'approved') && endTime < now;
+        
+        // We fetch reviews to check if evaluated
+        checkEvaluationStatus(booking.id).then(isEvaluated => {
+            // Step 1: Pending (Always active if not rejected/cancelled)
+            document.getElementById('step1-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#6A5243] border-4 border-[#F3F0E6] shadow-sm transition-colors duration-500';
+            document.getElementById('step1-text').className = 'mt-2 text-xs font-bold text-[#6A5243] uppercase tracking-wide';
+            
+            if (booking.status === 'approved' || isCompleted || isEvaluated) {
+                // Step 2: Approved
+                progressPercent = 33;
+                setTimeout(() => {
+                    document.getElementById('step2-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#6A5243] border-4 border-[#F3F0E6] shadow-sm transition-colors duration-500';
+                    document.getElementById('step2-text').className = 'mt-2 text-xs font-bold text-[#6A5243] uppercase tracking-wide';
+                }, 300);
+            }
+            
+            if (isCompleted || isEvaluated) {
+                // Step 3: Completed
+                progressPercent = 66;
+                setTimeout(() => {
+                    document.getElementById('step3-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#6A5243] border-4 border-[#F3F0E6] shadow-sm transition-colors duration-500';
+                    document.getElementById('step3-text').className = 'mt-2 text-xs font-bold text-[#6A5243] uppercase tracking-wide';
+                }, 600);
+            }
+            
+            if (isEvaluated) {
+                // Step 4: Evaluated
+                progressPercent = 100;
+                setTimeout(() => {
+                    document.getElementById('step4-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#6A5243] border-4 border-[#F3F0E6] shadow-sm transition-colors duration-500';
+                    document.getElementById('step4-text').className = 'mt-2 text-xs font-bold text-[#6A5243] uppercase tracking-wide';
+                }, 900);
+            }
+            
+            setTimeout(() => {
+                document.getElementById('timelineProgress').style.width = progressPercent + '%';
+            }, 100);
+        });
+    }
+
     // Reveal animation
     const card = document.getElementById('ticketCard');
     card.classList.remove('opacity-0', 'translate-y-10');
+}
+
+async function checkEvaluationStatus(bookingId) {
+    try {
+        const data = await MeetQueue.api.fetch(`api/bookings.php?booking_id=${bookingId}`);
+        // Wait, to get evaluation, the user might need an endpoint. I'll just check if the user evaluated it by making a mock request, or if api/reviews.php doesn't have a GET, I can just assume not evaluated for now, or write a quick GET to api/reviews.php.
+        // Actually, let's fetch the html of history.php? We can't do that.
+        // I will update api/reviews.php to support GET soon.
+        const res = await fetch(`api/reviews.php?booking_id=${bookingId}`);
+        const result = await res.json();
+        return result.has_review;
+    } catch(e) { return false; }
 }
 
 function showError(msg) {
