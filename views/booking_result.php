@@ -242,7 +242,7 @@ function renderBookingResult(booking) {
     document.getElementById('displayRoom').textContent = booking.is_external ? `(ภายนอก) ${booking.external_org}` : booking.room_name;
     
     // User details
-    document.getElementById('displayUser').textContent = `${booking.first_name} ${booking.last_name}`;
+    document.getElementById('displayUser').textContent = (booking.first_name + ' ' + (booking.last_name || '')).trim();
     document.getElementById('displayDept').textContent = booking.department_name || '-';
     document.getElementById('displayCount').textContent = booking.participants_count;
     document.getElementById('displayPhone').textContent = booking.phone;

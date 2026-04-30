@@ -160,7 +160,7 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
                                      class="w-full h-full object-cover">
                             </div>
                             <div>
-                                <div class="text-xs font-bold text-primary">${b.first_name} ${b.last_name}</div>
+                                <div class="text-xs font-bold text-primary">${(b.first_name + ' ' + (b.last_name || '')).trim()}</div>
                                 <div class="text-[0.65rem] font-bold text-text-muted">${b.department_name || '-'}</div>
                             </div>
                         </div>

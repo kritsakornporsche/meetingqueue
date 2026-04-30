@@ -110,7 +110,7 @@ $user = $_SESSION['user_data'];
             ?>
             <img src="<?php echo $photo_url; ?>" onerror="this.src='https://ui-avatars.com/api/?name=<?php echo urlencode($user['first_name']); ?>&background=4f46e5&color=fff'" alt="Avatar" class="user-avatar">
             <div class="user-info">
-                <h4><?php echo htmlspecialchars($user['first_name'] . ' ' . ($user['last_name'] ?? '')); ?></h4>
+                <h4><?php echo htmlspecialchars(trim($user['first_name'] . ' ' . ($user['last_name'] ?? ''))); ?></h4>
                 <p><?php echo htmlspecialchars($user['position_name'] ?? 'บุคลากร'); ?></p>
             </div>
             <a href="api/logout.php" title="ออกจากระบบ" style="margin-left: auto; color: var(--danger);"><i class="fas fa-sign-out-alt"></i></a>

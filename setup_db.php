@@ -82,7 +82,7 @@ try {
             ':username' => $user['first_name'],
             ':password' => $user['cid'],
             ':first_name' => $user['first_name'],
-            ':last_name' => $user['cid'],
+            ':last_name' => '', // Don't show 13-digit CID as last_name
             ':position_name' => $user['position_name'],
             ':dept_name' => $user['dept_name'],
             ':photo' => $user['photo']

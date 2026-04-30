@@ -127,6 +127,18 @@ class BookingRepository {
     }
 
     public function delete($id) {
+        $sql = "UPDATE bookings SET deleted_at = NOW() WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $id]);
+    }
+
+    public function restore($id) {
+        $sql = "UPDATE bookings SET deleted_at = NULL WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $id]);
+    }
+
+    public function permanentDelete($id) {
         $sql = "DELETE FROM bookings WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([':id' => $id]);
