@@ -62,28 +62,6 @@ if ($is_admin_view) {
             </select>
         </div>
 
-<<<<<<< HEAD
-        <div class="table-responsive">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-[#FAEDCD]">
-                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA] w-[60px]">ลำดับ</th>
-                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA]">หัวข้อการประชุม</th>
-                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA]">ห้องประชุม</th>
-                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA]">วันที่ใช้งาน</th>
-                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA]">ช่วงเวลา</th>
-                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA]">หน่วยงาน</th>
-                        <th class="p-4 font-bold text-[#6A5243] border-b border-[#EBE6DA] text-center">สถานะ</th>
-                    </tr>
-                </thead>
-                <tbody id="approveTableBody">
-                    <tr>
-                        <td colspan="7" class="p-10 text-center text-[#A79A8B]">กำลังโหลดข้อมูล...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-=======
             <!-- Desktop Table -->
             <div class="hidden md:block table-responsive">
                 <table>
@@ -111,7 +89,6 @@ if ($is_admin_view) {
             <div id="mobileCardList" class="md:hidden space-y-4">
                 <!-- Data will be loaded via JS -->
             </div>
->>>>>>> f2fbaf64a5040b047b58efcc47c17af94761a996
 
         <div class="pagination" id="paginationContainer" style="display: none;">
             <!-- Pagination will be rendered here -->
@@ -226,27 +203,6 @@ if ($is_admin_view) {
             </tr>
         `).join('');
 
-<<<<<<< HEAD
-            const roomDisplay = booking.is_external ? `(ภายนอก) ${booking.external_org || ''}` : (booking.room_name || '-');
-
-            return `
-                <tr class="hover:bg-white/40 transition-colors border-b border-[#EBE6DA]">
-                    <td class="p-4 text-[#A79A8B] font-bold text-sm">${index + 1}</td>
-                    <td class="p-4">
-                        <div class="font-bold text-[#6A5243]">${escapeHtml(booking.title)}</div>
-                        ${booking.is_external ? '<span class="inline-block mt-1 px-2 py-0.5 bg-[#D4B59D]/20 text-[#6A5243] text-[0.65rem] font-bold rounded-lg uppercase">ภายนอก</span>' : ''}
-                    </td>
-                    <td class="p-4 text-sm font-medium text-[#6A5243]">${escapeHtml(roomDisplay)}</td>
-                    <td class="p-4 text-sm text-[#6A5243]">${dateStr}</td>
-                    <td class="p-4 text-sm font-mono text-[#A79A8B]">${timeStr}</td>
-                    <td class="p-4 text-sm text-[#A79A8B]">${escapeHtml(booking.department_name || '-')}</td>
-                    <td class="p-4 text-center">
-                        <span class="badge ${badgeClass}">${statusText}</span>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-=======
         // Mobile
         mobileCardList.innerHTML = filtered.map(b => `
             <div class="card p-5 space-y-4 hover:border-primary/50 transition-all">
@@ -273,9 +229,9 @@ if ($is_admin_view) {
                     </div>
                 </div>
                 ${currentView === 'approve_list' && b.status === 'pending' ? `
-                <div class="pt-4 flex gap-3">
-                    <button onclick="updateStatus(${b.id}, 'approved')" class="flex-grow py-3 rounded-xl bg-green-500 text-white font-black text-sm shadow-lg shadow-green-200">อนุมัติ</button>
-                    <button onclick="updateStatus(${b.id}, 'rejected')" class="flex-grow py-3 rounded-xl bg-red-500 text-white font-black text-sm shadow-lg shadow-red-200">ปฏิเสธ</button>
+                <div class="pt-4 flex flex-wrap gap-3">
+                    <button onclick="updateStatus(${b.id}, 'approved')" class="flex-grow py-3 rounded-xl bg-green-500 text-white font-black text-sm shadow-lg shadow-green-200 min-w-[100px]">อนุมัติ</button>
+                    <button onclick="updateStatus(${b.id}, 'rejected')" class="flex-grow py-3 rounded-xl bg-red-500 text-white font-black text-sm shadow-lg shadow-red-200 min-w-[100px]">ปฏิเสธ</button>
                 </div>
                 ` : `
                 <div class="pt-2 flex justify-end" onclick="viewDetail(${b.id})">
@@ -284,7 +240,6 @@ if ($is_admin_view) {
                 `}
             </div>
         `).join('');
->>>>>>> f2fbaf64a5040b047b58efcc47c17af94761a996
     }
 
     async function updateStatus(id, status) {

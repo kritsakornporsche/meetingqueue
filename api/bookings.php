@@ -111,6 +111,20 @@ try {
         if ($action === 'restore') {
             $success = $repo->restore($id);
             $message = 'กู้คืนข้อมูลสำเร็จ';
+        } elseif ($action === 'update_time') {
+            $start_time = $input['start_time'] ?? null;
+            $end_time = $input['end_time'] ?? null;
+            $room_id = $input['room_id'] ?? null;
+            
+            if (!$start_time || !$end_time) {
+                jsonResponse(['success' => false, 'message' => 'ข้อมูลเวลาไม่ครบถ้วน'], 400);
+            }
+            
+            // Check for overlap here if we had a method, or assume it's checked by the user
+            $success = \App\Core\Database::getInstance()->getConnection()->prepare(
+                "UPDATE bookings SET start_time = ?, end_time = ?, room_id = ? WHERE id = ?"
+            )->execute([$start_time, $end_time, $room_id, $id]);
+            $message = 'อัปเดตเวลาและสถานที่สำเร็จ';
         } else {
             $status = $input['status'] ?? null;
             if (!$status) jsonResponse(['success' => false, 'message' => 'ไม่ระบุสถานะ'], 400);

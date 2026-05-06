@@ -73,10 +73,9 @@ $view = $_GET['view'] ?? 'calendar';
                     case 'reports':
                         include 'views/reports.php';
                         break;
-<<<<<<< HEAD
                     case 'users':
                         include 'views/user_list.php';
-=======
+                        break;
                     case 'history':
                         include 'views/history.php';
                         break;
@@ -91,7 +90,6 @@ $view = $_GET['view'] ?? 'calendar';
                         break;
                     case 'statistics':
                         include 'views/statistics.php';
->>>>>>> f2fbaf64a5040b047b58efcc47c17af94761a996
                         break;
                     case 'booking_result':
                         include 'views/booking_result.php';
@@ -107,7 +105,7 @@ $view = $_GET['view'] ?? 'calendar';
     </div>
 
     <!-- Scripts -->
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.8/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="js/app.js"></script>
 </body>

@@ -89,7 +89,6 @@ try {
         ";
         $upsertStmt = $pdo->prepare($upsertSql);
 
-<<<<<<< HEAD
         $count = 0;
         foreach ($zkUsers as $user) {
             $upsertStmt->execute([
@@ -97,7 +96,7 @@ try {
                 ':username' => $user['first_name'],
                 ':password' => $user['cid'],
                 ':first_name' => $user['first_name'],
-                ':last_name' => $user['cid'],
+                ':last_name' => '', // Don't show 13-digit CID as last_name
                 ':position_name' => $user['position_name'],
                 ':dept_name' => $user['dept_name'],
                 ':photo' => $user['photo']
@@ -108,21 +107,6 @@ try {
     } catch (Exception $e) {
         echo "<p style='color: orange;'>⚠️ Could not sync with ZK BioTime: " . $e->getMessage() . "</p>";
         echo "<p><i>System will continue with existing data (if any). You can create an admin manually using create_admin.php</i></p>";
-=======
-    $count = 0;
-    foreach ($zkUsers as $user) {
-        $upsertStmt->execute([
-            ':emp_code' => $user['emp_code'],
-            ':username' => $user['first_name'],
-            ':password' => $user['cid'],
-            ':first_name' => $user['first_name'],
-            ':last_name' => '', // Don't show 13-digit CID as last_name
-            ':position_name' => $user['position_name'],
-            ':dept_name' => $user['dept_name'],
-            ':photo' => $user['photo']
-        ]);
-        $count++;
->>>>>>> f2fbaf64a5040b047b58efcc47c17af94761a996
     }
 
     echo "<hr>";

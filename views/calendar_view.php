@@ -8,6 +8,11 @@ $rooms = \App\Core\Database::getInstance()->getConnection()->query("SELECT * FRO
 // Get upcoming bookings using Repository
 $recent_bookings = $repo->getAll(['upcoming' => true]);
 $recent_bookings = array_slice($recent_bookings, 0, 9);
+
+$pending_count = 0;
+if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
+    $pending_count = \App\Core\Database::getInstance()->getConnection()->query("SELECT COUNT(*) FROM bookings WHERE status = 'pending'")->fetchColumn();
+}
 ?>
 
 <style>
@@ -229,9 +234,19 @@ $recent_bookings = array_slice($recent_bookings, 0, 9);
                     </h2>
                     <p class="text-xs text-[#A79A8B] mt-1">อัปเดตแบบ Real-time</p>
                 </div>
-                <a href="dashboard.php?view=book" class="px-8 py-4 rounded-2xl bg-gradient-to-br from-[#6A5243] to-[#523E32] text-white text-sm font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3 flex-shrink-0 whitespace-nowrap border-b-4 border-[#4a3a2f] leading-relaxed" style="box-sizing: border-box;">
-                    <i class="fas fa-plus-circle text-lg"></i> จองห้องประชุม
-                </a>
+                <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
+                    <?php if (($_SESSION['user_data']['role'] ?? 'user') === 'admin'): ?>
+                    <a href="dashboard.php?view=approve_list" class="relative px-6 py-4 rounded-2xl bg-white border-2 border-[#D4B59D]/30 text-[#6A5243] text-sm font-bold shadow-sm hover:border-[#6A5243] hover:bg-[#FDFBF7] transition-all flex items-center gap-2 whitespace-nowrap box-border">
+                        <i class="fas fa-clipboard-check text-lg"></i> ขออนุมัติการจอง
+                        <?php if($pending_count > 0): ?>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[0.65rem] font-black w-6 h-6 flex items-center justify-center rounded-full shadow-md border-2 border-white"><?= $pending_count ?></span>
+                        <?php endif; ?>
+                    </a>
+                    <?php endif; ?>
+                    <a href="dashboard.php?view=book" class="px-8 py-4 rounded-2xl bg-gradient-to-br from-[#6A5243] to-[#523E32] text-white text-sm font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3 whitespace-nowrap border-b-4 border-[#4a3a2f] leading-relaxed box-border">
+                        <i class="fas fa-plus-circle text-lg"></i> จองห้องประชุม
+                    </a>
+                </div>
             </div>
             <div id="calendar" class="relative z-10"></div>
         </div>
@@ -344,6 +359,15 @@ $recent_bookings = array_slice($recent_bookings, 0, 9);
         color: #3b82f6 !important; /* Blue for Saturday */
     }
 
+    /* Hover effect for day cells in Month view to indicate they are clickable */
+    .fc-daygrid-day-frame {
+        transition: background-color 0.2s ease;
+        cursor: pointer;
+    }
+    .fc-daygrid-day-frame:hover {
+        background-color: rgba(212, 181, 157, 0.15) !important;
+    }
+
     .fc-event {
         border: none !important;
         border-radius: 0.75rem !important;
@@ -414,8 +438,12 @@ $recent_bookings = array_slice($recent_bookings, 0, 9);
                     </div>
                 </div>
             </div>
-            <div class="bg-[#EBE6DA]/30 px-8 py-5 border-t border-[#6A5243]/10 flex justify-end" style="padding: 1.25rem 2rem;">
-                <button type="button" id="closeModalBtn" class="inline-flex justify-center rounded-xl bg-white px-8 py-2.5 text-sm font-bold text-[#6A5243] shadow-sm hover:bg-gray-50 transition-all duration-200 border border-[#D4B59D]/50 hover:shadow-md hover:-translate-y-0.5" style="padding: 0.625rem 2rem;">ปิดหน้าต่าง</button>
+            <div class="bg-[#EBE6DA]/30 px-8 py-5 border-t border-[#6A5243]/10 flex justify-between items-center" style="padding: 1.25rem 2rem;">
+                <div id="modalAdminActions" class="flex gap-2 hidden">
+                    <button type="button" id="deleteBookingBtn" class="inline-flex justify-center rounded-xl bg-[#FCE8E6] px-4 py-2.5 text-sm font-bold text-[#D93025] hover:bg-red-100 transition-all border border-[#D93025]/30 shadow-sm hover:-translate-y-0.5">ลบ</button>
+                    <button type="button" id="editBookingBtn" class="inline-flex justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-[#D4B59D] hover:bg-[#EBE6DA] transition-all border border-[#D4B59D]/50 shadow-sm hover:-translate-y-0.5">แก้ไขเวลา</button>
+                </div>
+                <button type="button" id="closeModalBtn" class="inline-flex justify-center rounded-xl bg-[#6A5243] px-8 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-[#523E32] transition-all duration-200 hover:shadow-md hover:-translate-y-0.5" style="padding: 0.625rem 2rem;">ปิดหน้าต่าง</button>
             </div>
         </div>
     </div>
@@ -464,21 +492,51 @@ $recent_bookings = array_slice($recent_bookings, 0, 9);
             '12-31': 'วันสิ้นปี'
         };
 
+        const isAdmin = <?= json_encode(($_SESSION['user_data']['role'] ?? 'user') === 'admin') ?>;
         var calendarEl = document.getElementById('calendar');
         calendarInstance = new FullCalendar.Calendar(calendarEl, {
+            schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
             initialView: 'dayGridMonth',
             locale: 'th',
             height: 'auto',
+            editable: isAdmin,
+            resourceAreaWidth: '20%',
+            resourceAreaHeaderContent: 'ห้องประชุม',
+            slotMinTime: '08:00:00',
+            slotMaxTime: '18:00:00',
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                right: 'dayGridMonth,resourceTimelineDay'
+            },
+            navLinks: true,
+            navLinkDayClick: 'resourceTimelineDay',
+            dateClick: function(info) {
+                if (info.view.type === 'dayGridMonth') {
+                    calendarInstance.changeView('resourceTimelineDay', info.dateStr);
+                }
             },
             buttonText: {
                 today: 'วันนี้',
                 month: 'เดือน',
-                week: 'สัปดาห์',
-                day: 'วัน'
+                resourceTimelineDay: 'วัน'
+            },
+            resources: function(fetchInfo, successCallback, failureCallback) {
+                fetch('api/rooms.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const resources = data.rooms.map(room => ({
+                                id: room.id,
+                                title: room.name,
+                                capacity: room.capacity
+                            }));
+                            resources.push({ id: 'external', title: 'ภายนอกสถานที่' });
+                            successCallback(resources);
+                        } else {
+                            failureCallback();
+                        }
+                    });
             },
             dayCellClassNames: function(arg) {
                 let month = String(arg.date.getMonth() + 1).padStart(2, '0');
@@ -530,6 +588,95 @@ $recent_bookings = array_slice($recent_bookings, 0, 9);
                 }
             },
             events: 'api/calendar_events.php',
+            eventDrop: function(info) {
+                if (!isAdmin) {
+                    info.revert();
+                    return;
+                }
+                const pad = (n) => n < 10 ? '0' + n : n;
+                const toLocal = (d) => d ? d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) : null;
+                
+                const newStart = toLocal(info.event.start);
+                const newEnd = toLocal(info.event.end) || newStart;
+                const newResource = info.event.getResources()[0];
+                const roomId = newResource && newResource.id !== 'external' ? newResource.id : null;
+                
+                Swal.fire({
+                    title: 'ยืนยันการย้ายเวลา/ห้อง?',
+                    text: 'คุณต้องการเปลี่ยนการจองนี้ใช่หรือไม่',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'ตกลง',
+                    cancelButtonText: 'ยกเลิก',
+                    confirmButtonColor: '#6A5243'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('api/bookings.php', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'update_time',
+                                booking_id: info.event.id,
+                                start_time: newStart,
+                                end_time: newEnd,
+                                room_id: roomId
+                            })
+                        }).then(res => res.json()).then(data => {
+                            if (data.success) {
+                                MeetQueue.utils.notify('success', 'ย้ายสำเร็จ');
+                            } else {
+                                MeetQueue.utils.notify('error', 'ผิดพลาด', data.message);
+                                info.revert();
+                            }
+                        }).catch(() => {
+                            MeetQueue.utils.notify('error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
+                            info.revert();
+                        });
+                    } else {
+                        info.revert();
+                    }
+                });
+            },
+            eventResize: function(info) {
+                if (!isAdmin) {
+                    info.revert();
+                    return;
+                }
+                const pad = (n) => n < 10 ? '0' + n : n;
+                const toLocal = (d) => d ? d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) : null;
+                
+                const newStart = toLocal(info.event.start);
+                const newEnd = toLocal(info.event.end) || newStart;
+                const newResource = info.event.getResources()[0] || null;
+                const roomId = newResource && newResource.id !== 'external' ? newResource.id : (info.event.extendedProps.room_id || null);
+
+                Swal.fire({
+                    title: 'ยืนยันการยืด/หดเวลา?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'ตกลง',
+                    cancelButtonText: 'ยกเลิก',
+                    confirmButtonColor: '#6A5243'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('api/bookings.php', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'update_time',
+                                booking_id: info.event.id,
+                                start_time: newStart,
+                                end_time: newEnd,
+                                room_id: roomId
+                            })
+                        }).then(res => res.json()).then(data => {
+                            if (!data.success) info.revert();
+                        });
+                    } else {
+                        info.revert();
+                    }
+                });
+            },
             eventClick: function(info) {
                 const props = info.event.extendedProps;
                 const start = info.event.start.toLocaleString('th-TH', { dateStyle: 'long', timeStyle: 'short' });
@@ -558,6 +705,96 @@ $recent_bookings = array_slice($recent_bookings, 0, 9);
                 
                 statusBadge.textContent = statusText;
                 statusBadge.className = `inline-block px-3 py-1 text-xs font-bold rounded-full mb-3 ${statusColor}`;
+                
+                // Show admin actions if admin
+                if (isAdmin) {
+                    document.getElementById('modalAdminActions').classList.remove('hidden');
+                    
+                    document.getElementById('deleteBookingBtn').onclick = () => {
+                        Swal.fire({
+                            title: 'ยืนยันการลบ?',
+                            text: 'คุณต้องการลบการจองนี้ใช่หรือไม่',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'ลบ',
+                            cancelButtonText: 'ยกเลิก',
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#A79A8B'
+                        }).then((res) => {
+                            if (res.isConfirmed) {
+                                fetch('api/bookings.php', {
+                                    method: 'DELETE',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ booking_id: info.event.id })
+                                }).then(r => r.json()).then(data => {
+                                    if (data.success) {
+                                        MeetQueue.utils.notify('success', 'ลบสำเร็จ');
+                                        calendarInstance.refetchEvents();
+                                        closeModal();
+                                    } else {
+                                        MeetQueue.utils.notify('error', 'ผิดพลาด', data.message);
+                                    }
+                                });
+                            }
+                        });
+                    };
+
+                    document.getElementById('editBookingBtn').onclick = () => {
+                        const pad = (n) => n < 10 ? '0' + n : n;
+                        const toLocalInput = (d) => d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+                        
+                        const startLocal = toLocalInput(info.event.start);
+                        const endLocal = info.event.end ? toLocalInput(info.event.end) : startLocal;
+
+                        Swal.fire({
+                            title: 'แก้ไขเวลาการจอง',
+                            html: `
+                                <div class="flex flex-col gap-4 text-left mt-4 px-2">
+                                    <div>
+                                        <label class="block text-sm font-bold text-[#6A5243] mb-1">เวลาเริ่ม</label>
+                                        <input type="datetime-local" id="swal-start" class="w-full rounded-xl border border-[#D4B59D]/50 px-4 py-2 focus:ring-2 focus:ring-[#6A5243] focus:border-transparent" value="${startLocal}">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-[#6A5243] mb-1">เวลาสิ้นสุด</label>
+                                        <input type="datetime-local" id="swal-end" class="w-full rounded-xl border border-[#D4B59D]/50 px-4 py-2 focus:ring-2 focus:ring-[#6A5243] focus:border-transparent" value="${endLocal}">
+                                    </div>
+                                </div>
+                            `,
+                            showCancelButton: true,
+                            confirmButtonText: 'บันทึก',
+                            cancelButtonText: 'ยกเลิก',
+                            confirmButtonColor: '#6A5243',
+                            cancelButtonColor: '#A79A8B',
+                            preConfirm: () => {
+                                return {
+                                    start: document.getElementById('swal-start').value,
+                                    end: document.getElementById('swal-end').value
+                                }
+                            }
+                        }).then((res) => {
+                            if (res.isConfirmed) {
+                                const newStart = res.value.start.replace('T', ' ') + ':00';
+                                const newEnd = res.value.end.replace('T', ' ') + ':00';
+                                const roomId = info.event.extendedProps.room_id || null;
+                                fetch('api/bookings.php', {
+                                    method: 'PATCH',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ action: 'update_time', booking_id: info.event.id, start_time: newStart, end_time: newEnd, room_id: roomId })
+                                }).then(r => r.json()).then(data => {
+                                    if (data.success) {
+                                        MeetQueue.utils.notify('success', 'อัปเดตเวลาสำเร็จ');
+                                        calendarInstance.refetchEvents();
+                                        closeModal();
+                                    } else {
+                                        MeetQueue.utils.notify('error', 'ผิดพลาด', data.message);
+                                    }
+                                });
+                            }
+                        });
+                    };
+                } else {
+                    document.getElementById('modalAdminActions').classList.add('hidden');
+                }
                 
                 document.getElementById('eventModal').classList.remove('hidden');
             }

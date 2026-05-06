@@ -26,19 +26,19 @@
     .premium-input { width: 100%; padding: 1.25rem 1.5rem; border-radius: 1.5rem; background: #F9F8F6; border: 2px solid #F0EDE6; outline: none; transition: all 0.3s; color: #2D241E; font-weight: 600; font-size: 1.0625rem; }
     .premium-input:focus { border-color: #D4B59D; background: white; box-shadow: 0 0 0 5px rgba(212, 181, 157, 0.15); }
     
-<<<<<<< HEAD
     .label-premium { font-size: 1rem; font-weight: 700; color: #4A3A2F; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
     .label-premium i { color: #D4B59D; font-size: 1.25rem; }
-=======
-    .label-premium { font-size: 0.9375rem; font-weight: 800; color: #4A3A2F; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
-    .label-premium i { color: #D4B59D; font-size: 1.1rem; }
 
     /* Loading Overlay */
     .loading-overlay { position: fixed; inset: 0; background: rgba(235, 230, 218, 0.9); backdrop-filter: blur(10px); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
     .loading-overlay.active { display: flex; animation: fadeIn 0.4s ease-out; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
->>>>>>> f2fbaf64a5040b047b58efcc47c17af94761a996
 </style>
+
+<!-- Viewer.js CSS for Image Zoom/Pan -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.3/viewer.min.css" />
+
+<?php $is_admin = ($_SESSION['user_data']['role'] ?? '') === 'admin'; ?>
 
 <div id="bookingLoading" class="loading-overlay">
     <div class="w-24 h-24 rounded-full bg-white shadow-2xl flex items-center justify-center mb-6 relative">
@@ -154,7 +154,7 @@
                             $equipments = ['โปรเจกเตอร์' => 'fa-video', 'ทีวี' => 'fa-tv', 'คอมพิวเตอร์' => 'fa-desktop', 'ไมโครโฟน' => 'fa-microphone', 'อื่นๆ' => 'fa-ellipsis-h'];
                             foreach($equipments as $name => $icon): 
                             ?>
-                            <label class="flex items-center gap-3 cursor-pointer px-5 py-3 bg-white border-2 border-[#EBE6DA] rounded-2xl hover:border-[#6A5243] hover:bg-[#FDFBF7] transition-all group select-none">
+                            <label class="flex items-center gap-3 cursor-pointer px-5 py-3 bg-white border-2 border-[#EBE6DA] rounded-2xl hover:border-[#6A5243] hover:bg-[#FDFBF7] transition-all group select-none whitespace-nowrap">
                                 <input type="checkbox" name="equipments" value="<?php echo $name; ?>" class="w-5 h-5 accent-[#6A5243]"> 
                                 <span class="flex items-center gap-2">
                                     <i class="fas <?php echo $icon; ?> text-[#A79A8B] group-hover:text-[#D4B59D] transition-colors"></i>
@@ -228,13 +228,8 @@
                             </div>
                         </div>
 
-<<<<<<< HEAD
                         <div class="mt-10 p-6 rounded-[1.5rem] bg-[#D4B59D]/20 text-[#D4B59D] text-[0.75rem] font-medium leading-relaxed border border-[#D4B59D]/30">
                             <i class="fas fa-info-circle mr-1"></i> ข้อมูลทั้งหมดจะถูกส่งให้ผู้ดูแลระบบตรวจสอบ คุณสามารถติดตามสถานะได้ในเมนู "ผลการอนุมัติ"
-=======
-                        <div class="mt-8 p-4 rounded-2xl bg-[#D4B59D]/20 text-[#D4B59D] text-xs font-bold leading-relaxed border border-[#D4B59D]/30">
-                            * ข้อมูลทั้งหมดจะถูกส่งให้ผู้ดูแลระบบตรวจสอบ คุณสามารถติดตามสถานะได้ในเมนู "สถานะการจอง"
->>>>>>> f2fbaf64a5040b047b58efcc47c17af94761a996
                         </div>
                     </div>
                 </div>
@@ -258,7 +253,39 @@
     </div>
 </div>
 
+<!-- Admin Room Image Manager Modal -->
+<?php if($is_admin): ?>
+<div id="imageManageModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-[2rem] w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+        <div class="p-6 border-b border-[#EBE6DA] flex justify-between items-center bg-[#FDFBF7]">
+            <h3 class="text-xl font-bold text-[#6A5243]"><i class="fas fa-images text-[#D4B59D]"></i> จัดการรูปภาพห้อง <span id="imgModalRoomName"></span></h3>
+            <button type="button" onclick="closeImageManageModal()" class="w-10 h-10 rounded-full bg-white border border-[#EBE6DA] text-[#A79A8B] hover:text-red-500 hover:border-red-200 transition-all flex items-center justify-center"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-6 overflow-y-auto flex-grow bg-[#F9F8F6]">
+            <!-- Current Images -->
+            <div id="currentImagesGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                <!-- Images will be rendered here -->
+            </div>
+            
+            <!-- Upload New -->
+            <div class="bg-white p-6 rounded-2xl border-2 border-dashed border-[#D4B59D]/40 text-center">
+                <h4 class="font-bold text-[#6A5243] mb-4">อัปโหลดรูปภาพใหม่</h4>
+                <input type="file" id="newRoomImage" accept="image/*" class="hidden" onchange="uploadRoomImage()">
+                <label for="newRoomImage" class="inline-flex items-center gap-2 px-6 py-3 bg-[#6A5243] text-white rounded-xl cursor-pointer hover:bg-[#523E32] transition-colors shadow-md">
+                    <i class="fas fa-upload"></i> เลือกรูปภาพ (Max 5MB)
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
+<!-- Hidden Container for Viewer.js -->
+<ul id="roomImagesViewer" class="hidden"></ul>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.3/viewer.min.js"></script>
 <script>
+    const isAdmin = <?= json_encode($is_admin) ?>;
     let activeStep = 1;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -347,11 +374,164 @@
                         <div class="flex-grow pt-1">
                             <h4 class="font-black text-[#6A5243] text-[1.05rem] leading-snug mb-2 line-clamp-2">${room.name}</h4>
                             <div class="text-[0.75rem] text-[#A79A8B] font-bold">ความจุ: ${room.capacity} ท่าน</div>
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <button type="button" onclick="event.stopPropagation(); viewRoomImages('${encodeURIComponent(room.images || '[]')}')" class="text-[0.65rem] font-bold px-3 py-1.5 bg-[#F9F8F6] text-[#6A5243] rounded-lg border border-[#EBE6DA] hover:bg-[#D4B59D]/20 transition-colors shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fas fa-search-plus text-[#D4B59D]"></i> ดูรูปภาพ</button>
+                                ${isAdmin ? `<button type="button" onclick="event.stopPropagation(); openImageManageModal(${room.id}, '${room.name.replace(/'/g, "\\'")}', '${encodeURIComponent(room.images || '[]')}')" class="text-[0.65rem] font-bold px-3 py-1.5 bg-[#F9F8F6] text-[#6A5243] rounded-lg border border-[#EBE6DA] hover:bg-[#D4B59D]/20 transition-colors shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fas fa-cog text-[#A79A8B]"></i> จัดการรูป</button>` : ''}
+                            </div>
                         </div>
                     </div>
                 `;
                 grid.appendChild(card);
             });
+        }
+    }
+
+    // --- Image Viewer ---
+    let roomViewer = null;
+    function viewRoomImages(imagesJsonStr) {
+        try {
+            const images = JSON.parse(decodeURIComponent(imagesJsonStr));
+            if (!images || images.length === 0) {
+                Swal.fire({ icon: 'info', title: 'ไม่มีรูปภาพ', text: 'ห้องประชุมนี้ยังไม่ได้อัปโหลดรูปภาพ' });
+                return;
+            }
+            
+            const ul = document.getElementById('roomImagesViewer');
+            ul.innerHTML = images.map(img => `<li><img src="${img}" alt="Room Image"></li>`).join('');
+            
+            if (roomViewer) {
+                roomViewer.destroy();
+            }
+            
+            roomViewer = new Viewer(ul, {
+                inline: false,
+                button: true,
+                navbar: true,
+                title: false,
+                toolbar: {
+                    zoomIn: 1,
+                    zoomOut: 1,
+                    oneToOne: 1,
+                    reset: 1,
+                    prev: 1,
+                    play: {
+                        show: 1,
+                        size: 'large',
+                    },
+                    next: 1,
+                    rotateLeft: 1,
+                    rotateRight: 1,
+                    flipHorizontal: 1,
+                    flipVertical: 1,
+                },
+                viewed() {
+                    roomViewer.zoomTo(1);
+                }
+            });
+            roomViewer.show();
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // --- Admin Image Management ---
+    let currentManageRoomId = null;
+    function openImageManageModal(roomId, roomName, imagesJsonStr) {
+        currentManageRoomId = roomId;
+        document.getElementById('imgModalRoomName').textContent = roomName;
+        document.getElementById('imageManageModal').classList.remove('hidden');
+        renderManageImages(imagesJsonStr);
+    }
+    
+    function closeImageManageModal() {
+        document.getElementById('imageManageModal').classList.add('hidden');
+        currentManageRoomId = null;
+        initRoomSelection(); // Refresh to update JSON str in buttons
+    }
+
+    function renderManageImages(imagesJsonStr) {
+        try {
+            const images = JSON.parse(decodeURIComponent(imagesJsonStr));
+            const grid = document.getElementById('currentImagesGrid');
+            if (!images || images.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-6 text-[#A79A8B] font-bold bg-white rounded-xl border-2 border-dashed border-[#EBE6DA]">ยังไม่มีรูปภาพ</div>';
+                return;
+            }
+            
+            grid.innerHTML = images.map(img => `
+                <div class="relative group rounded-xl overflow-hidden border border-[#EBE6DA] bg-white shadow-sm aspect-video">
+                    <img src="${img}" class="w-full h-full object-cover">
+                    <button type="button" onclick="deleteRoomImage('${img}')" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-red-600"><i class="fas fa-trash-alt text-xs"></i></button>
+                </div>
+            `).join('');
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function uploadRoomImage() {
+        const fileInput = document.getElementById('newRoomImage');
+        const file = fileInput.files[0];
+        if (!file) return;
+        if (!currentManageRoomId) return;
+
+        const fd = new FormData();
+        fd.append('room_id', currentManageRoomId);
+        fd.append('image', file);
+
+        MeetQueue.utils.loading(true, 'กำลังอัปโหลด...');
+        try {
+            const res = await MeetQueue.api.fetch('api/room_images.php', { method: 'POST', body: fd });
+            MeetQueue.utils.loading(false);
+            if (res.success) {
+                // Fetch fresh room data to get new images array
+                const data = await MeetQueue.api.fetch('api/rooms.php');
+                const room = data.rooms.find(r => r.id == currentManageRoomId);
+                if (room) {
+                    renderManageImages(encodeURIComponent(room.images || '[]'));
+                }
+                fileInput.value = '';
+                MeetQueue.utils.notify('success', 'อัปโหลดสำเร็จ');
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (e) {
+            MeetQueue.utils.loading(false);
+            MeetQueue.utils.notify('error', 'อัปโหลดไม่สำเร็จ', e.message);
+        }
+    }
+
+    async function deleteRoomImage(imagePath) {
+        const confirm = await Swal.fire({
+            title: 'ยืนยันการลบรูปภาพ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'ลบ',
+            cancelButtonText: 'ยกเลิก'
+        });
+
+        if (confirm.isConfirmed) {
+            MeetQueue.utils.loading(true, 'กำลังลบ...');
+            try {
+                const res = await MeetQueue.api.fetch('api/room_images.php', {
+                    method: 'DELETE',
+                    body: JSON.stringify({ room_id: currentManageRoomId, image_path: imagePath })
+                });
+                MeetQueue.utils.loading(false);
+                if (res.success) {
+                    const data = await MeetQueue.api.fetch('api/rooms.php');
+                    const room = data.rooms.find(r => r.id == currentManageRoomId);
+                    if (room) {
+                        renderManageImages(encodeURIComponent(room.images || '[]'));
+                    }
+                } else {
+                    throw new Error(res.message);
+                }
+            } catch (e) {
+                MeetQueue.utils.loading(false);
+                MeetQueue.utils.notify('error', 'ลบไม่สำเร็จ', e.message);
+            }
         }
     }
 

@@ -20,24 +20,48 @@ try {
     
     $events = $repo->getAll($filters);
     
-    // Map status to colors
-    $colors = [
-        'pending' => '#D4A373',  // Sand
-        'approved' => '#5C715E', // Leaf Green
-        'rejected' => '#BC6C25', // Autumn Orange
-        'completed' => '#6E4B3A' // Root Brown
+    // Fetch rooms sorted by capacity descending for color mapping
+    $rooms = \App\Core\Database::getInstance()->getConnection()->query("SELECT id FROM rooms ORDER BY capacity DESC")->fetchAll(PDO::FETCH_COLUMN);
+    
+    // Rainbow colors: Purple, Indigo, Blue, Green, Yellow, Orange, Red
+    $rainbow_colors = [
+        '#a855f7', // ม่วง
+        '#6366f1', // คราม
+        '#3b82f6', // น้ำเงิน
+        '#10b981', // เขียว
+        '#eab308', // เหลือง
+        '#f97316', // แสด
+        '#ef4444', // แดง
+        '#ec4899', // ชมพู (fallback)
     ];
     
-    $formattedEvents = array_map(function($e) use ($colors) {
+    $room_colors = [];
+    foreach ($rooms as $index => $room_id) {
+        $room_colors[$room_id] = $rainbow_colors[$index % count($rainbow_colors)];
+    }
+    // External meetings take the next available color
+    $external_color = $rainbow_colors[count($rooms) % count($rainbow_colors)];
+    
+    $formattedEvents = array_map(function($e) use ($room_colors, $external_color) {
+        $roomId = $e['room_id'];
+        $baseColor = $roomId && isset($room_colors[$roomId]) ? $room_colors[$roomId] : $external_color;
+        
+        // If pending, make it slightly faded/different if we wanted, but we'll stick to the base color
+        // so it matches the room strictly.
+        $color = $baseColor;
+        
         return [
             'id' => $e['id'],
+            'resourceId' => $roomId ?: 'external',
             'title' => ($e['room_name'] ?? 'ภายนอก') . ': ' . $e['title'],
             'start' => $e['start_time'],
             'end' => $e['end_time'],
-            'backgroundColor' => $colors[$e['status']] ?? '#94a3b8',
-            'borderColor' => $colors[$e['status']] ?? '#94a3b8',
+            'backgroundColor' => $color,
+            'borderColor' => $color,
+            'className' => 'event-status-' . $e['status'], // to allow custom CSS based on status later if needed
             'extendedProps' => [
                 'status' => $e['status'],
+                'room_id' => $roomId,
                 'room' => $e['room_name'] ?? 'ภายนอกสถานที่',
                 'user' => $e['first_name'] . ' ' . ($e['last_name'] ?? ''),
                 'original_title' => $e['title'],
