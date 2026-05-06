@@ -162,22 +162,25 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
                 <h2 class="text-xl font-bold text-[#6A5243]">ห้องประชุม</h2>
                 <p class="text-xs text-[#A79A8B]">ทั้งหมด <?= count($rooms) ?> ห้อง</p>
             </div>
-            <button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#6A5243] shadow-sm hover:bg-[#EBE6DA] transition-colors border border-[#D4B59D]/30">
+            <button onclick="document.getElementById('filterContainer').classList.toggle('hidden')" class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#6A5243] shadow-sm hover:bg-[#EBE6DA] transition-colors border border-[#D4B59D]/30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#D4B59D]">
                 <i class="fas fa-sliders-h text-xs"></i>
             </button>
         </div>
         
-        <!-- Filter Pills -->
-        <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide pt-1">
-            <button class="px-5 py-2.5 rounded-full bg-[#6A5243] text-white text-sm font-semibold whitespace-nowrap shadow-sm leading-normal">ทั้งหมด</button>
-            <button class="px-5 py-2.5 rounded-full bg-white text-[#6A5243] text-sm font-semibold whitespace-nowrap border border-[#D4B59D]/30 hover:bg-[#F3F0E6] leading-normal">ว่าง</button>
-            <button class="px-5 py-2.5 rounded-full bg-white text-[#6A5243] text-sm font-semibold whitespace-nowrap border border-[#D4B59D]/30 hover:bg-[#F3F0E6] leading-normal">ไม่ว่าง</button>
-        </div>
-        
-        <!-- Search -->
-        <div class="relative mb-2 w-full box-border mt-2">
-            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-[#A79A8B] text-sm"></i>
-            <input type="text" placeholder="ค้นหาห้องประชุม..." class="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white border border-[#D4B59D]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4B59D]/50 text-[#6A5243] shadow-sm placeholder-[#A79A8B] box-border leading-loose">
+        <div id="filterContainer" class="hidden transition-all duration-300">
+            <!-- Filter Pills -->
+            <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide pt-1" id="statusFilterContainer">
+                <button data-filter="all" class="filter-btn active px-5 py-2.5 rounded-full bg-[#6A5243] text-white text-sm font-semibold whitespace-nowrap shadow-sm leading-normal transition-colors">ทั้งหมด</button>
+                <button data-filter="ว่าง" class="filter-btn px-5 py-2.5 rounded-full bg-white text-[#6A5243] text-sm font-semibold whitespace-nowrap border border-[#D4B59D]/30 hover:bg-[#F3F0E6] leading-normal transition-colors">ว่าง</button>
+                <button data-filter="ไม่ว่าง" class="filter-btn px-5 py-2.5 rounded-full bg-white text-[#6A5243] text-sm font-semibold whitespace-nowrap border border-[#D4B59D]/30 hover:bg-[#F3F0E6] leading-normal transition-colors">ไม่ว่าง</button>
+                <button data-filter="บางส่วน" class="filter-btn px-5 py-2.5 rounded-full bg-white text-[#6A5243] text-sm font-semibold whitespace-nowrap border border-[#D4B59D]/30 hover:bg-[#F3F0E6] leading-normal transition-colors">บางส่วน</button>
+            </div>
+            
+            <!-- Search -->
+            <div class="relative mb-2 w-full box-border mt-2">
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-[#A79A8B] text-sm"></i>
+                <input type="text" id="roomSearchInput" placeholder="ค้นหาห้องประชุม..." class="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white border border-[#D4B59D]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4B59D]/50 text-[#6A5243] shadow-sm placeholder-[#A79A8B] box-border leading-loose transition-all">
+            </div>
         </div>
         
         <!-- Room Cards -->
@@ -187,7 +190,7 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
                 $statusText = ['ว่าง', 'ไม่ว่าง', 'บางส่วน'];
                 $rand = $index % 3;
             ?>
-            <div class="room-card relative group" data-room-id="<?= $room['id'] ?>" onclick="filterCalendarByRoom(<?= $room['id'] ?>, this)">
+            <div class="room-card relative group" data-room-id="<?= $room['id'] ?>" data-status="<?= $statusText[$rand] ?>" onclick="filterCalendarByRoom(<?= $room['id'] ?>, this)">
                 <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#D4B59D] to-[#6A5243] opacity-0 group-hover:opacity-100 transition-opacity" style="border-radius: 1rem 0 0 1rem;"></div>
                 
                 <div class="room-card-header">
@@ -452,6 +455,7 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
 <script>
     let calendarInstance = null;
     let currentRoomFilter = 'all';
+    let currentStatusFilter = 'all';
 
     function filterCalendarByRoom(roomId, element) {
         if (currentRoomFilter === roomId) {
@@ -472,7 +476,48 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
         }
     }
 
+    function applyRoomFilters() {
+        const searchTerm = document.getElementById('roomSearchInput').value.toLowerCase();
+        
+        document.querySelectorAll('.room-card').forEach(card => {
+            const title = card.querySelector('.room-card-title').textContent.toLowerCase();
+            const status = card.getAttribute('data-status');
+            
+            const matchesSearch = title.includes(searchTerm);
+            const matchesStatus = currentStatusFilter === 'all' || status === currentStatusFilter;
+            
+            if (matchesSearch && matchesStatus) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        // Search Input Listener
+        const searchInput = document.getElementById('roomSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', applyRoomFilters);
+        }
+        
+        // Filter Buttons Listener
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active state styling
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-[#6A5243]', 'text-white');
+                    b.classList.add('bg-white', 'text-[#6A5243]');
+                });
+                this.classList.remove('bg-white', 'text-[#6A5243]');
+                this.classList.add('bg-[#6A5243]', 'text-white');
+                
+                currentStatusFilter = this.getAttribute('data-filter');
+                applyRoomFilters();
+            });
+        });
+
         // รายการวันหยุดข้าราชการ (รูปแบบ MM-DD)
         const publicHolidays = {
             '01-01': 'วันขึ้นปีใหม่',
