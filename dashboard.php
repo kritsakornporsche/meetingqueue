@@ -24,6 +24,9 @@ $view = $_GET['view'] ?? 'calendar';
     <!-- Choices.js CSS for beautiful dropdowns -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <!-- Tailwind CSS v4 -->
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <style type="text/tailwindcss">
@@ -53,8 +56,13 @@ $view = $_GET['view'] ?? 'calendar';
             <div class="content-wrapper animate-fade">
                 <?php
                 switch ($view) {
+                    case 'requests':
+                    case 'results':
                     case 'approve_list':
                         include 'views/approve_list.php';
+                        break;
+                    case 'room_status':
+                        include 'views/room_status.php';
                         break;
                     case 'book':
                         include 'views/book_room.php';
@@ -65,8 +73,25 @@ $view = $_GET['view'] ?? 'calendar';
                     case 'reports':
                         include 'views/reports.php';
                         break;
+<<<<<<< HEAD
                     case 'users':
                         include 'views/user_list.php';
+=======
+                    case 'history':
+                        include 'views/history.php';
+                        break;
+                    case 'rooms':
+                        include 'views/rooms_management.php';
+                        break;
+                    case 'admin_management':
+                        include 'views/admin_management.php';
+                        break;
+                    case 'trash_management':
+                        include 'views/trash_management.php';
+                        break;
+                    case 'statistics':
+                        include 'views/statistics.php';
+>>>>>>> f2fbaf64a5040b047b58efcc47c17af94761a996
                         break;
                     case 'booking_result':
                         include 'views/booking_result.php';
@@ -85,20 +110,5 @@ $view = $_GET['view'] ?? 'calendar';
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="js/app.js"></script>
-    <script>
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-
-        function toggleMenu() {
-            sidebar?.classList.toggle('open');
-            sidebarOverlay?.classList.toggle('show');
-            document.body.style.overflow = sidebar?.classList.contains('open') ? 'hidden' : '';
-        }
-
-        mobileMenuBtn?.addEventListener('click', toggleMenu);
-        sidebarOverlay?.addEventListener('click', toggleMenu);
-    </script>
 </body>
 </html>

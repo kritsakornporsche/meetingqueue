@@ -26,9 +26,29 @@
     .premium-input { width: 100%; padding: 1.25rem 1.5rem; border-radius: 1.5rem; background: #F9F8F6; border: 2px solid #F0EDE6; outline: none; transition: all 0.3s; color: #2D241E; font-weight: 600; font-size: 1.0625rem; }
     .premium-input:focus { border-color: #D4B59D; background: white; box-shadow: 0 0 0 5px rgba(212, 181, 157, 0.15); }
     
+<<<<<<< HEAD
     .label-premium { font-size: 1rem; font-weight: 700; color: #4A3A2F; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
     .label-premium i { color: #D4B59D; font-size: 1.25rem; }
+=======
+    .label-premium { font-size: 0.9375rem; font-weight: 800; color: #4A3A2F; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+    .label-premium i { color: #D4B59D; font-size: 1.1rem; }
+
+    /* Loading Overlay */
+    .loading-overlay { position: fixed; inset: 0; background: rgba(235, 230, 218, 0.9); backdrop-filter: blur(10px); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
+    .loading-overlay.active { display: flex; animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+>>>>>>> f2fbaf64a5040b047b58efcc47c17af94761a996
 </style>
+
+<div id="bookingLoading" class="loading-overlay">
+    <div class="w-24 h-24 rounded-full bg-white shadow-2xl flex items-center justify-center mb-6 relative">
+        <div class="absolute inset-0 rounded-full border-4 border-[#D4B59D]/20"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-[#6A5243] border-t-transparent animate-spin"></div>
+        <i class="fas fa-paper-plane text-2xl text-[#6A5243]"></i>
+    </div>
+    <h3 class="text-2xl font-black text-[#6A5243] mb-2">กำลังส่งข้อมูล...</h3>
+    <p class="text-[#A79A8B] font-bold">กรุณารอสักครู่ ระบบกำลังประมวลผลคำขอของคุณ</p>
+</div>
 
 <div class="max-w-[1100px] mx-auto py-12 px-6 md:px-10">
     <!-- Header Section -->
@@ -208,8 +228,13 @@
                             </div>
                         </div>
 
+<<<<<<< HEAD
                         <div class="mt-10 p-6 rounded-[1.5rem] bg-[#D4B59D]/20 text-[#D4B59D] text-[0.75rem] font-medium leading-relaxed border border-[#D4B59D]/30">
                             <i class="fas fa-info-circle mr-1"></i> ข้อมูลทั้งหมดจะถูกส่งให้ผู้ดูแลระบบตรวจสอบ คุณสามารถติดตามสถานะได้ในเมนู "ผลการอนุมัติ"
+=======
+                        <div class="mt-8 p-4 rounded-2xl bg-[#D4B59D]/20 text-[#D4B59D] text-xs font-bold leading-relaxed border border-[#D4B59D]/30">
+                            * ข้อมูลทั้งหมดจะถูกส่งให้ผู้ดูแลระบบตรวจสอบ คุณสามารถติดตามสถานะได้ในเมนู "สถานะการจอง"
+>>>>>>> f2fbaf64a5040b047b58efcc47c17af94761a996
                         </div>
                     </div>
                 </div>
@@ -258,14 +283,11 @@
             document.getElementById(id).addEventListener('input', updateSummary);
         });
 
-        // Final Submission
         document.getElementById('bookingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const original = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-            btn.disabled = true;
-
+            
             try {
                 const fd = new FormData();
                 fd.append('room_id', document.getElementById('room_id').value);
@@ -280,39 +302,31 @@
                 const file = document.getElementById('attachment').files[0];
                 if (file) fd.append('attachment', file);
                 
-                // Get checked equipments
                 const eqs = [];
                 document.querySelectorAll('input[name="equipments"]:checked').forEach(cb => eqs.push(cb.value));
                 if (eqs.length > 0) fd.append('equipments', eqs.join(', '));
 
-                const res = await fetch('api/book_room.php', { method: 'POST', body: fd });
-                const json = await res.json();
+                MeetQueue.utils.loading(true, 'กำลังประมวลผลคำขอ...');
+
+                const json = await MeetQueue.api.fetch('api/bookings.php', { method: 'POST', body: fd });
+                
+                MeetQueue.utils.loading(false);
                 
                 if (json.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'ส่งคำขอสำเร็จ!',
-                        text: 'เจ้าหน้าที่จะดำเนินการตรวจสอบข้อมูลของคุณโดยเร็วที่สุด',
-                        confirmButtonText: 'ตกลง',
-                        confirmButtonColor: '#6A5243',
-                        background: '#fff',
-                        customClass: { popup: 'rounded-[3rem]', confirmButton: 'rounded-2xl px-10 py-4 font-black' }
-                    }).then(() => window.location.href = 'dashboard.php?view=booking_result&id=' + json.booking_id);
+                    await MeetQueue.utils.notify('success', 'ส่งคำขอจองสำเร็จ!', 'เจ้าหน้าที่จะดำเนินการตรวจสอบโดยเร็วที่สุด');
+                    window.location.href = 'dashboard.php?view=booking_result&id=' + json.id;
                 } else {
-                    throw new Error(json.error);
+                    throw new Error(json.message);
                 }
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'ไม่สำเร็จ', text: err.message, confirmButtonColor: '#ef4444' });
-            } finally {
-                btn.innerHTML = original;
-                btn.disabled = false;
+                MeetQueue.utils.loading(false);
+                MeetQueue.utils.notify('error', 'ไม่สำเร็จ', err.message);
             }
         });
     });
 
     async function initRoomSelection() {
-        const res = await fetch('api/rooms.php');
-        const data = await res.json();
+        const data = await MeetQueue.api.fetch('api/rooms.php');
         if (data.success) {
             const grid = document.getElementById('room-grid');
             data.rooms.forEach(room => {

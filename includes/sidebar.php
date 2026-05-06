@@ -29,13 +29,31 @@ $user = $_SESSION['user_data'];
             <li>
                 <a href="dashboard.php?view=results" class="<?php echo ($_GET['view'] ?? '') == 'results' ? 'active' : ''; ?>">
                     <i class="fas fa-clipboard-check"></i>
-                    <span>ผลการอนุมัติ</span>
+                    <span>สถานะการประชุมของฉัน</span>
+                </a>
+            </li>
+            <li>
+                <a href="dashboard.php?view=room_status" class="<?php echo ($_GET['view'] ?? '') == 'room_status' ? 'active' : ''; ?>">
+                    <i class="fas fa-door-open"></i>
+                    <span>สถานะการประชุม</span>
+                </a>
+            </li>
+            <li>
+                <a href="dashboard.php?view=statistics" class="<?php echo ($_GET['view'] ?? '') == 'statistics' ? 'active' : ''; ?>">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>สถิติการใช้งาน</span>
                 </a>
             </li>
             <li>
                 <a href="dashboard.php?view=reports" class="<?php echo ($_GET['view'] ?? '') == 'reports' ? 'active' : ''; ?>">
                     <i class="fas fa-chart-line"></i>
                     <span>รายงานการใช้ห้องประชุม</span>
+                </a>
+            </li>
+            <li>
+                <a href="dashboard.php?view=history" class="<?php echo ($_GET['view'] ?? '') == 'history' ? 'active' : ''; ?>">
+                    <i class="fas fa-history"></i>
+                    <span>ประวัติการประชุม</span>
                 </a>
             </li>
         </ul>
@@ -45,6 +63,18 @@ $user = $_SESSION['user_data'];
     <div class="nav-section">
         <div class="nav-label">ผู้ดูแลระบบ</div>
         <ul class="nav-links">
+            <li>
+                <a href="dashboard.php?view=admin_management" class="<?php echo ($_GET['view'] ?? '') == 'admin_management' ? 'active' : ''; ?>">
+                    <i class="fas fa-tasks"></i>
+                    <span>จัดการการประชุม</span>
+                </a>
+            </li>
+            <li>
+                <a href="dashboard.php?view=trash_management" class="<?php echo ($_GET['view'] ?? '') == 'trash_management' ? 'active' : ''; ?>">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>ถังขยะ</span>
+                </a>
+            </li>
             <li>
                 <a href="dashboard.php?view=requests" class="<?php echo ($_GET['view'] ?? '') == 'requests' ? 'active' : ''; ?>">
                     <i class="fas fa-list-ul"></i>
@@ -86,7 +116,7 @@ $user = $_SESSION['user_data'];
             ?>
             <img src="<?php echo $photo_url; ?>" onerror="this.src='https://ui-avatars.com/api/?name=<?php echo urlencode($user['first_name']); ?>&background=4f46e5&color=fff'" alt="Avatar" class="user-avatar">
             <div class="user-info">
-                <h4><?php echo htmlspecialchars($user['first_name'] . ' ' . ($user['last_name'] ?? '')); ?></h4>
+                <h4><?php echo htmlspecialchars(trim($user['first_name'] . ' ' . ($user['last_name'] ?? ''))); ?></h4>
                 <p><?php echo htmlspecialchars($user['position_name'] ?? 'บุคลากร'); ?></p>
             </div>
             <a href="api/logout.php" title="ออกจากระบบ" style="margin-left: auto; color: var(--danger);"><i class="fas fa-sign-out-alt"></i></a>

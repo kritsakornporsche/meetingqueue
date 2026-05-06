@@ -1,12 +1,13 @@
 <?php
 require_once 'api/config.php';
-$pdo = getLocalDB();
-$stmt = $pdo->query("SELECT * FROM rooms");
-$rooms = $stmt->fetchAll();
+use App\Repository\BookingRepository;
 
-// Mock recent statuses for the timeline
-$statusStmt = $pdo->query("SELECT b.*, r.name as room_name, u.first_name, u.last_name FROM bookings b LEFT JOIN rooms r ON b.room_id = r.id JOIN users u ON b.user_id = u.id ORDER BY b.created_at DESC LIMIT 3");
-$recent_bookings = $statusStmt->fetchAll();
+$repo = new BookingRepository();
+$rooms = \App\Core\Database::getInstance()->getConnection()->query("SELECT * FROM rooms")->fetchAll();
+
+// Get upcoming bookings using Repository
+$recent_bookings = $repo->getAll(['upcoming' => true]);
+$recent_bookings = array_slice($recent_bookings, 0, 9);
 ?>
 
 <style>
@@ -14,8 +15,8 @@ $recent_bookings = $statusStmt->fetchAll();
     .dash-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 1.5rem;
-        min-height: calc(100vh - 8rem);
+        gap: var(--space-md);
+        min-height: calc(100dvh - 80px);
         max-width: 100%;
         box-sizing: border-box;
     }
@@ -23,25 +24,23 @@ $recent_bookings = $statusStmt->fetchAll();
         min-width: 0;
     }
     @media (min-width: 1280px) {
-        .dash-grid { grid-template-columns: 320px minmax(0, 1fr); gap: 2rem; }
-    }
-    .dash-card {
-        background: white;
-        border-radius: 1.5rem;
-        padding: 1.5rem;
-        border: 1px solid rgba(212, 181, 157, 0.3);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        max-width: 100%;
-        box-sizing: border-box;
+        .dash-grid { grid-template-columns: 320px minmax(0, 1fr); gap: var(--space-lg); }
     }
     
-    /* Bulletproof Room Card Styles */
+    /* Mobile-first Room Cards Layout */
     .room-card-wrapper {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
         gap: 0.75rem;
         width: 100%;
         box-sizing: border-box;
+    }
+    
+    @media (min-width: 1280px) {
+        .room-card-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
     }
     .room-card {
         background: white;
@@ -142,13 +141,10 @@ $recent_bookings = $statusStmt->fetchAll();
     
     .bottom-grid {
         display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-        margin-top: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+        gap: var(--space-md);
+        margin-top: var(--space-md);
         min-width: 0;
-    }
-    @media (min-width: 1024px) {
-        .bottom-grid { grid-template-columns: 1fr 1fr; }
     }
 </style>
 
@@ -245,7 +241,7 @@ $recent_bookings = $statusStmt->fetchAll();
             <!-- Status / Timeline -->
             <div class="dash-card flex flex-col">
                 <div class="flex justify-between items-center mb-5">
-                    <h3 class="font-bold text-[#6A5243] text-lg">สถานะการจองล่าสุด</h3>
+                    <h3 class="font-bold text-[#6A5243] text-lg">การประชุมที่จะถึง</h3>
                     <a href="dashboard.php?view=approve_list" class="text-xs font-bold text-[#D4B59D] hover:text-[#6A5243] transition-colors">ดูทั้งหมด</a>
                 </div>
                 
@@ -266,8 +262,12 @@ $recent_bookings = $statusStmt->fetchAll();
                         <div class="relative">
                             <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full <?= $color[0] ?> ring-4 ring-white"></div>
                             <h4 class="text-sm font-bold text-[#6A5243]"><?= htmlspecialchars($rb['title']) ?></h4>
+                            <p class="text-[0.7rem] font-bold text-[#D4B59D] mt-0.5">
+                                <i class="far fa-calendar-alt mr-1"></i> <?= date('j M Y', strtotime($rb['start_time'])) ?>
+                                <i class="far fa-clock ml-2 mr-1"></i> <?= date('H:i', strtotime($rb['start_time'])) ?> น.
+                            </p>
                             <p class="text-xs text-[#A79A8B] mt-0.5">
-                                <?= $rb['room_name'] ?? 'ภายนอก' ?> • จองโดย <?= $rb['first_name'] ?>
+                                <?= $rb['room_name'] ?? 'ภายนอก' ?> • <?= $rb['first_name'] ?>
                             </p>
                             <p class="text-[0.65rem] font-semibold <?= $color[1] ?> mt-1 uppercase tracking-wider">
                                 <?= $rb['status'] ?>

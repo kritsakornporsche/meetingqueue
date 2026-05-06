@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "algorithm-design": {
+      "source": "lingzhi227/agent-research-skills",
+      "sourceType": "github",
+      "skillPath": "skills/algorithm-design/SKILL.md",
+      "computedHash": "5177107bf00ba948f1beff6dcfac05824af7a4d1e3847c0b27238aead3bfd0a9"
+    },
     "find-skills": {
       "source": "vercel-labs/skills",
       "sourceType": "github",
@@ -30,6 +36,12 @@
       "sourceType": "github",
       "skillPath": "plugins/ui-design/skills/responsive-design/SKILL.md",
       "computedHash": "1c756f7e216c16c91be788a0f64ae5d94451b5ffe076a1e120f671e2a3c9bd3e"
+    },
+    "system-design": {
+      "source": "anthropics/knowledge-work-plugins",
+      "sourceType": "github",
+      "skillPath": "engineering/skills/system-design/SKILL.md",
+      "computedHash": "9b334dd1bc654fda2ed014680e1910f33fcb4b0daa6fee2b91ef50156f401b81"
     },
     "tailwind-design-system": {
       "source": "wshobson/agents",
