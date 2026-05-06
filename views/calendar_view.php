@@ -167,16 +167,16 @@ $recent_bookings = $statusStmt->fetchAll();
         </div>
         
         <!-- Filter Pills -->
-        <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            <button class="px-4 py-1.5 rounded-full bg-[#6A5243] text-white text-xs font-semibold whitespace-nowrap shadow-sm">ทั้งหมด</button>
-            <button class="px-4 py-1.5 rounded-full bg-white text-[#6A5243] text-xs font-semibold whitespace-nowrap border border-[#D4B59D]/30 hover:bg-[#F3F0E6]">ว่าง</button>
-            <button class="px-4 py-1.5 rounded-full bg-white text-[#6A5243] text-xs font-semibold whitespace-nowrap border border-[#D4B59D]/30 hover:bg-[#F3F0E6]">ไม่ว่าง</button>
+        <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide pt-1">
+            <button class="px-5 py-2.5 rounded-full bg-[#6A5243] text-white text-sm font-semibold whitespace-nowrap shadow-sm leading-normal">ทั้งหมด</button>
+            <button class="px-5 py-2.5 rounded-full bg-white text-[#6A5243] text-sm font-semibold whitespace-nowrap border border-[#D4B59D]/30 hover:bg-[#F3F0E6] leading-normal">ว่าง</button>
+            <button class="px-5 py-2.5 rounded-full bg-white text-[#6A5243] text-sm font-semibold whitespace-nowrap border border-[#D4B59D]/30 hover:bg-[#F3F0E6] leading-normal">ไม่ว่าง</button>
         </div>
         
         <!-- Search -->
-        <div class="relative mb-2 w-full box-border">
-            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[#A79A8B] text-xs"></i>
-            <input type="text" placeholder="ค้นหาห้องประชุม..." class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-[#D4B59D]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4B59D]/50 text-[#6A5243] shadow-sm placeholder-[#A79A8B] box-border">
+        <div class="relative mb-2 w-full box-border mt-2">
+            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-[#A79A8B] text-sm"></i>
+            <input type="text" placeholder="ค้นหาห้องประชุม..." class="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white border border-[#D4B59D]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4B59D]/50 text-[#6A5243] shadow-sm placeholder-[#A79A8B] box-border leading-loose">
         </div>
         
         <!-- Room Cards -->
@@ -233,8 +233,8 @@ $recent_bookings = $statusStmt->fetchAll();
                     </h2>
                     <p class="text-xs text-[#A79A8B] mt-1">อัปเดตแบบ Real-time</p>
                 </div>
-                <a href="dashboard.php?view=book" class="px-8 py-3.5 rounded-2xl bg-gradient-to-br from-[#6A5243] to-[#523E32] text-white text-sm font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3 flex-shrink-0 whitespace-nowrap border-b-4 border-[#4a3a2f]" style="box-sizing: border-box;">
-                    <i class="fas fa-plus-circle text-base"></i> จองห้องประชุม
+                <a href="dashboard.php?view=book" class="px-8 py-4 rounded-2xl bg-gradient-to-br from-[#6A5243] to-[#523E32] text-white text-sm font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3 flex-shrink-0 whitespace-nowrap border-b-4 border-[#4a3a2f] leading-relaxed" style="box-sizing: border-box;">
+                    <i class="fas fa-plus-circle text-lg"></i> จองห้องประชุม
                 </a>
             </div>
             <div id="calendar" class="relative z-10"></div>
@@ -346,9 +346,14 @@ $recent_bookings = $statusStmt->fetchAll();
 
     .fc-event {
         border: none !important;
-        border-radius: 0.5rem !important;
-        padding: 2px 4px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        border-radius: 0.75rem !important;
+        padding: 4px 8px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+    .fc-event-main {
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 </style>
 

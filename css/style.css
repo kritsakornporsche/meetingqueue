@@ -86,6 +86,22 @@ aside {
     transition: var(--transition);
     z-index: 50;
     border-right: 1px solid var(--border);
+    overflow-y: auto;
+}
+
+/* Custom Sidebar Scrollbar */
+aside::-webkit-scrollbar {
+    width: 6px;
+}
+aside::-webkit-scrollbar-track {
+    background: transparent;
+}
+aside::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 10px;
+}
+aside::-webkit-scrollbar-thumb:hover {
+    background-color: var(--secondary);
 }
 
 .sidebar-logo {
