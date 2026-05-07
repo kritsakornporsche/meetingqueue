@@ -32,6 +32,21 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
         .dash-grid { grid-template-columns: 320px minmax(0, 1fr); gap: var(--space-lg); }
     }
     
+    /* Responsive room panel scroll */
+    .room-panel {
+        /* max-height adapts to available viewport: subtract header (~60px) + summary section (~220px) + padding */
+        max-height: clamp(320px, calc(100dvh - 340px), 780px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(212,181,157,0.4) transparent;
+        padding-right: 0.25rem;
+    }
+    .room-panel::-webkit-scrollbar { width: 4px; }
+    .room-panel::-webkit-scrollbar-track { background: transparent; }
+    .room-panel::-webkit-scrollbar-thumb { background: rgba(212,181,157,0.5); border-radius: 10px; }
+    .room-panel::-webkit-scrollbar-thumb:hover { background: rgba(212,181,157,0.8); }
+
     /* Mobile-first Room Cards Layout */
     .room-card-wrapper {
         display: grid;
@@ -150,8 +165,189 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
         gap: var(--space-md);
         margin-top: var(--space-md);
         min-width: 0;
-    }
 </style>
+
+<style>
+    /* ── Monthly Summary Section ── */
+    .monthly-summary { margin-bottom: 1.25rem; }
+    .monthly-summary-header {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .monthly-summary-title {
+        font-size: 0.85rem; font-weight: 700; color: #6A5243;
+        display: flex; align-items: center; gap: 0.5rem;
+    }
+    .monthly-summary-title i { color: #D4B59D; }
+    .monthly-summary-sub { font-size: 0.7rem; color: #A79A8B; font-weight: 500; }
+
+    .stat-cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.6rem;
+        margin-bottom: 0.85rem;
+    }
+    @media (max-width: 640px) { .stat-cards { grid-template-columns: repeat(2, 1fr); } }
+
+    .stat-card {
+        border-radius: 1rem; padding: 0.85rem 1rem;
+        display: flex; align-items: center; gap: 0.7rem;
+        position: relative; overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+    .stat-card::after {
+        content: ''; position: absolute; top: -18px; right: -18px;
+        width: 60px; height: 60px; border-radius: 50%;
+        background: rgba(255,255,255,0.15);
+    }
+    .stat-card-total    { background: linear-gradient(135deg, #3B82F6, #2563EB); }
+    .stat-card-approved { background: linear-gradient(135deg, #10B981, #059669); }
+    .stat-card-pending  { background: linear-gradient(135deg, #F59E0B, #D97706); }
+    .stat-card-rejected { background: linear-gradient(135deg, #EF4444, #DC2626); }
+
+    .stat-card-icon {
+        width: 2.2rem; height: 2.2rem; border-radius: 0.6rem;
+        background: rgba(255,255,255,0.25);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.9rem; flex-shrink: 0; color: #fff;
+    }
+    .stat-card-body { min-width: 0; }
+    .stat-card-num {
+        font-size: 1.4rem; font-weight: 900; line-height: 1;
+        letter-spacing: -0.5px; color: #fff;
+    }
+    .stat-card-label { font-size: 0.62rem; font-weight: 600; opacity: 0.85; color: #fff; margin-top: 2px; white-space: nowrap; }
+
+    .monthly-chart-wrap {
+        background: white; border-radius: 1rem; padding: 0.85rem 1rem 0.6rem;
+        border: 1px solid rgba(212,181,157,0.2);
+        box-shadow: 0 2px 8px rgba(106,82,67,0.04);
+    }
+    .monthly-chart-wrap canvas { max-height: 110px; }
+</style>
+
+<!-- Monthly Summary -->
+<div class="monthly-summary">
+    <div class="monthly-summary-header">
+        <div class="monthly-summary-title">
+            <i class="fas fa-chart-bar"></i> สรุปการจองประจำเดือน
+        </div>
+        <span class="monthly-summary-sub" id="summaryMonthLabel">กำลังโหลด...</span>
+    </div>
+    <div class="stat-cards">
+        <div class="stat-card stat-card-total">
+            <div class="stat-card-icon"><i class="fas fa-calendar-alt"></i></div>
+            <div class="stat-card-body">
+                <div class="stat-card-num" id="stat-total">–</div>
+                <div class="stat-card-label">รายการทั้งหมด</div>
+            </div>
+        </div>
+        <div class="stat-card stat-card-approved">
+            <div class="stat-card-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-card-body">
+                <div class="stat-card-num" id="stat-approved">–</div>
+                <div class="stat-card-label">อนุมัติแล้ว</div>
+            </div>
+        </div>
+        <div class="stat-card stat-card-pending">
+            <div class="stat-card-icon"><i class="fas fa-hourglass-half"></i></div>
+            <div class="stat-card-body">
+                <div class="stat-card-num" id="stat-pending">–</div>
+                <div class="stat-card-label">รออนุมัติ</div>
+            </div>
+        </div>
+        <div class="stat-card stat-card-rejected">
+            <div class="stat-card-icon"><i class="fas fa-times-circle"></i></div>
+            <div class="stat-card-body">
+                <div class="stat-card-num" id="stat-rejected">–</div>
+                <div class="stat-card-label">ปฏิเสธ</div>
+            </div>
+        </div>
+    </div>
+    <div class="monthly-chart-wrap">
+        <canvas id="monthlyBarChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+(function() {
+    const now = new Date();
+    const y = now.getFullYear(), mo = now.getMonth();
+    const m = String(mo + 1).padStart(2, '0');
+    const lastDay = new Date(y, mo + 1, 0).getDate();
+    const start = y + '-' + m + '-01';
+    const end   = y + '-' + m + '-' + String(lastDay).padStart(2, '0');
+    const thaiMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    document.getElementById('summaryMonthLabel').textContent = thaiMonths[mo] + ' ' + (y + 543);
+
+    fetch('api/calendar_daycounts.php?start=' + start + '&end=' + end)
+        .then(r => r.json())
+        .then(counts => {
+            let total=0,approved=0,pending=0,rejected=0;
+            const labels=[],totals=[],approveds=[],pendings=[],rejecteds=[];
+            for (let d = 1; d <= lastDay; d++) {
+                const key = y+'-'+m+'-'+String(d).padStart(2,'0');
+                const c = counts[key] || {total:0,approved:0,pending:0,rejected:0};
+                labels.push(d); totals.push(c.total); approveds.push(c.approved);
+                pendings.push(c.pending); rejecteds.push(c.rejected);
+                total+=c.total; approved+=c.approved; pending+=c.pending; rejected+=c.rejected;
+            }
+            function animateCount(el, target) {
+                let cur=0; const step=Math.max(1,Math.ceil(target/20));
+                const id=setInterval(()=>{cur=Math.min(cur+step,target); el.textContent=cur; if(cur>=target)clearInterval(id);},40);
+            }
+            animateCount(document.getElementById('stat-total'),    total);
+            animateCount(document.getElementById('stat-approved'), approved);
+            animateCount(document.getElementById('stat-pending'),  pending);
+            animateCount(document.getElementById('stat-rejected'), rejected);
+
+            const ctx = document.getElementById('monthlyBarChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        { label:'ทั้งหมด',   data:totals,    backgroundColor:'rgba(59,130,246,0.75)',  borderRadius:3, borderSkipped:false },
+                        { label:'อนุมัติ',   data:approveds, backgroundColor:'rgba(16,185,129,0.75)',  borderRadius:3, borderSkipped:false },
+                        { label:'รออนุมัติ', data:pendings,  backgroundColor:'rgba(245,158,11,0.75)',  borderRadius:3, borderSkipped:false },
+                        { label:'ปฏิเสธ',   data:rejecteds, backgroundColor:'rgba(239,68,68,0.75)',   borderRadius:3, borderSkipped:false },
+                    ]
+                },
+                options: {
+                    responsive:true, maintainAspectRatio:true,
+                    interaction:{ mode:'index', intersect:false },
+                    plugins:{
+                        legend:{
+                            position:'top', align:'end',
+                            labels:{ boxWidth:10, boxHeight:10, borderRadius:3, useBorderRadius:true,
+                                font:{size:10,family:"'Outfit','Sarabun',sans-serif"}, color:'#A79A8B', padding:8 }
+                        },
+                        tooltip:{
+                            backgroundColor:'rgba(253,251,247,0.97)', titleColor:'#6A5243', bodyColor:'#6A5243',
+                            borderColor:'rgba(212,181,157,0.3)', borderWidth:1, padding:8,
+                            titleFont:{size:11,weight:'bold',family:"'Outfit','Sarabun',sans-serif"},
+                            bodyFont:{size:10,family:"'Outfit','Sarabun',sans-serif"},
+                            callbacks:{ title: ctx=>'วันที่ '+ctx[0].label }
+                        }
+                    },
+                    scales:{
+                        x:{ grid:{display:false}, border:{display:false},
+                            ticks:{font:{size:9,family:"'Outfit','Sarabun',sans-serif"},color:'#C9BCB0',maxRotation:0,autoSkip:true,maxTicksLimit:16} },
+                        y:{ beginAtZero:true, grid:{color:'rgba(212,181,157,0.1)'}, border:{display:false},
+                            ticks:{font:{size:9,family:"'Outfit','Sarabun',sans-serif"},color:'#C9BCB0',stepSize:1,maxTicksLimit:5} }
+                    }
+                }
+            });
+        })
+        .catch(()=>{
+            ['stat-total','stat-approved','stat-pending','stat-rejected'].forEach(id=>{
+                document.getElementById(id).textContent='0';
+            });
+        });
+})();
+</script>
 
 <div class="dash-grid">
     
@@ -169,21 +365,22 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
         
         <div id="filterContainer" class="hidden transition-all duration-300">
             <!-- Filter Pills -->
-            <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide pt-1" id="statusFilterContainer">
-                <button data-filter="all" class="filter-btn active px-5 py-2.5 rounded-full bg-[#6A5243] text-white text-sm font-semibold whitespace-nowrap shadow-sm leading-normal transition-colors">ทั้งหมด</button>
-                <button data-filter="ว่าง" class="filter-btn px-5 py-2.5 rounded-full bg-white text-[#6A5243] text-sm font-semibold whitespace-nowrap border border-[#D4B59D]/30 hover:bg-[#F3F0E6] leading-normal transition-colors">ว่าง</button>
-                <button data-filter="ไม่ว่าง" class="filter-btn px-5 py-2.5 rounded-full bg-white text-[#6A5243] text-sm font-semibold whitespace-nowrap border border-[#D4B59D]/30 hover:bg-[#F3F0E6] leading-normal transition-colors">ไม่ว่าง</button>
-                <button data-filter="บางส่วน" class="filter-btn px-5 py-2.5 rounded-full bg-white text-[#6A5243] text-sm font-semibold whitespace-nowrap border border-[#D4B59D]/30 hover:bg-[#F3F0E6] leading-normal transition-colors">บางส่วน</button>
+            <div class="flex gap-1.5 overflow-x-auto pb-1 pt-1" id="statusFilterContainer">
+                <button data-filter="all" class="filter-btn filter-pill filter-pill-active">ทั้งหมด</button>
+                <button data-filter="ว่าง" class="filter-btn filter-pill filter-pill-inactive">ว่าง</button>
+                <button data-filter="ไม่ว่าง" class="filter-btn filter-pill filter-pill-inactive">ไม่ว่าง</button>
+                <button data-filter="บางส่วน" class="filter-btn filter-pill filter-pill-inactive">บางส่วน</button>
             </div>
-            
+
             <!-- Search -->
-            <div class="relative mb-2 w-full box-border mt-2">
-                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-[#A79A8B] text-sm"></i>
-                <input type="text" id="roomSearchInput" placeholder="ค้นหาห้องประชุม..." class="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white border border-[#D4B59D]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4B59D]/50 text-[#6A5243] shadow-sm placeholder-[#A79A8B] box-border leading-loose transition-all">
+            <div class="search-field" style="margin-top: 0.6rem; margin-bottom: 0.5rem;">
+                <i class="fas fa-search"></i>
+                <input type="text" id="roomSearchInput" placeholder="ค้นหาห้องประชุม...">
             </div>
         </div>
         
         <!-- Room Cards -->
+        <div class="room-panel">
         <div class="room-card-wrapper">
             <?php foreach($rooms as $index => $room): 
                 $statusColors = ['color: #1E8E3E; background: #E6F4EA;', 'color: #D93025; background: #FCE8E6;', 'color: #F29900; background: #FEF7E0;'];
@@ -220,6 +417,7 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
             </div>
             <?php endforeach; ?>
         </div>
+        </div><!-- /.room-panel -->
     </div>
     
     <!-- Right Panel (9 columns) -->
@@ -239,15 +437,17 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
                 </div>
                 <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
                     <?php if (($_SESSION['user_data']['role'] ?? 'user') === 'admin'): ?>
-                    <a href="dashboard.php?view=approve_list" class="relative px-6 py-4 rounded-2xl bg-white border-2 border-[#D4B59D]/30 text-[#6A5243] text-sm font-bold shadow-sm hover:border-[#6A5243] hover:bg-[#FDFBF7] transition-all flex items-center gap-2 whitespace-nowrap box-border">
-                        <i class="fas fa-clipboard-check text-lg"></i> ขออนุมัติการจอง
+                    <a href="dashboard.php?view=approve_list" class="cal-btn cal-btn-outline">
+                        <i class="fas fa-clipboard-check"></i>
+                        ขออนุมัติการจอง
                         <?php if($pending_count > 0): ?>
-                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[0.65rem] font-black w-6 h-6 flex items-center justify-center rounded-full shadow-md border-2 border-white"><?= $pending_count ?></span>
+                        <span class="cal-btn-badge"><?= $pending_count ?></span>
                         <?php endif; ?>
                     </a>
                     <?php endif; ?>
-                    <a href="dashboard.php?view=book" class="px-8 py-4 rounded-2xl bg-gradient-to-br from-[#6A5243] to-[#523E32] text-white text-sm font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3 whitespace-nowrap border-b-4 border-[#4a3a2f] leading-relaxed box-border">
-                        <i class="fas fa-plus-circle text-lg"></i> จองห้องประชุม
+                    <a href="dashboard.php?view=book" class="cal-btn cal-btn-primary">
+                        <i class="fas fa-plus-circle"></i>
+                        จองห้องประชุม
                     </a>
                 </div>
             </div>
@@ -281,7 +481,7 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
                             <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full <?= $color[0] ?> ring-4 ring-white"></div>
                             <h4 class="text-sm font-bold text-[#6A5243]"><?= htmlspecialchars($rb['title']) ?></h4>
                             <p class="text-[0.7rem] font-bold text-[#D4B59D] mt-0.5">
-                                <i class="far fa-calendar-alt mr-1"></i> <?= date('j M Y', strtotime($rb['start_time'])) ?>
+                                <i class="far fa-calendar-alt mr-1"></i> <?= date('j M ', strtotime($rb['start_time'])) . (date('Y', strtotime($rb['start_time'])) + 543) ?>
                                 <i class="far fa-clock ml-2 mr-1"></i> <?= date('H:i', strtotime($rb['start_time'])) ?> น.
                             </p>
                             <p class="text-xs text-[#A79A8B] mt-0.5">
@@ -371,6 +571,12 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
         background-color: rgba(212, 181, 157, 0.15) !important;
     }
 
+    /* Hide event pills in month view — replaced by count badges */
+    .fc-dayGridMonth-view .fc-event,
+    .fc-dayGridMonth-view .fc-daygrid-more-link {
+        display: none !important;
+    }
+
     .fc-event {
         border: none !important;
         border-radius: 0.75rem !important;
@@ -382,6 +588,85 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+    /* ── Override fc-daygrid-day-top to hold total badge + date ── */
+    .fc-dayGridMonth-view .fc-daygrid-day-top {
+        display: flex !important;
+        flex-direction: row !important;
+        direction: ltr !important;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 3px 4px 2px;
+    }
+    .fc-dayGridMonth-view .fc-daygrid-day-number {
+        order: 2;          /* push date to the right */
+        padding: 0 !important;
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    /* Total badge placeholder (top-left) */
+    .day-total-placeholder {
+        order: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 26px;
+        height: 20px;
+        padding: 0 5px;
+        border-radius: 5px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        background: #DBEAFE;
+        color: #1D4ED8;
+        line-height: 1;
+        visibility: hidden;   /* hidden until counts arrive */
+    }
+    .day-total-placeholder.has-data {
+        visibility: visible;
+    }
+
+    /* Holiday row — full width, centered, between top and bottom */
+    .day-holiday-row {
+        width: 100%;
+        text-align: center;
+        font-size: 0.6rem;
+        color: #ef4444;
+        font-weight: 700;
+        padding: 1px 4px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Day-count badge layout */
+    .day-counts {
+        display: flex;
+        flex-direction: column;
+        margin-top: auto;   /* push to bottom of frame */
+    }
+    .day-counts-bottom {
+        display: flex;
+        width: 100%;
+        gap: 1px;
+        padding: 0 2px 3px;
+    }
+    .day-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: 0;
+        flex: 1;
+        height: 18px;
+        font-size: 0.65rem;
+    }
+    .day-badge-approved { background: #DCFCE7; color: #166534; }
+    .day-badge-pending  { background: #FEF9C3; color: #854D0E; }
+    .day-badge-rejected { background: #FEE2E2; color: #991B1B; }
 </style>
 
 <!-- Event Detail Modal -->
@@ -507,11 +792,11 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
             btn.addEventListener('click', function() {
                 // Update active state styling
                 filterBtns.forEach(b => {
-                    b.classList.remove('bg-[#6A5243]', 'text-white');
-                    b.classList.add('bg-white', 'text-[#6A5243]');
+                    b.classList.remove('filter-pill-active');
+                    b.classList.add('filter-pill-inactive');
                 });
-                this.classList.remove('bg-white', 'text-[#6A5243]');
-                this.classList.add('bg-[#6A5243]', 'text-white');
+                this.classList.remove('filter-pill-inactive');
+                this.classList.add('filter-pill-active');
                 
                 currentStatusFilter = this.getAttribute('data-filter');
                 applyRoomFilters();
@@ -566,6 +851,17 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
                 month: 'เดือน',
                 resourceTimelineDay: 'วัน'
             },
+            datesSet: function(info) {
+                var titleEl = document.querySelector('.fc-toolbar-title');
+                if (titleEl) {
+                    var d = calendarInstance.getDate();
+                    if (calendarInstance.view.type === 'dayGridMonth') {
+                        titleEl.textContent = d.toLocaleDateString('th-TH', { month: 'long', year: 'numeric', calendar: 'buddhist' });
+                    } else {
+                        titleEl.textContent = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric', calendar: 'buddhist' });
+                    }
+                }
+            },
             resources: function(fetchInfo, successCallback, failureCallback) {
                 fetch('api/rooms.php')
                     .then(response => response.json())
@@ -593,44 +889,96 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
                 return [];
             },
             dayCellDidMount: function(arg) {
+                if (arg.view.type !== 'dayGridMonth') return;
+
                 let month = String(arg.date.getMonth() + 1).padStart(2, '0');
-                let day = String(arg.date.getDate()).padStart(2, '0');
-                let md = month + '-' + day;
+                let day   = String(arg.date.getDate()).padStart(2, '0');
+                let md    = month + '-' + day;
+                let dateStr = arg.date.toISOString().slice(0, 10);
+
+                let frame = arg.el.querySelector('.fc-daygrid-day-frame');
+                let top   = arg.el.querySelector('.fc-daygrid-day-top');
+                if (!frame || !top) return;
+
+                // Make frame flex-column so badges sit at the bottom
+                frame.style.display = 'flex';
+                frame.style.flexDirection = 'column';
+                frame.style.minHeight = '80px';
+
+                // 1) Inject total badge placeholder into the top row (left side)
+                let totalSpan = document.createElement('span');
+                totalSpan.className = 'day-total-placeholder';
+                totalSpan.dataset.date = dateStr;
+                top.insertBefore(totalSpan, top.firstChild);
+
+                // 2) Holiday row (middle) — full width, centered
+                let holidayRow = document.createElement('div');
+                holidayRow.className = 'day-holiday-row';
                 if (publicHolidays[md]) {
-                    let label = document.createElement('div');
-                    label.style.fontSize = '0.65rem';
-                    label.style.color = '#ef4444';
-                    label.style.padding = '0 4px';
-                    label.style.whiteSpace = 'nowrap';
-                    label.style.overflow = 'hidden';
-                    label.style.textOverflow = 'ellipsis';
-                    label.style.width = '100%';
-                    label.style.textAlign = 'right';
-                    label.innerText = publicHolidays[md];
-                    
-                    let frame = arg.el.querySelector('.fc-daygrid-day-top');
-                    if (frame) {
-                        frame.style.flexDirection = 'column';
-                        frame.style.alignItems = 'flex-end';
-                        frame.appendChild(label);
-                    }
+                    holidayRow.innerText = publicHolidays[md];
+                    arg.el.classList.add('fc-day-public-holiday');
                 }
+                top.insertAdjacentElement('afterend', holidayRow);
+
+                // 3) Status badges container (bottom) — start empty, filled by datesSet
+                let countsDiv = document.createElement('div');
+                countsDiv.className = 'day-counts';
+                countsDiv.dataset.date = dateStr;
+                countsDiv.style.display = 'none';  /* hidden until counts arrive */
+                countsDiv.innerHTML = '<div class="day-counts-bottom"></div>';
+                frame.appendChild(countsDiv);
             },
-            datesSet: function() {
+            datesSet: function(info) {
+                // Update Buddhist year in toolbar title
                 var titleEl = document.querySelector('.fc-toolbar-title');
                 if (titleEl) {
                     var text = titleEl.innerText;
                     var newText = text.replace(/\d{4}/g, function(match) {
                         var year = parseInt(match);
-                        if (year < 2500) {
-                            return year + 543;
-                        }
+                        if (year < 2500) return year + 543;
                         return year;
                     });
-                    if (text !== newText) {
-                        titleEl.innerText = newText;
-                    }
+                    if (text !== newText) titleEl.innerText = newText;
                 }
+
+                if (info.view.type !== 'dayGridMonth') return;
+
+                var startStr = info.startStr.slice(0, 10);
+                var endStr   = info.endStr.slice(0, 10);
+
+                fetch('api/calendar_daycounts.php?start=' + startStr + '&end=' + endStr)
+                    .then(r => r.json())
+                    .then(counts => {
+                        // Fill total badge placeholders
+                        document.querySelectorAll('.day-total-placeholder').forEach(function(span) {
+                            var d = span.dataset.date;
+                            var c = counts[d] || null;
+                            if (c && c.total > 0) {
+                                span.textContent = c.total;
+                                span.classList.add('has-data');  /* make visible */
+                            }
+                            /* else: stay hidden (visibility:hidden default) */
+                        });
+
+                        // Fill status badge rows — only if there are bookings
+                        document.querySelectorAll('.day-counts').forEach(function(wrap) {
+                            var d = wrap.dataset.date;
+                            var c = counts[d] || null;
+                            if (!c || c.total === 0) {
+                                wrap.style.display = 'none';  /* no bookings: hide entirely */
+                                return;
+                            }
+                            var bottom = wrap.querySelector('.day-counts-bottom');
+                            if (bottom) {
+                                bottom.innerHTML =
+                                    '<span class="day-badge day-badge-approved">' + c.approved + '</span>' +
+                                    '<span class="day-badge day-badge-pending">'  + c.pending  + '</span>' +
+                                    '<span class="day-badge day-badge-rejected">' + c.rejected + '</span>';
+                                wrap.style.display = '';  /* show */
+                            }
+                        });
+                    })
+                    .catch(function(){});
             },
             events: 'api/calendar_events.php',
             eventDrop: function(info) {
@@ -724,8 +1072,8 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
             },
             eventClick: function(info) {
                 const props = info.event.extendedProps;
-                const start = info.event.start.toLocaleString('th-TH', { dateStyle: 'long', timeStyle: 'short' });
-                const end = info.event.end ? info.event.end.toLocaleString('th-TH', { timeStyle: 'short' }) : '';
+                const start = info.event.start.toLocaleString('th-TH', { dateStyle: 'long', timeStyle: 'short', calendar: 'buddhist' });
+                const end = info.event.end ? info.event.end.toLocaleString('th-TH', { timeStyle: 'short', calendar: 'buddhist' }) : '';
                 
                 document.getElementById('modalTitle').textContent = props.original_title || info.event.title;
                 document.getElementById('modalRoom').textContent = props.room;

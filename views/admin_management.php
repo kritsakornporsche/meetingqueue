@@ -217,7 +217,7 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
     }
 
     function formatDate(dateStr) {
-        return new Date(dateStr).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+        return new Date(dateStr).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit', calendar: 'buddhist' });
     }
 
     function formatTime(dateStr) {

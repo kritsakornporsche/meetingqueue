@@ -4,30 +4,66 @@
     .step-container.active { display: block; }
     @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     
-    /* Enhanced Progress Bar */
-    .progress-bar-premium { display: flex; justify-content: space-between; margin-bottom: 4rem; position: relative; max-width: 600px; margin-left: auto; margin-right: auto; }
-    .progress-bar-premium::before { content: ''; position: absolute; top: 22px; left: 0; width: 100%; height: 4px; background: #EBE6DA; z-index: 1; border-radius: 10px; }
-    .progress-step-premium { width: 48px; height: 48px; border-radius: 18px; background: white; border: 3px solid #EBE6DA; display: flex; align-items: center; justify-content: center; z-index: 2; position: relative; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); font-weight: 800; color: #A79A8B; font-size: 1.125rem; }
-    .progress-step-premium.active { border-color: #6A5243; background: #6A5243; color: white; transform: scale(1.1); box-shadow: 0 10px 25px rgba(106, 82, 67, 0.15); }
+    /* 2-Step Progress Bar */
+    .progress-bar-premium { display: flex; justify-content: center; gap: 6rem; margin-bottom: 2rem; position: relative; max-width: 360px; margin-left: auto; margin-right: auto; }
+    .progress-bar-premium::before { content: ''; position: absolute; top: 19px; left: 15%; width: 70%; height: 2px; background: #EBE6DA; z-index: 1; border-radius: 10px; }
+    .progress-step-premium { width: 40px; height: 40px; border-radius: 14px; background: white; border: 2px solid #EBE6DA; display: flex; align-items: center; justify-content: center; z-index: 2; position: relative; transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); font-weight: 800; color: #A79A8B; font-size: 0.95rem; }
+    .progress-step-premium.active { border-color: #6A5243; background: #6A5243; color: white; transform: scale(1.08); box-shadow: 0 6px 16px rgba(106, 82, 67, 0.18); }
     .progress-step-premium.completed { border-color: #D4B59D; background: #D4B59D; color: white; }
-    .progress-label-premium { position: absolute; top: 60px; font-size: 0.875rem; font-weight: 700; color: #A79A8B; white-space: nowrap; left: 50%; transform: translateX(-50%); letter-spacing: 0.05em; text-transform: uppercase; }
+    .progress-label-premium { position: absolute; top: 46px; font-size: 0.68rem; font-weight: 700; color: #A79A8B; white-space: nowrap; left: 50%; transform: translateX(-50%); letter-spacing: 0.02em; }
     .progress-step-premium.active .progress-label-premium { color: #6A5243; }
 
-    /* Interactive Elements */
-    .room-card-premium { border: 2px solid #EBE6DA; border-radius: 2rem; padding: 1.75rem 2rem; cursor: pointer; transition: all 0.3s; background: white; border-bottom-width: 6px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; }
-    .room-card-premium:hover { border-color: #D4B59D; transform: translateY(-4px); box-shadow: 0 15px 30px rgba(106, 82, 67, 0.05); }
-    .room-card-premium.active { border-color: #6A5243; background: #FDFBF7; border-bottom-color: #4a3a2f; }
+    .room-card-premium { border: 1.5px solid #EBE6DA; border-radius: 1rem; padding: 0.85rem 1rem; cursor: pointer; transition: all 0.25s; background: white; min-height: 90px; display: flex; flex-direction: column; justify-content: space-between; }
+    .room-card-premium:hover { border-color: #D4B59D; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(106,82,67,0.06); }
+    .room-card-premium.active { border-color: #6A5243; background: #FDFBF7; box-shadow: 0 0 0 2px #6A5243; }
     .room-card-premium.active h4 { color: #6A5243; }
-    
-    .quick-btn-premium { border: 2px solid #EBE6DA; padding: 0.75rem 1.25rem; border-radius: 1.25rem; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; background: white; color: #6A5243; border-bottom-width: 4px; min-width: 100px; }
-    .quick-btn-premium:hover { border-color: #D4B59D; transform: translateY(-2px); }
-    .quick-btn-premium.active { border-color: #6A5243; background: #6A5243; color: white; border-bottom-color: #4a3a2f; }
 
-    .premium-input { width: 100%; padding: 1.25rem 1.5rem; border-radius: 1.5rem; background: #F9F8F6; border: 2px solid #F0EDE6; outline: none; transition: all 0.3s; color: #2D241E; font-weight: 600; font-size: 1.0625rem; }
-    .premium-input:focus { border-color: #D4B59D; background: white; box-shadow: 0 0 0 5px rgba(212, 181, 157, 0.15); }
-    
-    .label-premium { font-size: 1rem; font-weight: 700; color: #4A3A2F; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
-    .label-premium i { color: #D4B59D; font-size: 1.25rem; }
+    .quick-btn-premium { border: 1.5px solid #EBE6DA; padding: 0.4rem 0.9rem; border-radius: 0.75rem; font-size: 0.8rem; font-weight: 600; transition: all 0.2s; background: white; color: #6A5243; }
+    .quick-btn-premium:hover { border-color: #D4B59D; }
+    .quick-btn-premium.active { border-color: #6A5243; background: #6A5243; color: white; }
+
+    .premium-input { width: 100%; padding: 0.75rem 1rem; border-radius: 0.875rem; background: #F9F8F6; border: none; outline: none; transition: all 0.25s; color: #2D241E; font-weight: 500; font-size: 0.9rem; font-family: inherit; }
+    .premium-input:focus { background: white; box-shadow: 0 0 0 2px rgba(212,181,157,0.5); }
+
+    .label-premium { font-size: 0.85rem; font-weight: 700; color: #4A3A2F; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.5rem; }
+    .label-premium i { color: #D4B59D; font-size: 0.9rem; }
+
+    /* Equipment Icon Cards */
+    .equip-grid { display: flex; flex-wrap: wrap; gap: 1rem 0.75rem; padding-bottom: 0.5rem; }
+    .equip-card { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; padding: 0.75rem 1rem 0.65rem; border-radius: 0.875rem; background: #F9F8F6; border: 1.5px solid transparent; cursor: pointer; transition: all 0.2s; min-width: 72px; user-select: none; margin-bottom: 0.35rem; }
+    .equip-card:hover { background: #F3EFE8; border-color: #D4B59D; }
+    .equip-card.active { background: #6A5243; border-color: #6A5243; position: relative; }
+    .equip-card.active i, .equip-card.active span { color: white !important; }
+    .equip-card.active::after {
+        content: '\2713';
+        position: absolute;
+        bottom: -9px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #22c55e;
+        color: white;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        font-size: 0.65rem;
+        font-weight: 900;
+        line-height: 18px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(34,197,94,0.4);
+        border: 2px solid white;
+        z-index: 2;
+    }
+    .equip-card i { font-size: 1.1rem; color: #A79A8B; transition: color 0.2s; }
+    .equip-card span { font-size: 0.7rem; font-weight: 700; color: #6A5243; white-space: nowrap; }
+    .equip-other-input { margin-top: 0.5rem; width: 100%; padding: 0.55rem 0.8rem; border-radius: 0.75rem; background: #F9F8F6; border: none; font-size: 0.82rem; font-family: inherit; color: #2D241E; display: none; }
+    .equip-other-input:focus { outline: none; box-shadow: 0 0 0 2px rgba(212,181,157,0.5); background: white; }
+
+    /* Summary panel */
+    .summary-panel { background: #6A5243; border-radius: 1.25rem; padding: 1.25rem; color: white; }
+    .summary-row { margin-bottom: 0.85rem; }
+    .summary-row:last-child { margin-bottom: 0; }
+    .summary-label { font-size: 0.62rem; font-weight: 700; opacity: 0.55; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.2rem; }
+    .summary-value { font-size: 0.88rem; font-weight: 700; color: #F3DFC8; word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; }
 
     /* Loading Overlay */
     .loading-overlay { position: fixed; inset: 0; background: rgba(235, 230, 218, 0.9); backdrop-filter: blur(10px); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
@@ -50,208 +86,207 @@
     <p class="text-[#A79A8B] font-bold">กรุณารอสักครู่ ระบบกำลังประมวลผลคำขอของคุณ</p>
 </div>
 
-<div class="max-w-[1100px] mx-auto py-12 px-6 md:px-10">
+<div class="max-w-[1000px] mx-auto py-6 px-4 md:px-8">
     <!-- Header Section -->
-    <div class="text-center mb-48">
-        <div class="inline-flex items-center gap-6 px-7 py-3 rounded-full bg-[#6A5243]/5 text-[#6A5243] text-[0.85rem] font-bold uppercase tracking-[0.25em] mb-12 border border-[#6A5243]/10">
+    <div class="text-center mb-6">
+        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[#6A5243]/5 text-[#6A5243] text-[0.75rem] font-bold uppercase tracking-[0.15em] mb-4 border border-[#6A5243]/10">
             <i class="fas fa-bolt text-[#D4B59D]"></i> Instant Booking System
         </div>
-        <h2 class="text-4xl md:text-5xl font-bold text-[#6A5243] mb-12 tracking-tight leading-[1.4]">แบบฟอร์มการจอง</h2>
-        <p class="text-lg md:text-xl text-[#A79A8B] font-medium max-w-3xl mx-auto leading-[2.2] opacity-75">กรุณาเลือกรายละเอียดตามขั้นตอนด้านล่าง เพื่อความรวดเร็วในการพิจารณาอนุมัติ</p>
+        <h2 class="text-2xl md:text-3xl font-bold text-[#6A5243] mb-3 tracking-tight">แบบฟอร์มการจอง</h2>
+        <p class="text-sm text-[#A79A8B] font-medium max-w-xl mx-auto leading-relaxed opacity-80">กรุณาเลือกรายละเอียดตามขั้นตอนด้านล่าง เพื่อความรวดเร็วในการพิจารณาอนุมัติ</p>
     </div>
 
-    <!-- Progress Indicator -->
-    <div class="progress-bar-premium mb-32">
+    <!-- Progress Indicator (2 steps) -->
+    <div class="progress-bar-premium mb-10">
         <div class="progress-step-premium active" id="pstep-1">
-            <i class="fas fa-door-open"></i>
-            <span class="progress-label-premium">1. เลือกห้อง</span>
+            <i class="fas fa-calendar-check"></i>
+            <span class="progress-label-premium">1. เลือกห้อง & วันเวลา</span>
         </div>
         <div class="progress-step-premium" id="pstep-2">
-            <i class="fas fa-clock"></i>
-            <span class="progress-label-premium">2. วันและเวลา</span>
-        </div>
-        <div class="progress-step-premium" id="pstep-3">
             <i class="fas fa-user-pen"></i>
-            <span class="progress-label-premium">3. สรุปข้อมูล</span>
+            <span class="progress-label-premium">2. สรุปการจอง</span>
         </div>
     </div>
 
     <!-- Main Form Card -->
-    <div class="bg-white rounded-[4rem] shadow-[0_40px_100px_rgba(106,82,67,0.1)] border border-[#EBE6DA] relative" style="padding: 60px 50px !important; min-height: 800px;">
-        <div class="absolute -top-32 -right-32 w-80 h-80 bg-[#D4B59D]/5 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-32 -left-32 w-80 h-80 bg-[#6A5243]/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="bg-white rounded-[1.5rem] shadow-[0_10px_40px_rgba(106,82,67,0.07)] border border-[#EBE6DA]" style="padding: 1.5rem !important;">
+        <form id="bookingForm" enctype="multipart/form-data">
 
-        <form id="bookingForm" enctype="multipart/form-data" class="relative z-10">
-            <div style="height: 40px !important;"></div> <!-- Subtler Spacer -->
-            
-            <!-- Step 1: Room Selection & Title -->
+            <!-- ═══ STEP 1: Room + Title + Date/Time + Participants + Equipment ═══ -->
             <div class="step-container active" id="step-1">
-                <div class="space-y-12">
-                    <div style="margin-top: 10px !important;">
-                        <label class="label-premium" style="font-size: 1.1rem !important; margin-bottom: 2rem !important;"><i class="fas fa-building"></i> เลือกห้องประชุมที่ต้องการใช้งาน <span class="text-red-500">*</span></label>
-                        <div id="room-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Premium Room Cards -->
-                        </div>
+                <div style="display:flex; flex-direction:column; gap:1.25rem;">
+
+                    <!-- Room selection -->
+                    <div>
+                        <label class="label-premium"><i class="fas fa-building"></i> เลือกห้องประชุม <span class="text-red-500">*</span></label>
+                        <div id="room-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3"><!-- loaded by JS --></div>
                         <input type="hidden" id="room_id" required>
                     </div>
-                    
-                    <div class="pt-20">
-                        <label class="label-premium"><i class="fas fa-quote-left" style="padding: 8px"></i> หัวข้อการประชุมหรือกิจกรรม <span class="text-red-500">*</span></label>
-                        <input type="text" id="title" class="premium-input placeholder:text-[#A79A8B]/50" placeholder="ตัวอย่าง: ประชุมติดตามงานประจำสัปดาห์..." required>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Step 2: Date, Time & Capacity -->
-            <div class="step-container" id="step-2">
-                <div class="space-y-12">
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                        <!-- Date Selection -->
-                        <div class="lg:col-span-5">
+                    <!-- Title -->
+                    <div>
+                        <label class="label-premium"><i class="fas fa-quote-left"></i> หัวข้อการประชุมหรือกิจกรรม <span class="text-red-500">*</span></label>
+                        <input type="text" id="title" class="premium-input" placeholder="ตัวอย่าง: ประชุมติดตามงานประจำสัปดาห์..." required>
+                    </div>
+
+                    <!-- Date + Time side by side -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
                             <label class="label-premium"><i class="fas fa-calendar-alt"></i> วันที่จัดประชุม <span class="text-red-500">*</span></label>
-                            <input type="date" id="meeting_date" class="premium-input text-center text-2xl font-black py-6" required>
-                            <p class="text-xs text-[#A79A8B] mt-4 font-bold text-center italic">* เฉพาะวันจันทร์ - ศุกร์ ยกเว้นวันหยุดนักขัตฤกษ์</p>
+                            <input type="date" id="meeting_date" class="premium-input font-bold" required>
+                            <p class="text-[0.68rem] text-[#A79A8B] mt-1.5 italic">* เฉพาะวันจันทร์ - ศุกร์ ยกเว้นวันหยุดนักขัตฤกษ์</p>
                         </div>
-
-                        <!-- Time Selection -->
-                        <div class="lg:col-span-7 bg-[#F9F8F6] p-8 rounded-[2.5rem] border border-[#EBE6DA]">
-                            <label class="text-[#6A5243] font-black mb-6 flex items-center gap-2">
-                                <i class="fas fa-hourglass-half text-[#D4B59D]"></i> ช่วงเวลาที่ต้องการ
-                            </label>
-                            
-                            <div class="grid grid-cols-2 gap-6 mb-8">
+                        <div class="bg-[#F9F8F6] rounded-xl p-4">
+                            <label class="label-premium"><i class="fas fa-clock"></i> ช่วงเวลาที่ต้องการ</label>
+                            <div class="grid grid-cols-2 gap-3 mb-3">
                                 <div>
-                                    <span class="text-[0.65rem] font-black text-[#A79A8B] uppercase tracking-widest mb-2 block">เริ่มเวลา</span>
-                                    <input type="time" id="start_time" value="08:30" class="premium-input py-4 text-center text-xl font-black">
+                                    <span class="text-[0.62rem] font-bold text-[#A79A8B] uppercase tracking-widest block mb-1">เริ่มเวลา</span>
+                                    <input type="time" id="start_time" value="08:30" class="premium-input text-center font-bold">
                                 </div>
                                 <div>
-                                    <span class="text-[0.65rem] font-black text-[#A79A8B] uppercase tracking-widest mb-2 block">สิ้นสุดเวลา</span>
-                                    <input type="time" id="end_time" value="16:30" class="premium-input py-4 text-center text-xl font-black">
+                                    <span class="text-[0.62rem] font-bold text-[#A79A8B] uppercase tracking-widest block mb-1">สิ้นสุดเวลา</span>
+                                    <input type="time" id="end_time" value="16:30" class="premium-input text-center font-bold">
                                 </div>
                             </div>
-
-                            <div class="flex flex-wrap gap-3">
-                                <button type="button" onclick="setQuickTimePremium('08:30', '12:00', this)" class="quick-btn-premium">ช่วงเช้า</button>
-                                <button type="button" onclick="setQuickTimePremium('13:00', '16:30', this)" class="quick-btn-premium">ช่วงบ่าย</button>
-                                <button type="button" onclick="setQuickTimePremium('08:30', '16:30', this)" class="quick-btn-premium">ทั้งวัน</button>
+                            <div class="flex gap-2">
+                                <button type="button" onclick="setQuickTimePremium('08:30','12:00',this)" class="quick-btn-premium">ช่วงเช้า</button>
+                                <button type="button" onclick="setQuickTimePremium('13:00','16:30',this)" class="quick-btn-premium">ช่วงบ่าย</button>
+                                <button type="button" onclick="setQuickTimePremium('08:30','16:30',this)" class="quick-btn-premium">ทั้งวัน</button>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Participants -->
                     <div>
-                        <label class="label-premium"><i class="fas fa-users"></i> จำนวนผู้เข้าประชุมที่คาดการณ์ <span class="text-red-500">*</span></label>
-                        <div class="flex items-center gap-6 max-w-[300px] mb-8">
-                            <button type="button" onclick="adjustValue(-5)" class="w-16 h-16 rounded-2xl bg-white border-2 border-[#EBE6DA] flex items-center justify-center text-[#6A5243] hover:border-[#6A5243] hover:bg-[#FDFBF7] transition-all"><i class="fas fa-minus text-xl"></i></button>
-                            <input type="number" id="participants_count" value="10" class="premium-input text-center text-3xl font-black py-4" required>
-                            <button type="button" onclick="adjustValue(5)" class="w-16 h-16 rounded-2xl bg-white border-2 border-[#EBE6DA] flex items-center justify-center text-[#6A5243] hover:border-[#6A5243] hover:bg-[#FDFBF7] transition-all"><i class="fas fa-plus text-xl"></i></button>
+                        <label class="label-premium"><i class="fas fa-users"></i> จำนวนผู้เข้าประชุม <span class="text-red-500">*</span></label>
+                        <div class="flex items-center gap-3" style="max-width:220px;">
+                            <button type="button" onclick="adjustValue(-5)" class="w-10 h-10 rounded-xl bg-[#F9F8F6] flex items-center justify-center text-[#6A5243] hover:bg-[#EBE6DA] transition-all flex-shrink-0"><i class="fas fa-minus text-sm"></i></button>
+                            <input type="number" id="participants_count" value="10" class="premium-input text-center font-black text-lg" required>
+                            <button type="button" onclick="adjustValue(5)" class="w-10 h-10 rounded-xl bg-[#F9F8F6] flex items-center justify-center text-[#6A5243] hover:bg-[#EBE6DA] transition-all flex-shrink-0"><i class="fas fa-plus text-sm"></i></button>
                         </div>
                     </div>
-                    
+
+                    <!-- Equipment icon cards -->
                     <div>
-                        <label class="label-premium"><i class="fas fa-tv"></i> ตัวเลือกอุปกรณ์ (Optional)</label>
-                        <div class="flex flex-wrap gap-4">
-                            <?php 
-                            $equipments = ['โปรเจกเตอร์' => 'fa-video', 'ทีวี' => 'fa-tv', 'คอมพิวเตอร์' => 'fa-desktop', 'ไมโครโฟน' => 'fa-microphone', 'อื่นๆ' => 'fa-ellipsis-h'];
-                            foreach($equipments as $name => $icon): 
-                            ?>
-                            <label class="flex items-center gap-3 cursor-pointer px-5 py-3 bg-white border-2 border-[#EBE6DA] rounded-2xl hover:border-[#6A5243] hover:bg-[#FDFBF7] transition-all group select-none whitespace-nowrap">
-                                <input type="checkbox" name="equipments" value="<?php echo $name; ?>" class="w-5 h-5 accent-[#6A5243]"> 
-                                <span class="flex items-center gap-2">
-                                    <i class="fas <?php echo $icon; ?> text-[#A79A8B] group-hover:text-[#D4B59D] transition-colors"></i>
-                                    <span class="text-[0.95rem] font-bold text-[#6A5243]"><?php echo $name; ?></span>
-                                </span>
-                            </label>
-                            <?php endforeach; ?>
+                        <label class="label-premium"><i class="fas fa-tools"></i> ตัวเลือกอุปกรณ์ (Optional)</label>
+                        <div class="equip-grid">
+                            <div class="equip-card" onclick="toggleEquip(this,'โปรเจกเตอร์')">
+                                <i class="fas fa-video"></i><span>โปรเจกเตอร์</span>
+                            </div>
+                            <div class="equip-card" onclick="toggleEquip(this,'ทีวี')">
+                                <i class="fas fa-tv"></i><span>ทีวี</span>
+                            </div>
+                            <div class="equip-card" onclick="toggleEquip(this,'คอมพิวเตอร์')">
+                                <i class="fas fa-desktop"></i><span>คอมพิวเตอร์</span>
+                            </div>
+                            <div class="equip-card" onclick="toggleEquip(this,'ไมโครโฟน')">
+                                <i class="fas fa-microphone"></i><span>ไมโครโฟน</span>
+                            </div>
+                            <div class="equip-card" onclick="toggleEquipOther(this)" id="equipOtherCard">
+                                <i class="fas fa-ellipsis-h"></i><span>อื่นๆ</span>
+                            </div>
                         </div>
+                        <input type="text" id="equipOtherText" class="equip-other-input" placeholder="ระบุอุปกรณ์ที่ต้องการ...">
+                        <input type="hidden" id="equipments_hidden">
                     </div>
+
                 </div>
             </div>
 
-            <!-- Step 3: Contact & Summary -->
-            <div class="step-container" id="step-3">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                    <!-- Contact Info -->
-                    <div class="lg:col-span-7 space-y-8">
+            <!-- ═══ STEP 2: Contact + File + Summary ═══ -->
+            <div class="step-container" id="step-2">
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+
+                    <!-- Left: Contact & File -->
+                    <div class="lg:col-span-3" style="display:flex; flex-direction:column; gap:1rem;">
                         <div>
                             <label class="label-premium"><i class="fas fa-phone"></i> เบอร์โทรศัพท์สำหรับติดต่อกลับ <span class="text-red-500">*</span></label>
-                            <input type="text" id="phone" placeholder="ตัวอย่าง: 081-234-5678" class="premium-input" required>
+                            <input type="text" id="phone" class="premium-input" placeholder="ตัวอย่าง: 081-234-5678" required>
                         </div>
                         <div>
-                            <label class="label-premium"><i class="fas fa-clipboard-list"></i> หมายเหตุเพิ่มเติม (ความต้องการพิเศษ)</label>
-                            <textarea id="description" rows="3" class="premium-input py-4 px-6" placeholder="ระบุสิ่งที่ต้องการให้เจ้าหน้าที่เตรียมความพร้อม..."></textarea>
+                            <label class="label-premium"><i class="fas fa-clipboard-list"></i> หมายเหตุ (ความต้องการพิเศษ)</label>
+                            <textarea id="description" rows="3" class="premium-input" style="resize:vertical;" placeholder="ระบุสิ่งที่ต้องการให้เจ้าหน้าที่เตรียม..."></textarea>
                         </div>
                         <div>
-                            <label class="label-premium"><i class="fas fa-file-pdf"></i> เอกสารแนบ (ประกาศ/กำหนดการ)</label>
-                            <div class="relative group">
-                                <label for="attachment" class="flex flex-col items-center justify-center w-full h-40 border-3 border-dashed border-[#D4B59D]/40 rounded-[2.5rem] cursor-pointer hover:bg-[#FDFBF7] hover:border-[#6A5243] transition-all group">
-                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                        <div class="w-14 h-14 rounded-full bg-[#D4B59D]/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                            <i class="fas fa-upload text-[#D4B59D] text-xl"></i>
-                                        </div>
-                                        <p class="text-[#6A5243] font-black">คลิกเพื่ออัปโหลดไฟล์</p>
-                                        <p class="text-[0.65rem] text-[#A79A8B] font-bold mt-2 tracking-widest uppercase">Max Size 10MB (PDF, JPG, PNG)</p>
+                            <label class="label-premium"><i class="fas fa-paperclip"></i> เอกสารแนบ (ประกาศ/กำหนดการ)</label>
+                            <label for="attachment" class="block w-full cursor-pointer">
+                                <div class="flex flex-col items-center justify-center w-full py-6 border-2 border-dashed border-[#D4B59D]/40 rounded-xl hover:bg-[#FDFBF7] hover:border-[#D4B59D] transition-all text-center">
+                                    <div class="w-10 h-10 mx-auto rounded-full bg-[#D4B59D]/10 flex items-center justify-center mb-2">
+                                        <i class="fas fa-upload text-[#D4B59D]"></i>
                                     </div>
-                                    <input id="attachment" type="file" class="hidden" />
-                                </label>
-                                <div id="file-status" class="hidden mt-4 p-4 bg-[#6A5243]/5 rounded-2xl flex items-center justify-between border border-[#6A5243]/10">
-                                    <div class="flex items-center gap-3">
-                                        <i class="fas fa-file-circle-check text-[#D4B59D]"></i>
-                                        <span id="file-name" class="text-sm font-black text-[#6A5243] truncate max-w-[200px]"></span>
-                                    </div>
-                                    <button type="button" onclick="clearFile()" class="text-red-400 hover:text-red-600"><i class="fas fa-times-circle"></i></button>
+                                    <p class="text-[#6A5243] font-bold text-sm w-full text-center">คลิกเพื่ออัปโหลดไฟล์</p>
+                                    <p class="text-[0.62rem] text-[#A79A8B] font-bold mt-1 uppercase tracking-widest w-full text-center">Max 10MB · PDF, JPG, PNG</p>
+                                    <input id="attachment" type="file" class="hidden">
                                 </div>
+                            </label>
+                            <div id="file-status" class="hidden mt-2 px-3 py-2 bg-[#6A5243]/5 rounded-xl flex items-center justify-between border border-[#6A5243]/10">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <i class="fas fa-file-circle-check text-[#D4B59D] flex-shrink-0"></i>
+                                    <span id="file-name" class="text-sm font-bold text-[#6A5243] truncate"></span>
+                                </div>
+                                <button type="button" onclick="clearFile()" class="text-red-400 hover:text-red-600 flex-shrink-0 ml-2"><i class="fas fa-times-circle"></i></button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Booking Summary Panel -->
-                    <div class="lg:col-span-5 bg-[#6A5243] rounded-[3rem] p-12 text-white shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[450px]">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16"></div>
-                        <div>
-                            <h3 class="text-xl font-bold mb-10 flex items-center gap-4">
-                                <i class="fas fa-check-double text-[#D4B59D]"></i> สรุปรายละเอียดการจอง
-                            </h3>
-                            
-                            <div class="space-y-8">
-                                <div class="bg-white/5 p-6 rounded-[1.5rem] border border-white/10">
-                                    <span class="text-[0.65rem] font-bold text-white/50 uppercase tracking-[0.2em] block mb-2">ห้องประชุมที่เลือก</span>
-                                    <div id="summary-room" class="font-bold text-lg text-[#D4B59D] leading-tight">โปรดเลือกห้อง...</div>
+                    <!-- Right: Summary Panel -->
+                    <div class="lg:col-span-2">
+                        <div class="summary-panel h-full" style="min-height:260px; display:flex; flex-direction:column; justify-content:space-between;">
+                            <div>
+                                <h3 style="font-size:0.9rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                                    <i class="fas fa-check-double" style="color:#D4B59D;"></i> สรุปรายละเอียดการจอง
+                                </h3>
+                                <div class="summary-row">
+                                    <div class="summary-label">ห้องประชุมที่เลือก</div>
+                                    <div class="summary-value" id="summary-room">โปรดเลือกห้อง...</div>
                                 </div>
-                                <div class="bg-white/5 p-6 rounded-[1.5rem] border border-white/10">
-                                    <span class="text-[0.65rem] font-bold text-white/50 uppercase tracking-[0.2em] block mb-2">วันและเวลาที่เลือก</span>
-                                    <div id="summary-datetime" class="font-bold text-lg leading-tight">โปรดระบุวันและเวลา...</div>
+                                <div class="summary-row">
+                                    <div class="summary-label">หัวข้อการประชุม</div>
+                                    <div class="summary-value" id="summary-title">-</div>
                                 </div>
-                                <div class="bg-white/5 p-6 rounded-[1.5rem] border border-white/10">
-                                    <span class="text-[0.65rem] font-bold text-white/50 uppercase tracking-[0.2em] block mb-2">จำนวนผู้เข้าร่วมประชุม</span>
-                                    <div id="summary-count" class="font-bold text-lg">10 คน</div>
+                                <div class="summary-row">
+                                    <div class="summary-label">วันและเวลา</div>
+                                    <div class="summary-value" id="summary-datetime">โปรดระบุ...</div>
+                                </div>
+                                <div class="summary-row">
+                                    <div class="summary-label">จำนวนผู้เข้าร่วม</div>
+                                    <div class="summary-value" id="summary-count">10 คน</div>
+                                </div>
+                                <div class="summary-row" id="summary-equip-row" style="display:none;">
+                                    <div class="summary-label">อุปกรณ์</div>
+                                    <div class="summary-value" id="summary-equip">-</div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="mt-10 p-6 rounded-[1.5rem] bg-[#D4B59D]/20 text-[#D4B59D] text-[0.75rem] font-medium leading-relaxed border border-[#D4B59D]/30">
-                            <i class="fas fa-info-circle mr-1"></i> ข้อมูลทั้งหมดจะถูกส่งให้ผู้ดูแลระบบตรวจสอบ คุณสามารถติดตามสถานะได้ในเมนู "ผลการอนุมัติ"
+                            <div style="margin-top:0.85rem; padding:0.65rem 0.85rem; background:rgba(212,181,157,0.15); border-radius:0.75rem; border:1px solid rgba(212,181,157,0.3); font-size:0.68rem; color:#D4B59D; line-height:1.5;">
+                                <i class="fas fa-info-circle"></i> ข้อมูลจะถูกส่งให้ผู้ดูแลระบบตรวจสอบ ติดตามสถานะได้ที่ "ผลการอนุมัติ"
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
             <!-- Wizard Controls -->
-            <div class="flex justify-between items-center mt-20 pt-12 border-t-2 border-[#F9F8F6]">
-                <button type="button" id="prevBtn" onclick="moveStep(-1)" class="px-10 py-4 rounded-2xl border-2 border-[#EBE6DA] text-[#A79A8B] font-bold hover:border-[#D4B59D] hover:text-[#6A5243] transition-all opacity-0 pointer-events-none flex items-center gap-3">
-                    <i class="fas fa-arrow-left"></i> ย้อนกลับ
+            <div class="flex justify-between items-center mt-8 pt-6 border-t border-[#F0EDE6]">
+                <button type="button" id="prevBtn" onclick="moveStep(-1)" class="px-6 py-3 rounded-xl border-2 border-[#EBE6DA] bg-white text-[#A79A8B] text-sm font-bold hover:border-[#D4B59D] hover:text-[#6A5243] hover:bg-[#FDFBF7] transition-all flex items-center gap-2" style="opacity:0; pointer-events:none;">
+                    <i class="fas fa-arrow-left text-xs"></i> ย้อนกลับ
                 </button>
                 
-                <button type="button" id="nextBtn" onclick="moveStep(1)" class="px-14 py-5 rounded-2xl bg-gradient-to-br from-[#D4B59D] to-[#6A5243] text-white font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center gap-4 min-w-[180px] justify-center">
-                    ถัดไป <i class="fas fa-chevron-right"></i>
-                </button>
-                
-                <button type="submit" id="submitBtn" class="hidden px-16 py-5 rounded-2xl bg-[#22c55e] text-white font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center gap-4 min-w-[220px] justify-center">
-                    ยืนยันการส่งข้อมูล <i class="fas fa-paper-plane"></i>
-                </button>
+                <div class="flex gap-3">
+                    <button type="button" id="nextBtn" onclick="moveStep(1)" class="px-8 py-3 rounded-xl bg-[#6A5243] text-white text-sm font-bold shadow-sm hover:bg-[#523E32] hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2 min-w-[120px]">
+                        ถัดไป <i class="fas fa-chevron-right text-[0.7rem] opacity-80"></i>
+                    </button>
+                    <button type="submit" id="submitBtn" class="hidden px-8 py-3 rounded-xl bg-[#10b981] text-white text-sm font-bold shadow-sm hover:bg-[#059669] hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2 min-w-[150px]">
+                        ยืนยันการส่งข้อมูล <i class="fas fa-check-circle text-[0.7rem] opacity-80"></i>
+                    </button>
+                </div>
             </div>
         </form>
     </div>
 </div>
+
+
+
 
 <!-- Admin Room Image Manager Modal -->
 <?php if($is_admin): ?>
@@ -329,9 +364,8 @@
                 const file = document.getElementById('attachment').files[0];
                 if (file) fd.append('attachment', file);
                 
-                const eqs = [];
-                document.querySelectorAll('input[name="equipments"]:checked').forEach(cb => eqs.push(cb.value));
-                if (eqs.length > 0) fd.append('equipments', eqs.join(', '));
+                const eqs = [document.getElementById('equipments_hidden').value].filter(Boolean);
+                if (eqs.length > 0) fd.append('equipments', eqs[0]);
 
                 MeetQueue.utils.loading(true, 'กำลังประมวลผลคำขอ...');
 
@@ -554,72 +588,124 @@
         document.getElementById('file-status').classList.add('hidden');
     }
 
+    // --- Equipment toggle ---
+    const selectedEquip = new Set();
+    let isOtherEquipActive = false;
+
+    function toggleEquip(card, name) {
+        if (selectedEquip.has(name)) {
+            selectedEquip.delete(name);
+            card.classList.remove('active');
+        } else {
+            selectedEquip.add(name);
+            card.classList.add('active');
+        }
+        updateEquipmentsHidden();
+    }
+    
+    function toggleEquipOther(card) {
+        const inp = document.getElementById('equipOtherText');
+        if (card.classList.contains('active')) {
+            card.classList.remove('active');
+            inp.style.display = 'none';
+            isOtherEquipActive = false;
+        } else {
+            card.classList.add('active');
+            inp.style.display = 'block';
+            inp.focus();
+            isOtherEquipActive = true;
+        }
+        updateEquipmentsHidden();
+        
+        // Use single listener reference
+        inp.removeEventListener('input', updateEquipmentsHidden);
+        inp.addEventListener('input', updateEquipmentsHidden);
+    }
+
+    function updateEquipmentsHidden() {
+        let equips = [...selectedEquip];
+        if (isOtherEquipActive) {
+            const val = document.getElementById('equipOtherText').value.trim();
+            if (val) {
+                equips.push('อื่นๆ: ' + val);
+            }
+        }
+        document.getElementById('equipments_hidden').value = equips.join(', ');
+        updateSummary();
+    }
+
     function updateSummary() {
         const date = document.getElementById('meeting_date').value;
         const start = document.getElementById('start_time').value;
         const end = document.getElementById('end_time').value;
         const count = document.getElementById('participants_count').value;
+        const title = document.getElementById('title').value.trim();
         
         if (date) {
-            const formattedDate = new Date(date).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+            const d = new Date(date + 'T00:00:00');
+            const formattedDate = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric', calendar: 'buddhist' });
             document.getElementById('summary-datetime').textContent = `${formattedDate} (${start} - ${end})`;
         }
         document.getElementById('summary-count').textContent = `${count} คน`;
+        if (title) document.getElementById('summary-title').textContent = title;
+        
+        const equipVal = document.getElementById('equipments_hidden').value;
+        const equipRow = document.getElementById('summary-equip-row');
+        if (equipVal) {
+            document.getElementById('summary-equip').textContent = equipVal;
+            equipRow.style.display = 'block';
+        } else {
+            equipRow.style.display = 'none';
+        }
     }
 
     function moveStep(n) {
         if (n === 1 && !validateActiveStep()) return;
-
+        updateSummary();
         document.getElementById(`step-${activeStep}`).classList.remove('active');
         activeStep += n;
         document.getElementById(`step-${activeStep}`).classList.add('active');
-
         refreshWizardProgress();
     }
 
     function validateActiveStep() {
         if (activeStep === 1) {
             if (!document.getElementById('room_id').value) {
-                Swal.fire({ icon: 'warning', title: 'กรุณาเลือกห้องประชุม', confirmButtonColor: '#6A5243' });
-                return false;
+                Swal.fire({ icon: 'warning', title: 'กรุณาเลือกห้องประชุม', confirmButtonColor: '#6A5243' }); return false;
             }
             if (!document.getElementById('title').value.trim()) {
-                Swal.fire({ icon: 'warning', title: 'กรุณาระบุหัวข้อกิจกรรม', confirmButtonColor: '#6A5243' });
-                return false;
+                Swal.fire({ icon: 'warning', title: 'กรุณาระบุหัวข้อกิจกรรม', confirmButtonColor: '#6A5243' }); return false;
             }
-        }
-        if (activeStep === 2) {
             if (!document.getElementById('meeting_date').value) {
-                Swal.fire({ icon: 'warning', title: 'กรุณาระบุวันที่จัดประชุม', confirmButtonColor: '#6A5243' });
-                return false;
+                Swal.fire({ icon: 'warning', title: 'กรุณาระบุวันที่จัดประชุม', confirmButtonColor: '#6A5243' }); return false;
             }
         }
         return true;
     }
 
     function refreshWizardProgress() {
-        for (let i = 1; i <= 3; i++) {
+        const labels = ['1. เลือกห้อง & วันเวลา', '2. สรุปการจอง'];
+        const icons = ['fa-calendar-check', 'fa-user-pen'];
+        for (let i = 1; i <= 2; i++) {
             const dot = document.getElementById(`pstep-${i}`);
+            if (!dot) continue;
             if (i < activeStep) {
                 dot.className = 'progress-step-premium completed';
-                dot.innerHTML = '<i class="fas fa-check"></i><span class="progress-label-premium">' + (i==1?'1. เลือกห้อง':(i==2?'2. วันเวลา':'3. สรุป')) + '</span>';
+                dot.innerHTML = `<i class="fas fa-check"></i><span class="progress-label-premium">${labels[i-1]}</span>`;
             } else if (i === activeStep) {
                 dot.className = 'progress-step-premium active';
-                dot.innerHTML = '<i class="fas ' + (i==1?'fa-door-open':(i==2?'fa-clock':'fa-user-pen')) + '"></i><span class="progress-label-premium">' + (i==1?'1. เลือกห้อง':(i==2?'2. วันเวลา':'3. สรุป')) + '</span>';
+                dot.innerHTML = `<i class="fas ${icons[i-1]}"></i><span class="progress-label-premium">${labels[i-1]}</span>`;
             } else {
                 dot.className = 'progress-step-premium';
-                dot.innerHTML = '<i class="fas ' + (i==1?'fa-door-open':(i==2?'fa-clock':'fa-user-pen')) + '"></i><span class="progress-label-premium">' + (i==1?'1. เลือกห้อง':(i==2?'2. วันเวลา':'3. สรุป')) + '</span>';
+                dot.innerHTML = `<i class="fas ${icons[i-1]}"></i><span class="progress-label-premium">${labels[i-1]}</span>`;
             }
         }
-
         const prev = document.getElementById('prevBtn');
         const next = document.getElementById('nextBtn');
         const submit = document.getElementById('submitBtn');
-
         prev.style.opacity = activeStep === 1 ? '0' : '1';
         prev.style.pointerEvents = activeStep === 1 ? 'none' : 'auto';
-
-        if (activeStep === 3) {
+        if (activeStep === 2) {
             next.classList.add('hidden');
             submit.classList.remove('hidden');
         } else {

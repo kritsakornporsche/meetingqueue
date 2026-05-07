@@ -138,7 +138,7 @@ $totalHours = $endHour - $startHour;
         <!-- Chart 0: Daily Gantt Chart -->
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#EBE6DA] lg:col-span-2 overflow-hidden">
             <h3 class="text-lg font-bold text-[#6A5243] mb-6 flex justify-between items-center">
-                <span class="flex items-center gap-2"><i class="fas fa-stream text-[#D4B59D]"></i> ตารางการใช้ห้องประชุมวันนี้ (<?= date('d/m/Y') ?>)</span>
+                <span class="flex items-center gap-2"><i class="fas fa-stream text-[#D4B59D]"></i> ตารางการใช้ห้องประชุมวันนี้ (<?= date('d/m/') . (date('Y') + 543) ?>)</span>
                 <div class="flex items-center gap-3 text-[0.65rem] font-bold uppercase tracking-widest text-[#A79A8B]">
                     <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-[#10b981]"></span> อนุมัติ</span>
                     <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-[#f59e0b]"></span> รออนุมัติ</span>

@@ -76,7 +76,7 @@ $page_subtitle = 'รายการที่ถูกลบชั่วคร�
                         <div class="text-[0.65rem] font-bold text-text-muted">${b.department_name || '-'}</div>
                     </td>
                     <td class="px-6 py-4 text-xs font-bold text-red-500">
-                        ${new Date(b.deleted_at).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' })}
+                        ${new Date(b.deleted_at).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short', calendar: 'buddhist' })}
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex justify-center gap-2">

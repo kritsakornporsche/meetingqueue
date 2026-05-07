@@ -1,0 +1,50 @@
+<?php
+require_once 'config.php';
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit;
+}
+
+try {
+    $db = \App\Core\Database::getInstance()->getConnection();
+
+    $start = $_GET['start'] ?? date('Y-m-01');
+    $end   = $_GET['end']   ?? date('Y-m-t');
+
+    $sql = "
+        SELECT
+            DATE(start_time) AS day,
+            COUNT(*) AS total,
+            SUM(status = 'approved')  AS approved,
+            SUM(status = 'pending')   AS pending,
+            SUM(status = 'rejected')  AS rejected
+        FROM bookings
+        WHERE start_time >= :start
+          AND start_time <  :end
+          AND status != 'cancelled'
+        GROUP BY DATE(start_time)
+    ";
+
+    $stmt = $db->prepare($sql);
+    $stmt->execute([':start' => $start, ':end' => $end]);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Index by date string
+    $result = [];
+    foreach ($rows as $r) {
+        $result[$r['day']] = [
+            'total'    => (int)$r['total'],
+            'approved' => (int)$r['approved'],
+            'pending'  => (int)$r['pending'],
+            'rejected' => (int)$r['rejected'],
+        ];
+    }
+
+    header('Content-Type: application/json');
+    echo json_encode($result);
+
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => $e->getMessage()]);
+}
