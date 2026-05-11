@@ -18,8 +18,9 @@ if ($user['role'] !== 'admin') {
 $bookings = $repo->getAll($filters);
 
 // Filter past or completed meetings
-$past_bookings = array_filter($bookings, function($b) {
-    return in_array($b['status'], ['approved', 'completed']) && strtotime($b['end_time']) < time();
+$past_bookings = array_filter($bookings ?: [], function($b) {
+    $end_time = $b['end_time'] ?? null;
+    return in_array($b['status'] ?? '', ['approved', 'completed']) && $end_time && strtotime($end_time) < time();
 });
 
 // Fetch user reviews

@@ -21,13 +21,13 @@ try {
             SUM(status = 'rejected')  AS rejected
         FROM bookings
         WHERE start_time >= :start
-          AND start_time <  :end
+          AND start_time <= :end
           AND status != 'cancelled'
         GROUP BY DATE(start_time)
     ";
 
     $stmt = $db->prepare($sql);
-    $stmt->execute([':start' => $start, ':end' => $end]);
+    $stmt->execute([':start' => $start, ':end' => $end . ' 23:59:59']);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Index by date string
