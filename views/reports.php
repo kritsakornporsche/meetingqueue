@@ -155,22 +155,28 @@ $chartData = json_encode(array_values($roomStats));
             <i class="fas fa-chart-line text-[#D4B59D]"></i> ระบบรายงาน
         </h2>
         
-        <form method="GET" action="dashboard.php" class="flex gap-3">
+        <form method="GET" action="dashboard.php" class="flex flex-nowrap items-center gap-4">
             <input type="hidden" name="view" value="reports">
-            <select name="month" class="px-4 py-2 rounded-xl border border-[#D4B59D]/30 focus:outline-none focus:border-[#D4B59D] bg-white text-[#6A5243] shadow-sm">
-                <?php foreach($thai_months as $num => $name): ?>
-                    <option value="<?= $num ?>" <?= ($month == $num) ? 'selected' : '' ?>><?= $name ?></option>
-                <?php endforeach; ?>
-            </select>
-            <select name="year" class="px-4 py-2 rounded-xl border border-[#D4B59D]/30 focus:outline-none focus:border-[#D4B59D] bg-white text-[#6A5243] shadow-sm">
-                <?php for($y = date('Y')-2; $y <= date('Y')+1; $y++): ?>
-                    <option value="<?= $y ?>" <?= ($year == $y) ? 'selected' : '' ?>><?= $y + 543 ?></option>
-                <?php endfor; ?>
-            </select>
-            <button type="submit" class="px-5 py-2 rounded-xl bg-white border border-[#D4B59D]/50 text-[#6A5243] font-bold shadow-sm hover:bg-[#FDFBF7] transition-all">
+            <div class="relative flex-shrink-0">
+                <select name="month" class="pl-5 pr-12 py-3.5 rounded-2xl border border-[#D4B59D]/40 focus:outline-none focus:border-[#D4B59D] bg-white text-[#6A5243] text-[0.95rem] font-bold shadow-sm cursor-pointer appearance-none min-w-[170px] transition-all hover:border-[#D4B59D]" style="-webkit-appearance: none; -moz-appearance: none;">
+                    <?php foreach($thai_months as $num => $name): ?>
+                        <option value="<?= $num ?>" <?= ($month == $num) ? 'selected' : '' ?>><?= $name ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-[#D4B59D] pointer-events-none text-xs"></i>
+            </div>
+            <div class="relative flex-shrink-0">
+                <select name="year" class="pl-5 pr-12 py-3.5 rounded-2xl border border-[#D4B59D]/40 focus:outline-none focus:border-[#D4B59D] bg-white text-[#6A5243] text-[0.95rem] font-bold shadow-sm cursor-pointer appearance-none min-w-[130px] transition-all hover:border-[#D4B59D]" style="-webkit-appearance: none; -moz-appearance: none;">
+                    <?php for($y = date('Y')-2; $y <= date('Y')+1; $y++): ?>
+                        <option value="<?= $y ?>" <?= ($year == $y) ? 'selected' : '' ?>><?= $y + 543 ?></option>
+                    <?php endfor; ?>
+                </select>
+                <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-[#D4B59D] pointer-events-none text-xs"></i>
+            </div>
+            <button type="submit" class="flex-shrink-0 whitespace-nowrap px-10 py-3.5 rounded-2xl bg-white border border-[#D4B59D]/60 text-[#6A5243] text-[0.95rem] font-black shadow-sm hover:bg-[#FDFBF7] hover:border-[#D4B59D] transition-all active:scale-95">
                 ดูรายงาน
             </button>
-            <button type="button" onclick="window.print()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-[#D4B59D] to-[#6A5243] text-white font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2">
+            <button type="button" onclick="window.print()" class="flex-shrink-0 whitespace-nowrap px-10 py-3.5 rounded-2xl bg-gradient-to-r from-[#D4B59D] to-[#6A5243] text-white text-[0.95rem] font-black shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all active:scale-95 flex items-center gap-2">
                 <i class="fas fa-file-pdf"></i> ออกรายงาน PDF
             </button>
         </form>
@@ -195,10 +201,24 @@ $chartData = json_encode(array_values($roomStats));
         <script>
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('roomUsageChart').getContext('2d');
+            
+            // Process labels for wrapping (multi-line)
+            const rawLabels = <?= $chartLabels ?>;
+            const multiLineLabels = rawLabels.map(label => {
+                // Split by parenthesis if present, or at space
+                if (label.includes('(')) {
+                    return label.split('(').map((s, i) => i === 0 ? s.trim() : '(' + s.trim());
+                }
+                if (label.length > 20) {
+                    return [label.substring(0, 20), label.substring(20)];
+                }
+                return label;
+            });
+
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: <?= $chartLabels ?>,
+                    labels: multiLineLabels,
                     datasets: [{
                         label: 'จำนวนครั้งที่ใช้งาน',
                         data: <?= $chartData ?>,
@@ -211,11 +231,35 @@ $chartData = json_encode(array_values($roomStats));
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: { bottom: 40 }
+                    },
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(106, 82, 67, 0.9)',
+                            padding: 12,
+                            cornerRadius: 12,
+                            titleFont: { family: 'Sarabun, Outfit', size: 14 },
+                            bodyFont: { family: 'Sarabun, Outfit', size: 13 }
+                        }
                     },
                     scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                        y: { 
+                            beginAtZero: true, 
+                            ticks: { stepSize: 1, font: { family: 'Outfit', size: 12, weight: 'bold' } },
+                            grid: { color: '#F3F0E6' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { family: 'Sarabun, Outfit', size: 12, weight: 'bold' },
+                                color: '#6A5243',
+                                maxRotation: 0,
+                                minRotation: 0,
+                                padding: 10
+                            }
+                        }
                     }
                 }
             });

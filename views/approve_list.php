@@ -1,9 +1,10 @@
 <?php
 $current_view = $_GET['view'] ?? '';
-$is_admin_view = ($current_view === 'approve_list' || $current_view === 'requests') && (($_SESSION['user_data']['role'] ?? 'user') === 'admin');
-$force_user_filter = ($current_view === 'results' || $current_view === 'status');
+$user_role = $_SESSION['user_data']['role'] ?? 'user';
+$is_admin_view = ($current_view === 'approve_list' || $current_view === 'requests') && ($user_role === 'admin');
+// force_user_filter: regular users see only their own; admins on 'status' see all
+$force_user_filter = ($current_view === 'results' || $current_view === 'status') && ($user_role !== 'admin');
 
-// Page Metadata
 $page_title = 'สถานะการประชุม';
 $page_subtitle = 'ติดตามสถานะการประชุมของคุณ';
 $icon = 'fa-clipboard-check';
@@ -25,8 +26,129 @@ if ($is_admin_view) {
 }
 ?>
 
+<style>
+.filter-panel {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+}
+.filter-panel-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    flex-wrap: wrap;
+}
+.filter-panel-advanced {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 1rem;
+    background: #fdfbf7;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+.filter-panel-advanced.open { display: flex; }
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 160px;
+    flex: 1;
+}
+.filter-group label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0;
+}
+.filter-group input,
+.filter-group select {
+    padding: 0.55rem 0.85rem;
+    font-size: 0.85rem;
+    border-radius: 0.6rem;
+}
+.filter-group select { padding-right: 2rem; }
+.filter-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    border-radius: 0.65rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--text-main);
+    transition: var(--transition);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.filter-toggle-btn:hover { background: var(--sidebar-bg); border-color: var(--secondary); }
+.filter-toggle-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.filter-toggle-btn .filter-count {
+    background: rgba(255,255,255,0.3);
+    border-radius: 99px;
+    padding: 0 0.4rem;
+    font-size: 0.7rem;
+    display: none;
+}
+.filter-toggle-btn.active .filter-count { display: inline; }
+.filter-clear-btn {
+    display: none;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 0.65rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid #fecaca;
+    background: #fee2e2;
+    color: #991b1b;
+    transition: var(--transition);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.filter-clear-btn:hover { background: #fecaca; }
+.filter-clear-btn.visible { display: inline-flex; }
+.active-filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0 0.75rem 0.75rem;
+}
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    background: rgba(106,82,67,0.08);
+    border: 1px solid rgba(106,82,67,0.18);
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+.filter-chip button {
+    all: unset;
+    cursor: pointer;
+    opacity: 0.5;
+    width: auto;
+    padding: 0;
+    font-size: 0.65rem;
+    line-height: 1;
+}
+.filter-chip button:hover { opacity: 1; }
+</style>
+
 <div class="flex flex-col gap-6 w-full animate-fade">
-    <!-- Header Section -->
+    <!-- Header -->
     <div class="bg-white p-8 rounded-[3rem] border border-accent/30 shadow-sm relative overflow-hidden">
         <div class="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full -mr-32 -mt-32"></div>
         <div class="flex items-center gap-6 relative z-10">
@@ -48,229 +170,357 @@ if ($is_admin_view) {
         </div>
     </div>
     <div class="card-body">
-        <div class="filter-bar">
-            <div class="search-input" style="position: relative;">
-                <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
-                <input type="text" id="searchInput" placeholder="ค้นหา..." style="padding-left: 2.5rem;">
+
+        <!-- Filter Panel -->
+        <div class="filter-panel">
+            <!-- Top Row -->
+            <div class="filter-panel-top">
+                <div class="search-input" style="position: relative; flex:1; min-width:220px;">
+                    <i class="fas fa-search" style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;"></i>
+                    <input type="text" id="searchInput" placeholder="ค้นหาหัวข้อ, ผู้จอง, ห้องประชุม..." style="padding-left:2.5rem;padding-top:0.55rem;padding-bottom:0.55rem;font-size:0.9rem;" autocomplete="off">
+                </div>
+                <select id="statusFilter" class="select-filter" style="min-width:150px;padding-top:0.55rem;padding-bottom:0.55rem;font-size:0.9rem;">
+                    <option value="">สถานะทั้งหมด</option>
+                    <option value="approved">อนุมัติ</option>
+                    <option value="pending">รออนุมัติ</option>
+                    <option value="rejected">ไม่อนุมัติ</option>
+                    <option value="cancelled">ยกเลิก</option>
+                </select>
+                <button id="filterToggleBtn" class="filter-toggle-btn" onclick="toggleAdvancedFilter()">
+                    <i class="fas fa-sliders-h"></i> ตัวกรองเพิ่มเติม
+                    <span class="filter-count" id="activeFilterCount">0</span>
+                </button>
+                <button id="filterClearBtn" class="filter-clear-btn" onclick="clearAllFilters()">
+                    <i class="fas fa-times"></i> ล้างตัวกรอง
+                </button>
             </div>
-            <select id="statusFilter" class="select-filter">
-                <option value="">สถานะทั้งหมด</option>
-                <option value="approved">อนุมัติ</option>
-                <option value="pending">รออนุมัติ</option>
-                <option value="rejected">ไม่อนุมัติ</option>
-                <option value="cancelled">ยกเลิก</option>
-            </select>
+
+            <!-- Advanced Filters -->
+            <div class="filter-panel-advanced" id="advancedFilterPanel">
+                <div class="filter-group">
+                    <label><i class="fas fa-tag" style="margin-right:0.3rem;"></i>หัวข้อการประชุม</label>
+                    <input type="text" id="filterTitle" placeholder="พิมพ์หัวข้อ..." autocomplete="off">
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-user" style="margin-right:0.3rem;"></i>ผู้จอง</label>
+                    <input type="text" id="filterBooker" placeholder="ชื่อผู้จอง..." autocomplete="off">
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-door-open" style="margin-right:0.3rem;"></i>ห้องประชุม</label>
+                    <select id="filterRoom">
+                        <option value="">ทุกห้อง</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-building" style="margin-right:0.3rem;"></i>ฝ่าย/งาน</label>
+                    <input type="text" id="filterDept" placeholder="ฝ่าย/งาน..." autocomplete="off">
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-calendar-day" style="margin-right:0.3rem;"></i>วันเริ่มต้น</label>
+                    <input type="date" id="filterDateFrom" autocomplete="off">
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-calendar-day" style="margin-right:0.3rem;"></i>วันสิ้นสุด</label>
+                    <input type="date" id="filterDateTo" autocomplete="off">
+                </div>
+            </div>
+
+            <!-- Active Filter Chips -->
+            <div class="active-filter-chips" id="activeFilterChips"></div>
         </div>
 
-            <!-- Desktop Table -->
-            <div class="hidden md:block table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="w-16">ลำดับ</th>
-                            <th>ผู้จอง</th>
-                            <th>หัวข้อการประชุม</th>
-                            <th>ห้องประชุม/สถานที่</th>
-                            <th>วัน-เวลา</th>
-                            <th>ฝ่าย/งาน</th>
-                            <th class="text-center">สถานะ</th>
-                            <?php if ($current_view === 'approve_list'): ?>
-                            <th class="text-center">การจัดการ</th>
-                            <?php endif; ?>
-                        </tr>
-                    </thead>
-                    <tbody id="approveTableBody">
-                        <!-- Data will be loaded via JS -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Mobile Card List -->
-            <div id="mobileCardList" class="md:hidden space-y-4">
-                <!-- Data will be loaded via JS -->
-            </div>
-
-        <div class="pagination" id="paginationContainer" style="display: none;">
-            <!-- Pagination will be rendered here -->
+        <!-- Desktop Table -->
+        <div class="hidden md:block table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="w-16">ลำดับ</th>
+                        <th>ผู้จอง</th>
+                        <th>หัวข้อการประชุม</th>
+                        <th>ห้องประชุม/สถานที่</th>
+                        <th>วัน-เวลา</th>
+                        <th>ฝ่าย/งาน</th>
+                        <th class="text-center">สถานะ</th>
+                        <?php if ($current_view === 'approve_list'): ?>
+                        <th class="text-center">การจัดการ</th>
+                        <?php endif; ?>
+                    </tr>
+                </thead>
+                <tbody id="approveTableBody"></tbody>
+            </table>
         </div>
+
+        <!-- Mobile Card List -->
+        <div id="mobileCardList" class="md:hidden space-y-4"></div>
+
+        <div class="pagination" id="paginationContainer" style="display: none;"></div>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        loadApproveList();
-        document.getElementById('searchInput').addEventListener('input', renderTable);
-        document.getElementById('statusFilter').addEventListener('change', renderTable);
+document.addEventListener('DOMContentLoaded', () => {
+    // ── Reset all filters on fresh page load (prevent browser state restoration) ──
+    ['searchInput','filterTitle','filterBooker','filterDept','filterDateFrom','filterDateTo'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    const statusEl = document.getElementById('statusFilter');
+    if (statusEl) statusEl.value = '';
+    const roomEl = document.getElementById('filterRoom');
+    if (roomEl) roomEl.value = '';
+
+    loadApproveList();
+    loadRoomOptions();
+
+    ['searchInput','statusFilter','filterTitle','filterBooker','filterRoom','filterDept','filterDateFrom','filterDateTo']
+        .forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', () => { renderTable(); updateFilterUI(); });
+        });
+});
+
+async function loadRoomOptions() {
+    try {
+        const data = await MeetQueue.api.fetch('api/rooms.php');
+        if (data.success && data.rooms) {
+            const sel = document.getElementById('filterRoom');
+            data.rooms.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.id;
+                opt.textContent = r.name;
+                sel.appendChild(opt);
+            });
+        }
+    } catch(e) {}
+}
+
+async function loadApproveList() {
+    const isAdminView = <?php echo json_encode($is_admin_view); ?>;
+    const forceUserFilter = <?php echo json_encode($force_user_filter); ?>;
+    const view = <?php echo json_encode($current_view); ?>;
+    const userId = <?php echo json_encode($_SESSION['user_id'] ?? null); ?>;
+
+    let url = 'api/bookings.php';
+    if (forceUserFilter) url += `?user_id=${userId}`;
+
+    const data = await MeetQueue.api.fetch(url);
+
+    if (data.success) {
+        MeetQueue.setState({ bookings: data.bookings });
+        if (view === 'approve_list') {
+            document.getElementById('statusFilter').value = 'pending';
+        }
+        renderTable();
+        updateFilterUI();
+    } else {
+        document.getElementById('approveTableBody').innerHTML = `<tr><td colspan="7" class="text-center text-red-500 font-bold py-10">${data.message}</td></tr>`;
+    }
+}
+
+function getFilterValues() {
+    return {
+        search:   (document.getElementById('searchInput')?.value || '').toLowerCase().trim(),
+        status:   document.getElementById('statusFilter')?.value || '',
+        title:    (document.getElementById('filterTitle')?.value || '').toLowerCase().trim(),
+        booker:   (document.getElementById('filterBooker')?.value || '').toLowerCase().trim(),
+        room:     document.getElementById('filterRoom')?.value || '',
+        dept:     (document.getElementById('filterDept')?.value || '').toLowerCase().trim(),
+        dateFrom: document.getElementById('filterDateFrom')?.value || '',
+        dateTo:   document.getElementById('filterDateTo')?.value || '',
+    };
+}
+
+function renderTable() {
+    const tableBody = document.getElementById('approveTableBody');
+    const mobileCardList = document.getElementById('mobileCardList');
+    const currentView = <?php echo json_encode($current_view); ?>;
+    const { bookings } = MeetQueue.getState();
+    const f = getFilterValues();
+
+    const filtered = bookings.filter(b => {
+        const bDate = b.start_time ? b.start_time.substring(0, 10) : '';
+        const name = (b.first_name || '').toLowerCase();
+        const roomName = (b.room_name || '').toLowerCase();
+
+        if (f.search && !b.title.toLowerCase().includes(f.search) && !roomName.includes(f.search) && !name.includes(f.search)) return false;
+        if (f.status && b.status !== f.status) return false;
+        if (f.title && !b.title.toLowerCase().includes(f.title)) return false;
+        if (f.booker && !name.includes(f.booker)) return false;
+        if (f.room && String(b.room_id) !== f.room) return false;
+        if (f.dept && !(b.department_name || '').toLowerCase().includes(f.dept)) return false;
+        if (f.dateFrom && bDate < f.dateFrom) return false;
+        if (f.dateTo && bDate > f.dateTo) return false;
+        return true;
     });
 
-    async function loadApproveList() {
-        const isAdminView = <?php echo json_encode($is_admin_view); ?>;
-        const forceUserFilter = <?php echo json_encode($force_user_filter); ?>;
-        const view = <?php echo json_encode($current_view); ?>;
-        const userId = <?php echo json_encode($_SESSION['user_id'] ?? null); ?>;
-        
-        let url = 'api/bookings.php';
-        if (forceUserFilter) {
-            url += `?user_id=${userId}`;
-        }
-        
-        const data = await MeetQueue.api.fetch(url);
-        
-        if (data.success) {
-            MeetQueue.setState({ bookings: data.bookings });
-            
-            // Auto-filter pending for approve_list view
-            if (view === 'approve_list') {
-                document.getElementById('statusFilter').value = 'pending';
-            }
-            
-            renderTable();
-        } else {
-            document.getElementById('approveTableBody').innerHTML = `<tr><td colspan="7" class="text-center text-red-500 font-bold py-10">${data.message}</td></tr>`;
-        }
+    const colspan = currentView === 'approve_list' ? 8 : 7;
+
+    if (filtered.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-20 font-bold text-text-muted">ไม่พบข้อมูล</td></tr>`;
+        mobileCardList.innerHTML = '<div class="text-center py-20 bg-white/50 rounded-[3rem] border-2 border-dashed border-accent"><i class="fas fa-folder-open text-4xl text-accent mb-4 block"></i><p class="font-bold text-text-muted">ไม่พบข้อมูลที่ค้นหา</p></div>';
+        return;
     }
 
-    function renderTable() {
-        const tableBody = document.getElementById('approveTableBody');
-        const mobileCardList = document.getElementById('mobileCardList');
-        const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-        const statusFilter = document.getElementById('statusFilter').value;
-        const currentView = <?php echo json_encode($current_view); ?>;
-        const { bookings } = MeetQueue.getState();
-
-        const filtered = bookings.filter(b => {
-            const matchesSearch = b.title.toLowerCase().includes(searchQuery) || 
-                                 (b.room_name?.toLowerCase().includes(searchQuery)) ||
-                                 (b.first_name?.toLowerCase().includes(searchQuery));
-            const matchesStatus = statusFilter === '' || b.status === statusFilter;
-            return matchesSearch && matchesStatus;
-        });
-
-        if (filtered.length === 0) {
-            const emptyHtml = '<div class="text-center py-20 bg-white/50 rounded-[3rem] border-2 border-dashed border-accent"><i class="fas fa-folder-open text-4xl text-accent mb-4 block"></i><p class="font-bold text-text-muted">ไม่พบข้อมูลที่ค้นหา</p></div>';
-            tableBody.innerHTML = `<tr><td colspan="${currentView === 'approve_list' ? 8 : 7}" class="text-center py-20 font-bold text-text-muted">ไม่พบข้อมูล</td></tr>`;
-            mobileCardList.innerHTML = emptyHtml;
-            return;
-        }
-
-        // Desktop
-        tableBody.innerHTML = filtered.map((b, i) => `
-            <tr class="hover:bg-primary/5 transition-colors cursor-pointer group">
-                <td class="font-bold text-text-muted" onclick="viewDetail(${b.id})">${i + 1}</td>
-                <td onclick="viewDetail(${b.id})">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl overflow-hidden bg-accent/30 flex-shrink-0">
-                            <img src="https://192.168.9.7/auth_files/photo/${b.emp_code}.jpg" 
-                                 onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(b.first_name)}&background=E6D6BD&color=6A5243'" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="font-bold text-primary">${b.first_name}</span>
-                            <span class="text-[0.65rem] text-text-muted font-bold uppercase">${b.emp_code}</span>
-                        </div>
+    tableBody.innerHTML = filtered.map((b, i) => `
+        <tr class="hover:bg-primary/5 transition-colors cursor-pointer group">
+            <td class="font-bold text-text-muted" onclick="viewDetail(${b.id})">${i + 1}</td>
+            <td onclick="viewDetail(${b.id})">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl overflow-hidden bg-accent/30 flex-shrink-0">
+                        <img src="https://192.168.9.7/auth_files/photo/${b.emp_code}.jpg"
+                             onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(b.first_name)}&background=E6D6BD&color=6A5243'"
+                             class="w-full h-full object-cover">
                     </div>
-                </td>
-                <td onclick="viewDetail(${b.id})">
-                    <div class="font-bold text-primary">${MeetQueue.utils.escapeHtml(b.title)}</div>
-                    <div class="text-[0.7rem] text-text-muted italic">${b.description ? MeetQueue.utils.escapeHtml(b.description).substring(0, 30) + '...' : ''}</div>
-                </td>
-                <td onclick="viewDetail(${b.id})">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center text-primary"><i class="fas fa-door-open text-xs"></i></div>
-                        <span class="font-semibold">${b.room_name || 'ภายนอก'}</span>
-                    </div>
-                </td>
-                <td onclick="viewDetail(${b.id})">
-                    <div class="font-bold text-primary">${MeetQueue.utils.formatDate(b.start_time)}</div>
-                    <div class="text-xs text-text-muted font-semibold">${MeetQueue.utils.formatTime(b.start_time)} - ${MeetQueue.utils.formatTime(b.end_time)}</div>
-                </td>
-                <td onclick="viewDetail(${b.id})"><span class="text-xs font-bold px-2 py-1 bg-accent/20 rounded-md text-primary">${b.department_name || '-'}</span></td>
-                <td class="text-center" onclick="viewDetail(${b.id})">
-                    <span class="badge badge-${MeetQueue.utils.getStatusClass(b.status)}">${MeetQueue.utils.translateStatus(b.status)}</span>
-                </td>
-                ${currentView === 'approve_list' ? `
-                <td class="text-center">
-                    <div class="flex justify-center gap-2">
-                        ${b.status === 'pending' ? `
-                            <button onclick="updateStatus(${b.id}, 'approved')" class="w-8 h-8 rounded-lg bg-green-100 text-green-600 hover:bg-green-600 hover:text-white transition-all shadow-sm" title="อนุมัติ"><i class="fas fa-check text-xs"></i></button>
-                            <button onclick="updateStatus(${b.id}, 'rejected')" class="w-8 h-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-sm" title="ปฏิเสธ"><i class="fas fa-times text-xs"></i></button>
-                        ` : `
-                            <button onclick="viewDetail(${b.id})" class="text-xs font-bold text-text-muted hover:text-primary">เรียกดู</button>
-                        `}
-                    </div>
-                </td>
-                ` : ''}
-            </tr>
-        `).join('');
-
-        // Mobile
-        mobileCardList.innerHTML = filtered.map(b => `
-            <div class="card p-5 space-y-4 hover:border-primary/50 transition-all">
-                <div class="flex justify-between items-start" onclick="viewDetail(${b.id})">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-2xl overflow-hidden bg-accent/30 shadow-inner">
-                            <img src="https://192.168.9.7/auth_files/photo/${b.emp_code}.jpg" 
-                                 onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(b.first_name)}&background=E6D6BD&color=6A5243'" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div>
-                            <h4 class="font-black text-primary">${b.first_name}</h4>
-                            <span class="text-[0.7rem] font-bold text-text-muted uppercase tracking-wider">${b.department_name || '-'}</span>
-                        </div>
-                    </div>
-                    <span class="badge badge-${MeetQueue.utils.getStatusClass(b.status)}">${MeetQueue.utils.translateStatus(b.status)}</span>
-                </div>
-                <div class="space-y-3 pt-2" onclick="viewDetail(${b.id})">
-                    <h3 class="font-black text-lg leading-tight text-primary">${MeetQueue.utils.escapeHtml(b.title)}</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="flex items-center gap-2 text-text-muted"><i class="fas fa-door-open text-xs w-4"></i><span class="text-xs font-bold">${b.room_name || 'ภายนอก'}</span></div>
-                        <div class="flex items-center gap-2 text-text-muted"><i class="fas fa-clock text-xs w-4"></i><span class="text-xs font-bold">${MeetQueue.utils.formatTime(b.start_time)} - ${MeetQueue.utils.formatTime(b.end_time)}</span></div>
-                        <div class="flex items-center gap-2 text-text-muted col-span-2"><i class="fas fa-calendar-alt text-xs w-4"></i><span class="text-xs font-bold">${MeetQueue.utils.formatDate(b.start_time)}</span></div>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-primary">${b.first_name}</span>
+                        <span class="text-[0.65rem] text-text-muted font-bold uppercase">${b.emp_code}</span>
                     </div>
                 </div>
-                ${currentView === 'approve_list' && b.status === 'pending' ? `
-                <div class="pt-4 flex flex-wrap gap-3">
-                    <button onclick="updateStatus(${b.id}, 'approved')" class="flex-grow py-3 rounded-xl bg-green-500 text-white font-black text-sm shadow-lg shadow-green-200 min-w-[100px]">อนุมัติ</button>
-                    <button onclick="updateStatus(${b.id}, 'rejected')" class="flex-grow py-3 rounded-xl bg-red-500 text-white font-black text-sm shadow-lg shadow-red-200 min-w-[100px]">ปฏิเสธ</button>
+            </td>
+            <td onclick="viewDetail(${b.id})">
+                <div class="font-bold text-primary">${MeetQueue.utils.escapeHtml(b.title)}</div>
+                <div class="text-[0.7rem] text-text-muted italic">${b.description ? MeetQueue.utils.escapeHtml(b.description).substring(0, 30) + '...' : ''}</div>
+            </td>
+            <td onclick="viewDetail(${b.id})">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center text-primary"><i class="fas fa-door-open text-xs"></i></div>
+                    <span class="font-semibold">${b.room_name || 'ภายนอก'}</span>
                 </div>
-                ` : `
-                <div class="pt-2 flex justify-end" onclick="viewDetail(${b.id})">
-                    <span class="text-[0.65rem] font-black text-secondary uppercase tracking-widest flex items-center gap-1">ดูรายละเอียด <i class="fas fa-chevron-right text-[0.5rem]"></i></span>
+            </td>
+            <td onclick="viewDetail(${b.id})">
+                <div class="font-bold text-primary">${MeetQueue.utils.formatDate(b.start_time)}</div>
+                <div class="text-xs text-text-muted font-semibold">${MeetQueue.utils.formatTime(b.start_time)} - ${MeetQueue.utils.formatTime(b.end_time)}</div>
+            </td>
+            <td onclick="viewDetail(${b.id})"><span class="text-xs font-bold px-2 py-1 bg-accent/20 rounded-md text-primary">${b.department_name || '-'}</span></td>
+            <td class="text-center" onclick="viewDetail(${b.id})">
+                <span class="badge badge-${MeetQueue.utils.getStatusClass(b.status)}">${MeetQueue.utils.translateStatus(b.status)}</span>
+            </td>
+            ${currentView === 'approve_list' ? `
+            <td class="text-center">
+                <div class="flex justify-center gap-2">
+                    ${b.status === 'pending' ? `
+                        <button onclick="updateStatus(${b.id}, 'approved')" class="w-8 h-8 rounded-lg bg-green-100 text-green-600 hover:bg-green-600 hover:text-white transition-all shadow-sm" title="อนุมัติ"><i class="fas fa-check text-xs"></i></button>
+                        <button onclick="updateStatus(${b.id}, 'rejected')" class="w-8 h-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-sm" title="ปฏิเสธ"><i class="fas fa-times text-xs"></i></button>
+                    ` : `<button onclick="viewDetail(${b.id})" class="text-xs font-bold text-text-muted hover:text-primary">เรียกดู</button>`}
                 </div>
-                `}
+            </td>` : ''}
+        </tr>
+    `).join('');
+
+    mobileCardList.innerHTML = filtered.map(b => `
+        <div class="card p-5 space-y-4 hover:border-primary/50 transition-all">
+            <div class="flex justify-between items-start" onclick="viewDetail(${b.id})">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl overflow-hidden bg-accent/30 shadow-inner">
+                        <img src="https://192.168.9.7/auth_files/photo/${b.emp_code}.jpg"
+                             onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(b.first_name)}&background=E6D6BD&color=6A5243'"
+                             class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h4 class="font-black text-primary">${b.first_name}</h4>
+                        <span class="text-[0.7rem] font-bold text-text-muted uppercase tracking-wider">${b.department_name || '-'}</span>
+                    </div>
+                </div>
+                <span class="badge badge-${MeetQueue.utils.getStatusClass(b.status)}">${MeetQueue.utils.translateStatus(b.status)}</span>
             </div>
-        `).join('');
-    }
+            <div class="space-y-3 pt-2" onclick="viewDetail(${b.id})">
+                <h3 class="font-black text-lg leading-tight text-primary">${MeetQueue.utils.escapeHtml(b.title)}</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex items-center gap-2 text-text-muted"><i class="fas fa-door-open text-xs w-4"></i><span class="text-xs font-bold">${b.room_name || 'ภายนอก'}</span></div>
+                    <div class="flex items-center gap-2 text-text-muted"><i class="fas fa-clock text-xs w-4"></i><span class="text-xs font-bold">${MeetQueue.utils.formatTime(b.start_time)} - ${MeetQueue.utils.formatTime(b.end_time)}</span></div>
+                    <div class="flex items-center gap-2 text-text-muted col-span-2"><i class="fas fa-calendar-alt text-xs w-4"></i><span class="text-xs font-bold">${MeetQueue.utils.formatDate(b.start_time)}</span></div>
+                </div>
+            </div>
+            ${currentView === 'approve_list' && b.status === 'pending' ? `
+            <div class="pt-4 flex flex-wrap gap-3">
+                <button onclick="updateStatus(${b.id}, 'approved')" class="flex-grow py-3 rounded-xl bg-green-500 text-white font-black text-sm shadow-lg shadow-green-200 min-w-[100px]">อนุมัติ</button>
+                <button onclick="updateStatus(${b.id}, 'rejected')" class="flex-grow py-3 rounded-xl bg-red-500 text-white font-black text-sm shadow-lg shadow-red-200 min-w-[100px]">ปฏิเสธ</button>
+            </div>` : `
+            <div class="pt-2 flex justify-end" onclick="viewDetail(${b.id})">
+                <span class="text-[0.65rem] font-black text-secondary uppercase tracking-widest flex items-center gap-1">ดูรายละเอียด <i class="fas fa-chevron-right text-[0.5rem]"></i></span>
+            </div>`}
+        </div>
+    `).join('');
+}
 
-    async function updateStatus(id, status) {
-        const confirmMsg = status === 'approved' ? 'ยืนยันการอนุมัติ?' : 'ยืนยันการปฏิเสธ?';
-        const result = await Swal.fire({
-            title: confirmMsg,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: status === 'approved' ? '#22c55e' : '#ef4444',
-            confirmButtonText: 'ตกลง',
-            cancelButtonText: 'ยกเลิก'
+function toggleAdvancedFilter() {
+    const panel = document.getElementById('advancedFilterPanel');
+    const btn = document.getElementById('filterToggleBtn');
+    const isOpen = panel.classList.toggle('open');
+    btn.classList.toggle('active', isOpen);
+}
+
+function updateFilterUI() {
+    const f = getFilterValues();
+    const advancedKeys = ['title','booker','room','dept','dateFrom','dateTo'];
+    const labels = { title:'หัวข้อ', booker:'ผู้จอง', room:'ห้อง', dept:'ฝ่าย/งาน', dateFrom:'จาก', dateTo:'ถึง' };
+    const roomSel = document.getElementById('filterRoom');
+
+    let count = 0;
+    const chips = [];
+
+    advancedKeys.forEach(k => {
+        if (!f[k]) return;
+        count++;
+        let val = f[k];
+        if (k === 'room') {
+            const opt = roomSel.querySelector(`option[value="${val}"]`);
+            val = opt ? opt.textContent : val;
+        }
+        chips.push(`<span class="filter-chip">${labels[k]}: ${val}<button onclick="clearFilter('${k}')" title="ลบตัวกรอง">✕</button></span>`);
+    });
+
+    document.getElementById('activeFilterCount').textContent = count;
+    document.getElementById('filterToggleBtn').classList.toggle('active', count > 0 || document.getElementById('advancedFilterPanel').classList.contains('open'));
+    document.getElementById('filterClearBtn').classList.toggle('visible', count > 0 || f.search !== '' || f.status !== '');
+    document.getElementById('activeFilterChips').innerHTML = chips.join('');
+}
+
+function clearFilter(key) {
+    const map = { title:'filterTitle', booker:'filterBooker', room:'filterRoom', dept:'filterDept', dateFrom:'filterDateFrom', dateTo:'filterDateTo' };
+    const el = document.getElementById(map[key]);
+    if (el) { el.value = ''; renderTable(); updateFilterUI(); }
+}
+
+function clearAllFilters() {
+    ['searchInput','filterTitle','filterBooker','filterDept','filterDateFrom','filterDateTo'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('filterRoom').value = '';
+    renderTable();
+    updateFilterUI();
+}
+
+async function updateStatus(id, status) {
+    const confirmMsg = status === 'approved' ? 'ยืนยันการอนุมัติ?' : 'ยืนยันการปฏิเสธ?';
+    const result = await Swal.fire({
+        title: confirmMsg,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: status === 'approved' ? '#22c55e' : '#ef4444',
+        confirmButtonText: 'ตกลง',
+        cancelButtonText: 'ยกเลิก'
+    });
+
+    if (result.isConfirmed) {
+        MeetQueue.utils.loading(true);
+        const data = await MeetQueue.api.fetch('api/bookings.php', {
+            method: 'PATCH',
+            body: JSON.stringify({ booking_id: id, status: status })
         });
-
-        if (result.isConfirmed) {
-            MeetQueue.utils.loading(true);
-            const data = await MeetQueue.api.fetch('api/bookings.php', {
-                method: 'PATCH',
-                body: JSON.stringify({ booking_id: id, status: status })
-            });
-            MeetQueue.utils.loading(false);
-
-            if (data.success) {
-                MeetQueue.utils.notify('success', 'ดำเนินการสำเร็จ');
-                loadApproveList();
-            } else {
-                MeetQueue.utils.notify('error', 'ผิดพลาด', data.message);
-            }
+        MeetQueue.utils.loading(false);
+        if (data.success) {
+            MeetQueue.utils.notify('success', 'ดำเนินการสำเร็จ');
+            loadApproveList();
+        } else {
+            MeetQueue.utils.notify('error', 'ผิดพลาด', data.message);
         }
     }
+}
 
-    function viewDetail(id) {
-        window.location.href = 'dashboard.php?view=booking_result&id=' + id;
-    }
+function viewDetail(id) {
+    window.location.href = 'dashboard.php?view=booking_result&id=' + id;
+}
 </script>

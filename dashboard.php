@@ -57,6 +57,7 @@ $view = $_GET['view'] ?? 'calendar';
                 switch ($view) {
                     case 'requests':
                     case 'results':
+                    case 'status':
                     case 'approve_list':
                         include 'views/approve_list.php';
                         break;

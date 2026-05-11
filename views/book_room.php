@@ -128,6 +128,110 @@
     }
     .room-no-result i { font-size: 1.5rem; margin-bottom: 0.5rem; opacity: 0.4; }
     .room-no-result p { font-size: 0.85rem; font-weight: 600; }
+
+    /* ── Searchable Department Dropdown ── */
+    .dept-dropdown-wrap {
+        position: relative;
+    }
+    .dept-input-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: #F9F8F6;
+        border-radius: 0.875rem;
+        border: 1.5px solid #EBE6DA;
+        transition: all 0.25s;
+    }
+    .dept-input-wrap:focus-within {
+        background: white;
+        border-color: #D4B59D;
+        box-shadow: 0 0 0 3px rgba(212,181,157,0.18);
+    }
+    .dept-input-wrap.has-value {
+        border-color: #6A5243;
+        background: white;
+    }
+    .dept-icon {
+        position: absolute;
+        left: 0.9rem;
+        color: #A79A8B;
+        font-size: 0.85rem;
+        pointer-events: none;
+        z-index: 1;
+    }
+    .dept-search-input {
+        width: 100%;
+        padding: 0.75rem 2.5rem 0.75rem 2.5rem;
+        border: none;
+        background: transparent;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #2D241E;
+        font-family: inherit;
+        outline: none;
+        cursor: pointer;
+    }
+    .dept-search-input::placeholder { color: #C9BCB0; font-weight: 500; }
+    .dept-clear-btn {
+        position: absolute;
+        right: 0.6rem;
+        width: 1.6rem; height: 1.6rem;
+        border-radius: 50%;
+        border: none;
+        background: #EBE6DA;
+        color: #A79A8B;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.65rem;
+        transition: all 0.2s;
+    }
+    .dept-clear-btn:hover { background: #D4B59D; color: white; }
+    .dept-clear-btn.visible { display: flex; }
+
+    .dept-dropdown-list {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0; right: 0;
+        background: white;
+        border: 1.5px solid #D4B59D;
+        border-radius: 0.875rem;
+        box-shadow: 0 12px 32px rgba(106,82,67,0.12);
+        max-height: 240px;
+        overflow-y: auto;
+        z-index: 200;
+        display: none;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(212,181,157,0.4) transparent;
+    }
+    .dept-dropdown-list.open { display: block; }
+    .dept-dropdown-list::-webkit-scrollbar { width: 5px; }
+    .dept-dropdown-list::-webkit-scrollbar-thumb { background: rgba(212,181,157,0.5); border-radius: 10px; }
+
+    .dept-option {
+        padding: 0.65rem 1rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #4A3A2F;
+        cursor: pointer;
+        transition: background 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .dept-option:first-child { border-radius: 0.7rem 0.7rem 0 0; }
+    .dept-option:last-child { border-radius: 0 0 0.7rem 0.7rem; }
+    .dept-option:hover { background: #F3EFE8; color: #6A5243; }
+    .dept-option.selected { background: rgba(106,82,67,0.06); color: #6A5243; }
+    .dept-option .dept-match { color: #6A5243; font-weight: 800; }
+    .dept-no-result {
+        padding: 1rem;
+        text-align: center;
+        font-size: 0.82rem;
+        color: #A79A8B;
+        font-weight: 600;
+    }
 </style>
 
 <!-- Viewer.js CSS for Image Zoom/Pan -->
@@ -268,6 +372,28 @@
                         <input type="hidden" id="equipments_hidden">
                     </div>
 
+                    <!-- Department / Unit Searchable Dropdown -->
+                    <div>
+                        <label class="label-premium"><i class="fas fa-sitemap"></i> หน่วยงาน/ฝ่ายที่สังกัด <span class="text-red-500">*</span></label>
+                        <div class="dept-dropdown-wrap" id="deptDropdownWrap">
+                            <div class="dept-input-wrap" id="deptInputWrap">
+                                <i class="fas fa-building dept-icon"></i>
+                                <input
+                                    type="text"
+                                    id="deptSearchInput"
+                                    class="dept-search-input"
+                                    placeholder="พิมพ์เพื่อค้นหาหน่วยงาน..."
+                                    autocomplete="off"
+                                    aria-label="ค้นหาหน่วยงาน"
+                                >
+                                <button type="button" id="deptClearBtn" class="dept-clear-btn" title="ล้าง"><i class="fas fa-times"></i></button>
+                            </div>
+                            <div class="dept-dropdown-list" id="deptDropdownList" role="listbox"></div>
+                        </div>
+                        <input type="hidden" id="department_name" required>
+                        <p class="text-[0.68rem] text-[#A79A8B] mt-1.5 italic">* หน่วยงานที่จะแสดงในใบจองห้องประชุม</p>
+                    </div>
+
                 </div>
             </div>
 
@@ -403,6 +529,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         initRoomSelection();
+        initDeptDropdown();
         
         // Set default date to today
         const today = new Date().toLocaleDateString('en-CA'); // Gets YYYY-MM-DD in local timezone safely
@@ -438,6 +565,7 @@
                 fd.append('participants_count', document.getElementById('participants_count').value);
                 fd.append('description', document.getElementById('description').value);
                 fd.append('phone', document.getElementById('phone').value);
+                fd.append('department', document.getElementById('department_name').value);
                 
                 const file = document.getElementById('attachment').files[0];
                 if (file) fd.append('attachment', file);
@@ -846,6 +974,9 @@
             if (!document.getElementById('meeting_date').value) {
                 Swal.fire({ icon: 'warning', title: 'กรุณาระบุวันที่จัดประชุม', confirmButtonColor: '#6A5243' }); return false;
             }
+            if (!document.getElementById('department_name').value.trim()) {
+                Swal.fire({ icon: 'warning', title: 'กรุณาระบุหน่วยงาน/ฝ่ายที่สังกัด', confirmButtonColor: '#6A5243' }); return false;
+            }
         }
         return true;
     }
@@ -879,5 +1010,138 @@
             next.classList.remove('hidden');
             submit.classList.add('hidden');
         }
+    }
+
+    // ── Searchable Department Dropdown ──────────────────────────────────────
+    let allDepartments = [];
+    const sessionDept = <?php echo json_encode($_SESSION['user_data']['dept_name'] ?? ''); ?>;
+
+    async function initDeptDropdown() {
+        // Load departments from API
+        try {
+            const res = await MeetQueue.api.fetch('api/departments.php');
+            if (res.success) allDepartments = res.departments;
+        } catch(e) { allDepartments = []; }
+
+        const input = document.getElementById('deptSearchInput');
+        const hiddenInput = document.getElementById('department_name');
+        const list = document.getElementById('deptDropdownList');
+        const clearBtn = document.getElementById('deptClearBtn');
+        const wrap = document.getElementById('deptInputWrap');
+
+        // Pre-fill from session dept_name
+        if (sessionDept) {
+            input.value = sessionDept;
+            hiddenInput.value = sessionDept;
+            clearBtn.classList.add('visible');
+            wrap.classList.add('has-value');
+        }
+
+        function highlight(text, query) {
+            if (!query) return text;
+            const esc = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            return text.replace(new RegExp(`(${esc})`, 'gi'), '<span class="dept-match">$1</span>');
+        }
+
+        function renderList(query) {
+            const q = query.toLowerCase().trim();
+            const matches = q
+                ? allDepartments.filter(d => d.toLowerCase().includes(q))
+                : allDepartments;
+
+            if (matches.length === 0) {
+                list.innerHTML = `<div class="dept-no-result"><i class="fas fa-search" style="margin-right:0.4rem;opacity:0.4;"></i>ไม่พบหน่วยงาน "${query}"</div>`;
+            } else {
+                list.innerHTML = matches.map(d => `
+                    <div class="dept-option${hiddenInput.value === d ? ' selected' : ''}" role="option" data-value="${d}">
+                        <i class="fas fa-building" style="color:#D4B59D;font-size:0.75rem;flex-shrink:0;"></i>
+                        <span>${highlight(d, q)}</span>
+                    </div>
+                `).join('');
+
+                list.querySelectorAll('.dept-option').forEach(opt => {
+                    opt.addEventListener('mousedown', e => {
+                        e.preventDefault();
+                        selectDept(opt.dataset.value);
+                    });
+                });
+            }
+        }
+
+        function selectDept(val) {
+            input.value = val;
+            hiddenInput.value = val;
+            clearBtn.classList.add('visible');
+            wrap.classList.add('has-value');
+            list.classList.remove('open');
+        }
+
+        function openList() {
+            renderList(input.value);
+            list.classList.add('open');
+        }
+
+        function closeList() {
+            list.classList.remove('open');
+        }
+
+        // Events
+        input.addEventListener('focus', () => openList());
+        input.addEventListener('input', () => {
+            const q = input.value;
+            clearBtn.classList.toggle('visible', q.length > 0);
+            wrap.classList.toggle('has-value', hiddenInput.value !== '');
+            if (q === '') hiddenInput.value = '';
+            renderList(q);
+            list.classList.add('open');
+        });
+        input.addEventListener('blur', () => {
+            // Delay to allow click to register
+            setTimeout(() => {
+                closeList();
+                // If typed value doesn't match any option, clear the hidden field
+                if (!allDepartments.includes(input.value)) {
+                    hiddenInput.value = '';
+                    wrap.classList.remove('has-value');
+                }
+            }, 150);
+        });
+
+        // Keyboard navigation
+        input.addEventListener('keydown', e => {
+            const opts = list.querySelectorAll('.dept-option');
+            const focused = list.querySelector('.dept-option:focus, .dept-option.keyboard-focus');
+            let idx = -1;
+            opts.forEach((o, i) => { if (o === focused) idx = i; });
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                const next = opts[idx + 1] || opts[0];
+                if (next) { opts.forEach(o => o.classList.remove('keyboard-focus')); next.classList.add('keyboard-focus'); next.scrollIntoView({ block: 'nearest' }); }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prev = opts[idx - 1] || opts[opts.length - 1];
+                if (prev) { opts.forEach(o => o.classList.remove('keyboard-focus')); prev.classList.add('keyboard-focus'); prev.scrollIntoView({ block: 'nearest' }); }
+            } else if (e.key === 'Enter') {
+                const kf = list.querySelector('.dept-option.keyboard-focus');
+                if (kf) { e.preventDefault(); selectDept(kf.dataset.value); }
+            } else if (e.key === 'Escape') {
+                closeList();
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            input.value = '';
+            hiddenInput.value = '';
+            clearBtn.classList.remove('visible');
+            wrap.classList.remove('has-value');
+            input.focus();
+            openList();
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', e => {
+            if (!document.getElementById('deptDropdownWrap').contains(e.target)) closeList();
+        });
     }
 </script>

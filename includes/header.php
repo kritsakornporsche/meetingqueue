@@ -24,7 +24,40 @@ $titles = [
             </div>
         </div>
         <div class="breadcrumb">
-            <span><?php echo $titles[$view] ?? 'หน้าหลัก'; ?></span>
+            <?php
+            // Build clickable breadcrumb
+            $breadcrumb_map = [
+                'calendar'         => ['หน้าหลัก' => 'calendar'],
+                'book'             => ['หน้าหลัก' => 'calendar', 'จองห้องประชุม' => 'book'],
+                'results'          => ['หน้าหลัก' => 'calendar', 'สถานะการจอง' => 'results'],
+                'status'           => ['หน้าหลัก' => 'calendar', 'สถานะการประชุม' => 'status'],
+                'reports'          => ['หน้าหลัก' => 'calendar', 'รายงานการใช้' => 'reports'],
+                'requests'         => ['จองห้องประชุม' => 'book', 'รายการขอใช้' => 'requests'],
+                'approve_list'     => ['จองห้องประชุม' => 'book', 'รายการอนุมัติ' => 'approve_list'],
+                'external'         => ['หน้าหลัก' => 'calendar', 'บันทึกประชุมภายนอก' => 'external'],
+                'rooms'            => ['หน้าหลัก' => 'calendar', 'ข้อมูลห้องประชุม' => 'rooms'],
+                'room_status'      => ['หน้าหลัก' => 'calendar', 'สถานะห้องประชุม' => 'room_status'],
+                'history'          => ['หน้าหลัก' => 'calendar', 'ประวัติการประชุม' => 'history'],
+                'statistics'       => ['หน้าหลัก' => 'calendar', 'สถิติการใช้งาน' => 'statistics'],
+                'users'            => ['หน้าหลัก' => 'calendar', 'ข้อมูลผู้ใช้งาน' => 'users'],
+                'admin_management' => ['หน้าหลัก' => 'calendar', 'จัดการการประชุม' => 'admin_management'],
+                'trash_management' => ['หน้าหลัก' => 'calendar', 'ถังขยะ' => 'trash_management'],
+                'booking_result'   => ['หน้าหลัก' => 'calendar', 'รายละเอียดการจอง' => null],
+            ];
+            $crumbs = $breadcrumb_map[$view] ?? ['หน้าหลัก' => 'calendar'];
+            $crumb_parts = [];
+            $is_last = false;
+            $crumb_keys = array_keys($crumbs);
+            foreach ($crumbs as $label => $target_view) {
+                $is_last = ($label === end($crumb_keys));
+                if (!$is_last && $target_view) {
+                    $crumb_parts[] = '<a href="dashboard.php?view=' . htmlspecialchars($target_view) . '" class="breadcrumb-link">' . htmlspecialchars($label) . '</a>';
+                } else {
+                    $crumb_parts[] = '<span>' . htmlspecialchars($label) . '</span>';
+                }
+            }
+            echo implode(' <i class="fas fa-chevron-right" style="font-size:0.55rem;opacity:0.5;margin:0 0.1rem;"></i> ', $crumb_parts);
+            ?>
         </div>
     </div>
     <div class="header-right">

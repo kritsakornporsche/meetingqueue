@@ -47,7 +47,8 @@ try {
         }
         $isExternal = isset($_POST['is_external']) ? (bool)$_POST['is_external'] : false;
         $externalOrg = $_POST['external_org'] ?? null;
-        $department = $_SESSION['user_data']['dept_name'] ?? null;
+        // Use form-submitted department, fall back to session
+        $department = !empty($_POST['department']) ? $_POST['department'] : ($_SESSION['user_data']['dept_name'] ?? null);
 
         if (!$title || !$startTime || !$endTime) {
             jsonResponse(['success' => false, 'message' => "กรุณากรอกข้อมูลให้ครบถ้วน"], 400);

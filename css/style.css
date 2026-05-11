@@ -153,6 +153,18 @@ header {
     gap: 0.5rem;
 }
 .breadcrumb span { color: var(--text-main); font-weight: 600; }
+.breadcrumb-link {
+    color: var(--primary);
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.15s, opacity 0.15s;
+    opacity: 0.7;
+}
+.breadcrumb-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
 
 .header-right {
     display: flex;

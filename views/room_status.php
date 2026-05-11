@@ -35,30 +35,69 @@ foreach ($today_bookings as $b) {
 $current_time = time();
 ?>
 
-<div class="flex flex-col gap-6 w-full pb-10">
-    <div class="flex justify-between items-center mb-2">
-        <h2 class="text-2xl font-bold text-[#6A5243] flex items-center gap-2">
-            <i class="fas fa-desktop text-[#D4B59D]"></i> สถานะห้องประชุมปัจจุบัน
-        </h2>
-        <div class="text-[#6A5243] font-bold bg-white px-6 py-3 rounded-2xl shadow-sm border border-[#EBE6DA] text-lg">
-            <span id="current-time-display"></span>
+<!-- Usage Stats Popup -->
+<div id="usageStatsModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(106,82,67,0.25);backdrop-filter:blur(4px);" onclick="if(event.target===this)closeUsageStats()">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:1.5rem;padding:2rem;min-width:340px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(106,82,67,0.2);max-height:80vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+            <h3 style="font-size:1.1rem;font-weight:800;color:#6A5243;margin:0;display:flex;align-items:center;gap:0.5rem;">
+                <i class="fas fa-chart-bar" style="color:#D4B59D;"></i> สถิติการใช้งานวันนี้
+            </h3>
+            <button onclick="closeUsageStats()" style="border:none;background:#F3EFE8;width:32px;height:32px;border-radius:50%;cursor:pointer;color:#A79A8B;font-size:0.85rem;">✕</button>
+        </div>
+        <div id="usageStatsContent" style="display:flex;flex-direction:column;gap:0.75rem;">
+            <div style="text-align:center;padding:1.5rem;color:#A79A8B;font-size:0.85rem;">กำลังโหลด...</div>
         </div>
     </div>
+</div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        <?php foreach ($rooms as $room): 
+<div class="flex flex-col gap-6 w-full pb-10">
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <!-- Title -->
+        <h2 class="text-2xl font-bold text-[#6A5243] flex items-center gap-2" style="flex-shrink:0;">
+            <i class="fas fa-desktop text-[#D4B59D]"></i> สถานะห้องประชุมปัจจุบัน
+        </h2>
+
+        <!-- Room Search Dropdown (center, fills space) -->
+        <div style="flex:1;min-width:200px;max-width:420px;position:relative;" id="roomSearchWrap">
+            <div style="display:flex;align-items:center;background:white;border:1.5px solid #EBE6DA;border-radius:0.875rem;padding:0 0.85rem;transition:all 0.2s;" id="roomSearchBox">
+                <i class="fas fa-search" style="color:#A79A8B;font-size:0.82rem;flex-shrink:0;"></i>
+                <input type="text" id="roomSearchInput" placeholder="ค้นหาห้องประชุม..." autocomplete="off"
+                    style="flex:1;border:none;background:transparent;padding:0.6rem 0.6rem;font-size:0.88rem;font-weight:600;color:#2D241E;font-family:inherit;outline:none;"
+                    onfocus="document.getElementById('roomSearchBox').style.borderColor='#D4B59D';openRoomDropdown()"
+                    onblur="setTimeout(()=>{document.getElementById('roomSearchBox').style.borderColor='#EBE6DA';closeRoomDropdown()},150)">
+                <button id="roomSearchClearBtn" onclick="clearRoomSearch()" style="display:none;border:none;background:#EBE6DA;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:0.6rem;color:#A79A8B;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
+            </div>
+            <div id="roomDropdownList" style="display:none;position:absolute;top:calc(100%+5px);left:0;right:0;background:white;border:1.5px solid #D4B59D;border-radius:0.75rem;box-shadow:0 8px 24px rgba(106,82,67,0.12);z-index:100;max-height:220px;overflow-y:auto;scrollbar-width:thin;">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Clock Button -->
+        <button onclick="openUsageStats()" title="คลิกเพื่อดูสถิติการใช้งาน" style="
+            display:flex;align-items:center;gap:0.5rem;
+            background:white;border:1.5px solid #EBE6DA;border-radius:0.875rem;
+            padding:0.55rem 1rem;cursor:pointer;transition:all 0.2s;flex-shrink:0;
+            box-shadow:0 2px 8px rgba(106,82,67,0.06);
+        " onmouseover="this.style.borderColor='#D4B59D';this.style.background='#FDFBF7'" onmouseout="this.style.borderColor='#EBE6DA';this.style.background='white'">
+            <i class="fas fa-clock" style="color:#D4B59D;font-size:0.85rem;"></i>
+            <span id="current-time-display" style="font-size:1rem;font-weight:800;color:#6A5243;font-variant-numeric:tabular-nums;min-width:72px;display:inline-block;text-align:center;">--:--:--</span>
+            <i class="fas fa-chart-bar" style="color:#A79A8B;font-size:0.75rem;"></i>
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" style="align-items: stretch;">
+        <?php foreach ($rooms as $room):
             $schedules = $room_schedules[$room['id']] ?? [];
             usort($schedules, function($a, $b) {
                 return strtotime($a['start_time']) - strtotime($b['start_time']);
             });
 
             $current_meeting = null;
-            $next_meeting = null;
+            $next_meeting    = null;
 
             foreach ($schedules as $s) {
                 $start = strtotime($s['start_time']);
-                $end = strtotime($s['end_time']);
-                
+                $end   = strtotime($s['end_time']);
                 if ($current_time >= $start && $current_time <= $end) {
                     $current_meeting = $s;
                     break;
@@ -67,44 +106,104 @@ $current_time = time();
                 }
             }
 
-            $is_active = $current_meeting !== null;
-            $card_bg = $is_active ? 'bg-white border-red-200' : 'bg-white border-[#EBE6DA]';
+            $is_active  = $current_meeting !== null;
+            $border_cls = $is_active ? 'border-red-300' : 'border-[#EBE6DA]';
+            $inner_bg   = $is_active ? 'bg-red-50'      : 'bg-[#F9F8F6]';
         ?>
-        <div class="rounded-3xl p-8 border-2 <?= $card_bg ?> shadow-sm flex flex-col items-center text-center transition-all hover:shadow-md">
-            <!-- Room Name -->
-            <h3 class="text-xl font-black text-[#6A5243] mb-4"><?= htmlspecialchars($room['name']) ?></h3>
-            
-            <div class="w-full py-6 px-4 rounded-2xl <?= $is_active ? 'bg-red-50' : 'bg-gray-50' ?> mb-4 flex flex-col items-center justify-center min-h-[140px]">
+        <div data-room-id="<?= $room['id'] ?>" style="
+            display: flex;
+            flex-direction: column;
+            border-radius: 1.5rem;
+            border: 2px solid <?= $is_active ? '#fca5a5' : '#EBE6DA' ?>;
+            background: white;
+            box-shadow: 0 2px 12px rgba(106,82,67,0.06);
+            overflow: hidden;
+            transition: box-shadow 0.2s, outline 0.3s;
+        " onmouseover="this.style.boxShadow='0 8px 24px rgba(106,82,67,0.12)'" onmouseout="this.style.boxShadow='0 2px 12px rgba(106,82,67,0.06)'">
+
+            <!-- Room Name Header — fixed height, text clamped -->
+            <div style="
+                padding: 0.6rem 1.25rem 0.75rem;
+                min-height: 80px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-bottom: 1px solid <?= $is_active ? '#fecaca' : '#F0EDE6' ?>;
+                background: <?= $is_active ? '#fff5f5' : '#FDFBF7' ?>;
+                overflow: visible;
+            ">
+                <h3 style="
+                    font-size: 0.88rem;
+                    font-weight: 800;
+                    color: #6A5243;
+                    text-align: center;
+                    line-height: 2;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    margin: 0;
+                    width: 100%;
+                    padding-top: 0.35rem;
+                "><?= htmlspecialchars($room['name']) ?></h3>
+            </div>
+
+            <!-- Content Area — fixed height -->
+            <div style="
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 1.25rem;
+                background: <?= $is_active ? '#fff5f5' : '#F9F8F6' ?>;
+                min-height: 130px;
+                text-align: center;
+            ">
                 <?php if ($is_active): ?>
-                    <div class="text-xs font-bold text-red-500 mb-2 flex items-center gap-1 uppercase tracking-widest">
-                        <span class="animate-pulse w-2 h-2 rounded-full bg-red-500 block"></span> กำลังใช้งาน
+                    <div style="display:flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
+                        <span style="width:7px;height:7px;border-radius:50%;background:#ef4444;animation:pulse 1.5s infinite;display:inline-block;"></span>
+                        กำลังใช้งาน
                     </div>
-                    <h4 class="text-lg font-bold text-[#6A5243] mb-4 leading-tight"><?= htmlspecialchars($current_meeting['title']) ?></h4>
-                    
-                    <!-- Timer -->
-                    <div class="countdown-timer text-2xl font-black text-red-600 font-mono" data-target="<?= $current_meeting['end_time'] ?>" data-type="end">
+                    <p style="font-size:0.82rem;font-weight:700;color:#6A5243;margin:0 0 0.75rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                        <?= htmlspecialchars($current_meeting['title']) ?>
+                    </p>
+                    <div class="countdown-timer" data-target="<?= $current_meeting['end_time'] ?>" data-type="end"
+                         style="font-size:1.5rem;font-weight:900;color:#dc2626;font-family:monospace;letter-spacing:0.05em;">
                         00:00:00
                     </div>
                 <?php elseif ($next_meeting): ?>
-                    <div class="text-xs font-bold text-blue-500 mb-2 flex items-center gap-1 uppercase tracking-widest">
+                    <div style="font-size:0.68rem;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
                         เตรียมประชุมถัดไป
                     </div>
-                    <h4 class="text-lg font-bold text-[#6A5243] mb-4 leading-tight opacity-70"><?= htmlspecialchars($next_meeting['title']) ?></h4>
-                    
-                    <!-- Timer to Start -->
-                    <div class="countdown-timer text-2xl font-black text-blue-600 font-mono" data-target="<?= $next_meeting['start_time'] ?>" data-type="start">
+                    <p style="font-size:0.82rem;font-weight:700;color:#6A5243;opacity:0.7;margin:0 0 0.75rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                        <?= htmlspecialchars($next_meeting['title']) ?>
+                    </p>
+                    <div class="countdown-timer" data-target="<?= $next_meeting['start_time'] ?>" data-type="start"
+                         style="font-size:1.5rem;font-weight:900;color:#2563eb;font-family:monospace;letter-spacing:0.05em;">
                         00:00:00
                     </div>
                 <?php else: ?>
-                    <div class="flex flex-col items-center opacity-30">
-                        <i class="fas fa-calendar-check text-4xl mb-2"></i>
-                        <p class="font-bold">ไม่มีการประชุม</p>
+                    <div style="opacity:0.3;display:flex;flex-direction:column;align-items:center;gap:0.4rem;">
+                        <i class="fas fa-calendar-check" style="font-size:2rem;color:#6A5243;"></i>
+                        <p style="font-size:0.8rem;font-weight:700;color:#6A5243;margin:0;">ไม่มีการประชุม</p>
                     </div>
                 <?php endif; ?>
             </div>
 
-            <div class="text-sm font-bold <?= $is_active ? 'text-red-500' : 'text-green-500' ?> uppercase tracking-widest">
-                <?= $is_active ? 'Occupied' : 'Available' ?>
+            <!-- Status Badge — always at bottom, fixed height -->
+            <div style="
+                padding: 0.65rem 1rem;
+                text-align: center;
+                font-size: 0.72rem;
+                font-weight: 800;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: <?= $is_active ? '#dc2626' : '#16a34a' ?>;
+                background: <?= $is_active ? '#fee2e2' : '#dcfce7' ?>;
+                border-top: 1px solid <?= $is_active ? '#fecaca' : '#bbf7d0' ?>;
+            ">
+                <?= $is_active ? '🔴 Occupied' : '🟢 Available' ?>
             </div>
         </div>
         <?php endforeach; ?>
@@ -157,4 +256,122 @@ function updateCountdowns() {
 
 setInterval(updateCountdowns, 1000);
 updateCountdowns();
+
+// ── Room Search Dropdown ──────────────────────────────────────────────────
+const roomData = <?php
+    $roomList = array_map(fn($r) => ['id' => $r['id'], 'name' => $r['name']], $rooms);
+    echo json_encode($roomList);
+?>;
+
+function openRoomDropdown() {
+    renderRoomDropdown(document.getElementById('roomSearchInput').value);
+    document.getElementById('roomDropdownList').style.display = 'block';
+}
+
+function closeRoomDropdown() {
+    document.getElementById('roomDropdownList').style.display = 'none';
+}
+
+function renderRoomDropdown(query) {
+    const list = document.getElementById('roomDropdownList');
+    const q = query.toLowerCase().trim();
+    const matches = q ? roomData.filter(r => r.name.toLowerCase().includes(q)) : roomData;
+
+    if (matches.length === 0) {
+        list.innerHTML = '<div style="padding:0.75rem 1rem;font-size:0.82rem;color:#A79A8B;font-weight:600;text-align:center;">ไม่พบห้องประชุม</div>';
+        return;
+    }
+
+    list.innerHTML = matches.map(r => {
+        const hi = q ? r.name.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<b style="color:#6A5243;">$1</b>') : r.name;
+        return `<div onmousedown="scrollToRoom(${r.id})" style="padding:0.6rem 1rem;font-size:0.85rem;font-weight:600;color:#4A3A2F;cursor:pointer;transition:background 0.15s;display:flex;align-items:center;gap:0.5rem;"
+            onmouseover="this.style.background='#F3EFE8'" onmouseout="this.style.background=''"
+        ><i class="fas fa-door-open" style="color:#D4B59D;font-size:0.75rem;flex-shrink:0;"></i><span>${hi}</span></div>`;
+    }).join('');
+}
+
+function scrollToRoom(id) {
+    const card = document.querySelector(`[data-room-id="${id}"]`);
+    if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.style.outline = '3px solid #D4B59D';
+        card.style.transition = 'outline 0.3s';
+        setTimeout(() => card.style.outline = '', 2000);
+    }
+    document.getElementById('roomSearchInput').value = roomData.find(r => r.id == id)?.name || '';
+    document.getElementById('roomSearchClearBtn').style.display = 'flex';
+    closeRoomDropdown();
+}
+
+function clearRoomSearch() {
+    document.getElementById('roomSearchInput').value = '';
+    document.getElementById('roomSearchClearBtn').style.display = 'none';
+    document.getElementById('roomDropdownList').style.display = 'none';
+}
+
+document.getElementById('roomSearchInput').addEventListener('input', function() {
+    const v = this.value;
+    document.getElementById('roomSearchClearBtn').style.display = v ? 'flex' : 'none';
+    renderRoomDropdown(v);
+    document.getElementById('roomDropdownList').style.display = 'block';
+});
+
+// ── Usage Stats Popup ─────────────────────────────────────────────────────
+async function openUsageStats() {
+    document.getElementById('usageStatsModal').style.display = 'block';
+    const el = document.getElementById('usageStatsContent');
+    el.innerHTML = '<div style="text-align:center;padding:1.5rem;color:#A79A8B;font-size:0.85rem;">กำลังโหลด...</div>';
+
+    try {
+        const res = await fetch('api/bookings.php');
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message);
+
+        const today = new Date().toISOString().slice(0, 10);
+        const todayBookings = data.bookings.filter(b => b.start_time && b.start_time.startsWith(today));
+        const total = todayBookings.length;
+        const pending = todayBookings.filter(b => b.status === 'pending').length;
+        const approved = todayBookings.filter(b => b.status === 'approved').length;
+        const rejected = todayBookings.filter(b => b.status === 'rejected').length;
+
+        // Top rooms today
+        const roomCount = {};
+        todayBookings.forEach(b => { if (b.room_name) roomCount[b.room_name] = (roomCount[b.room_name] || 0) + 1; });
+        const topRooms = Object.entries(roomCount).sort((a,b) => b[1]-a[1]).slice(0, 3);
+
+        const statBox = (icon, label, val, color) => `
+            <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;background:#F9F8F6;border-radius:0.75rem;border:1px solid #EBE6DA;">
+                <div style="width:36px;height:36px;border-radius:0.6rem;background:${color}20;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="${icon}" style="color:${color};font-size:0.9rem;"></i>
+                </div>
+                <div style="flex:1;">
+                    <div style="font-size:0.68rem;color:#A79A8B;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">${label}</div>
+                    <div style="font-size:1.1rem;font-weight:900;color:#6A5243;">${val}</div>
+                </div>
+            </div>`;
+
+        el.innerHTML = `
+            ${statBox('fas fa-calendar-check','การจองวันนี้ทั้งหมด', total + ' รายการ', '#6A5243')}
+            ${statBox('fas fa-clock','รออนุมัติ', pending + ' รายการ', '#d97706')}
+            ${statBox('fas fa-check-circle','อนุมัติแล้ว', approved + ' รายการ', '#16a34a')}
+            ${statBox('fas fa-times-circle','ไม่อนุมัติ', rejected + ' รายการ', '#dc2626')}
+            ${topRooms.length ? `
+            <div style="margin-top:0.5rem;padding-top:0.75rem;border-top:1px solid #EBE6DA;">
+                <div style="font-size:0.72rem;font-weight:700;color:#A79A8B;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">ห้องที่ใช้งานบ่อยวันนี้</div>
+                ${topRooms.map(([name, cnt], i) => `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.75rem;background:${i===0?'rgba(106,82,67,0.05)':'transparent'};border-radius:0.5rem;margin-bottom:3px;">
+                    <span style="font-size:0.82rem;font-weight:600;color:#4A3A2F;">${name}</span>
+                    <span style="font-size:0.75rem;font-weight:800;color:#6A5243;background:#EBE6DA;padding:0.15rem 0.5rem;border-radius:99px;">${cnt} ครั้ง</span>
+                </div>`).join('')}
+            </div>` : ''}
+            <div style="text-align:center;font-size:0.68rem;color:#C9BCB0;margin-top:0.5rem;">ข้อมูล ณ วันที่ ${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</div>
+        `;
+    } catch(e) {
+        el.innerHTML = `<div style="text-align:center;padding:1.5rem;color:#dc2626;font-size:0.85rem;">โหลดข้อมูลไม่สำเร็จ</div>`;
+    }
+}
+
+function closeUsageStats() {
+    document.getElementById('usageStatsModal').style.display = 'none';
+}
 </script>
