@@ -54,8 +54,14 @@ try {
         }
 
         // Full start/end times
+        // Safeguard: normalize meeting_date to CE (ค.ศ.) in case frontend sent BE year (พ.ศ.)
+        $meetingDate = preg_replace_callback('/^(\d{4})/', function($m) {
+            $year = (int)$m[1];
+            return $year > 2400 ? ($year - 543) : $year;
+        }, $meetingDate ?? '');
+
         $fullStart = $meetingDate . ' ' . $startTime;
-        $fullEnd = $meetingDate . ' ' . $endTime;
+        $fullEnd   = $meetingDate . ' ' . $endTime;
 
         // Handle File Upload
         $attachmentPath = null;

@@ -894,7 +894,7 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
                 let month = String(arg.date.getMonth() + 1).padStart(2, '0');
                 let day   = String(arg.date.getDate()).padStart(2, '0');
                 let md    = month + '-' + day;
-                let dateStr = arg.date.toISOString().slice(0, 10);
+                let dateStr = arg.date.getFullYear() + '-' + String(arg.date.getMonth() + 1).padStart(2, '0') + '-' + String(arg.date.getDate()).padStart(2, '0');
 
                 let frame = arg.el.querySelector('.fc-daygrid-day-frame');
                 let top   = arg.el.querySelector('.fc-daygrid-day-top');

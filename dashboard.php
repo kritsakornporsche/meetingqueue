@@ -48,13 +48,9 @@ $view = $_GET['view'] ?? 'calendar';
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar Overlay for Mobile -->
-        <div id="sidebarOverlay" class="sidebar-overlay"></div>
-        
-        <?php include 'includes/sidebar.php'; ?>
-
         <main>
             <?php include 'includes/header.php'; ?>
+
 
             <div class="content-wrapper animate-fade">
                 <?php

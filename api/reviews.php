@@ -13,10 +13,15 @@ try {
     if ($method === 'GET') {
         $booking_id = $_GET['booking_id'] ?? null;
         if ($booking_id) {
-            $stmt = $db->prepare("SELECT COUNT(*) FROM meeting_reviews WHERE booking_id = :booking_id AND user_id = :user_id");
-            $stmt->execute([':booking_id' => $booking_id, ':user_id' => $_SESSION['user_id']]);
-            $count = $stmt->fetchColumn();
-            jsonResponse(['success' => true, 'has_review' => $count > 0]);
+            try {
+                $stmt = $db->prepare("SELECT COUNT(*) FROM meeting_reviews WHERE booking_id = :booking_id AND user_id = :user_id");
+                $stmt->execute([':booking_id' => $booking_id, ':user_id' => $_SESSION['user_id']]);
+                $count = $stmt->fetchColumn();
+                jsonResponse(['success' => true, 'has_review' => $count > 0]);
+            } catch (Exception $tableErr) {
+                // Table may not exist yet
+                jsonResponse(['success' => true, 'has_review' => false]);
+            }
         } else {
             jsonResponse(['success' => false, 'message' => 'Missing booking_id'], 400);
         }

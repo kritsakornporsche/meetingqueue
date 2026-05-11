@@ -12,8 +12,19 @@ const MeetQueue = (() => {
 
     // Shared Utilities
     const utils = {
+        // Normalize dateStr: if year > 2400, it was stored as Buddhist Era — subtract 543
+        _normalizeDateStr: (dateStr) => {
+            if (!dateStr) return dateStr;
+            const yearMatch = dateStr.match(/^(\d{4})/);
+            if (yearMatch && parseInt(yearMatch[1], 10) > 2400) {
+                const ceYear = parseInt(yearMatch[1], 10) - 543;
+                return dateStr.replace(/^\d{4}/, ceYear.toString());
+            }
+            return dateStr;
+        },
         formatDate: (dateStr) => {
             if (!dateStr) return '-';
+            dateStr = utils._normalizeDateStr(dateStr);
             const d = new Date(dateStr + (dateStr.length === 10 ? 'T00:00:00' : ''));
             if (isNaN(d)) return dateStr;
             // th-TH uses Buddhist Era (พ.ศ.) — year is CE+543
@@ -21,6 +32,7 @@ const MeetQueue = (() => {
         },
         formatDateLong: (dateStr) => {
             if (!dateStr) return '-';
+            dateStr = utils._normalizeDateStr(dateStr);
             const d = new Date(dateStr + (dateStr.length === 10 ? 'T00:00:00' : ''));
             if (isNaN(d)) return dateStr;
             return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric', calendar: 'buddhist' });
@@ -85,16 +97,19 @@ const MeetQueue = (() => {
         },
         initDatePickers: () => {
             if (typeof flatpickr !== 'undefined') {
+                const valueFormat = "Y-m-d"; // Value stored in hidden input (MUST stay CE)
+                const displayFormat = "d/m/Y"; // Shown to user (will be converted to BE)
+
                 flatpickr('input[type="date"]', {
                     locale: "th",
-                    dateFormat: "Y-m-d", // Value stored
+                    dateFormat: valueFormat,
                     altInput: true,
-                    altFormat: "d/m/Y", // Base format, replaced below
-                    disableMobile: true, // Force flatpickr on mobile
+                    altFormat: displayFormat,
+                    disableMobile: true,
                     formatDate: (date, format, locale) => {
                         let str = flatpickr.formatDate(date, format);
-                        // Apply Buddhist Era for 'Y' or 'y' formats
-                        if (format.indexOf('Y') !== -1) {
+                        // ONLY apply Buddhist Era to DISPLAY format, NOT to value format
+                        if (format === displayFormat && format.indexOf('Y') !== -1) {
                             str = str.replace(date.getFullYear().toString(), (date.getFullYear() + 543).toString());
                         }
                         return str;
@@ -102,7 +117,7 @@ const MeetQueue = (() => {
                     onReady: function(selectedDates, dateStr, instance) {
                         const yearInput = instance.currentYearElement;
                         if (yearInput) {
-                            // 1. Intercept DOM value setter to prevent Flatpickr from writing CE year
+                            // Intercept DOM value setter to show BE year in calendar header
                             const nativeInputValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
                             Object.defineProperty(yearInput, 'value', {
                                 get: function() {
@@ -110,7 +125,6 @@ const MeetQueue = (() => {
                                 },
                                 set: function(val) {
                                     let newVal = parseInt(val, 10);
-                                    // If Flatpickr tries to write a CE year (1900-2400), convert to BE
                                     if (newVal > 1900 && newVal < 2400) {
                                         newVal += 543;
                                     }
@@ -118,13 +132,11 @@ const MeetQueue = (() => {
                                 }
                             });
 
-                            // Initialize with BE year (triggers our setter)
                             yearInput.value = instance.currentYear;
 
-                            // 2. Intercept Flatpickr's changeYear to handle user typing BE year
+                            // Intercept changeYear to handle user typing BE year
                             const origChangeYear = instance.changeYear;
                             instance.changeYear = function(year, jump, step) {
-                                // If the user types a Buddhist year (e.g., 2569)
                                 if (year > 2400) {
                                     year -= 543;
                                 }
@@ -175,9 +187,28 @@ const MeetQueue = (() => {
 document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.add('ready');
     
-    // Bind global events
-    document.getElementById('mobileMenuBtn')?.addEventListener('click', MeetQueue.ui.toggleMenu);
-    document.getElementById('sidebarOverlay')?.addEventListener('click', MeetQueue.ui.toggleMenu);
+    // Hamburger Menu Toggle
+    const hamburgerBtn = document.getElementById('hamburgerMenuBtn');
+    const popupMenu = document.getElementById('popupMenu');
+    const popupOverlay = document.getElementById('popupMenuOverlay');
+    const popupClose = document.getElementById('popupMenuClose');
+
+    function togglePopupMenu() {
+        const isOpen = popupMenu?.classList.toggle('open');
+        hamburgerBtn?.classList.toggle('active', isOpen);
+        popupOverlay?.classList.toggle('show', isOpen);
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+    function closePopupMenu() {
+        popupMenu?.classList.remove('open');
+        hamburgerBtn?.classList.remove('active');
+        popupOverlay?.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    hamburgerBtn?.addEventListener('click', togglePopupMenu);
+    popupOverlay?.addEventListener('click', closePopupMenu);
+    popupClose?.addEventListener('click', closePopupMenu);
     
     // Initialize custom date pickers
     MeetQueue.ui.initDatePickers();
