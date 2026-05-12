@@ -7,8 +7,11 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $repo = new BookingRepository();
-$roomStats = $repo->getRoomUsageStats();
-$deptStats = $repo->getDepartmentStats();
+$selectedDate = $_GET['date'] ?? date('Y-m-d');
+
+// Fetch stats filtered by date
+$roomStats = $repo->getRoomUsageStats($selectedDate);
+$deptStats = $repo->getDepartmentStats($selectedDate);
 
 // Prepare data for Room Usage (Count)
 $roomLabels = [];
@@ -28,8 +31,13 @@ foreach ($deptStats as $stat) {
     $deptCounts[] = (int)$stat['total_bookings'];
 }
 
-// Prepare data for Equipment Stats
-$allBookings = $repo->getAll(['exclude_status' => 'cancelled']);
+// Prepare data for Equipment Stats (Filtered by day)
+$dayBookings = $repo->getAll([
+    'start' => $selectedDate . ' 00:00:00',
+    'end' => $selectedDate . ' 23:59:59',
+    'exclude_status' => 'cancelled'
+]);
+
 $eqStats = [
     'โปรเจกเตอร์' => 0,
     'ทีวี' => 0,
@@ -37,10 +45,9 @@ $eqStats = [
     'ไมโครโฟน' => 0
 ];
 
-foreach ($allBookings as $b) {
+foreach ($dayBookings as $b) {
     $desc = strtolower($b['description'] ?? '');
     foreach ($eqStats as $key => &$count) {
-        // Simple string matching to count equipment requests
         if (strpos($desc, $key) !== false || strpos($b['title'] ?? '', $key) !== false) {
             $count++;
         }
@@ -49,19 +56,21 @@ foreach ($allBookings as $b) {
 $eqLabels = array_keys($eqStats);
 $eqCounts = array_values($eqStats);
 
-// Prepare data for Daily Gantt Chart (Today)
-$today = date('Y-m-d');
-$todayBookings = array_filter($allBookings, function($b) use ($today) {
-    return strpos($b['start_time'], $today) === 0 && $b['status'] !== 'rejected' && $b['status'] !== 'cancelled';
+// Prepare data for Daily Gantt Chart (Selected Date)
+$todayBookings = array_filter($dayBookings, function($b) {
+    return $b['status'] !== 'rejected' && $b['status'] !== 'cancelled';
 });
 
 // Group by room
 $roomsForGantt = [];
-foreach ($roomStats as $stat) {
-    $roomsForGantt[$stat['name']] = []; // initialize
+// Get all rooms first to show empty ones
+$db = \App\Core\Database::getInstance()->getConnection();
+$stmt = $db->query("SELECT name FROM rooms ORDER BY id");
+while($row = $stmt->fetch()) {
+    $roomsForGantt[$row['name']] = [];
 }
 
-// Convert times to decimal hours (e.g. 09:30 -> 9.5)
+// Convert times to decimal hours
 foreach ($todayBookings as $b) {
     $roomName = $b['room_name'] ?? 'ภายนอก';
     if (!isset($roomsForGantt[$roomName])) {
@@ -90,13 +99,76 @@ foreach ($todayBookings as $b) {
 $startHour = 8;
 $endHour = 18;
 $totalHours = $endHour - $startHour;
+
+// Format display date
+$thai_months = [
+    '01' => 'ม.ค.', '02' => 'ก.พ.', '03' => 'มี.ค.', '04' => 'เม.ย.',
+    '05' => 'พ.ค.', '06' => 'มิ.ย.', '07' => 'ก.ค.', '08' => 'ส.ค.',
+    '09' => 'ก.ย.', '10' => 'ต.ค.', '11' => 'พ.ย.', '12' => 'ธ.ค.'
+];
+$time = strtotime($selectedDate);
+$displayDate = date('j', $time) . ' ' . $thai_months[date('m', $time)] . ' ' . (date('Y', $time) + 543);
 ?>
 
-<div class="flex flex-col gap-6 w-full animate-fade">
-    <div class="flex flex-wrap justify-between items-center gap-4">
-        <h2 class="text-2xl font-bold text-[#6A5243] flex items-center gap-2">
-            <i class="fas fa-chart-pie text-[#D4B59D]"></i> สถิติการใช้งานห้องประชุม
-        </h2>
+<style>
+    /* Prevent the Christian year from showing when selected/highlighted */
+    .numInput.cur-year::selection {
+        background: transparent !important;
+        color: transparent !important;
+    }
+    .numInput.cur-year::-moz-selection {
+        background: transparent !important;
+        color: transparent !important;
+    }
+    .be-year-display {
+        user-select: none;
+    }
+</style>
+
+<div class="w-full flex flex-col gap-6 animate-fade">
+    <!-- Header Section -->
+    <div class="flex flex-col xl:flex-row xl:items-end justify-between gap-6 pb-2">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 rounded-3xl bg-[#6A5243] flex items-center justify-center text-white shadow-xl shadow-[#6A5243]/20 border-4 border-white">
+                <i class="fas fa-chart-pie text-2xl"></i>
+            </div>
+            <div>
+                <h2 class="text-3xl font-black text-[#6A5243] leading-tight tracking-tight">สถิติการใช้งานห้องประชุม</h2>
+                <div class="flex items-center gap-2 mt-1.5">
+                    <span class="w-2 h-2 rounded-full bg-[#D4B59D]"></span>
+                    <p class="text-sm font-bold text-[#A79A8B]">วิเคราะห์และติดตามข้อมูลการจองห้องประจำวัน</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter Container -->
+        <div class="flex items-center gap-4 self-start xl:self-auto">
+            <!-- Filter Box (Date Picker) -->
+            <div class="flex items-center gap-2 bg-white/95 backdrop-blur-md p-2 rounded-[3rem] border border-[#EBE6DA] shadow-xl min-w-[480px]">
+                <!-- Label Section -->
+                <div class="flex items-center gap-4 pl-6 pr-4 border-r border-[#EBE6DA]">
+                    <div class="w-10 h-10 rounded-full bg-[#D4B59D]/15 flex items-center justify-center text-[#D4B59D]">
+                        <i class="far fa-calendar-check text-lg"></i>
+                    </div>
+                    <span class="text-[0.8rem] font-black text-[#6A5243] uppercase tracking-widest whitespace-nowrap">เลือกวันที่ต้องการดู</span>
+                </div>
+                
+                <!-- Selection Section -->
+                <div class="flex items-center gap-4 flex-1 px-6 group">
+                    <i class="fas fa-calendar-alt text-[#D4B59D] text-lg group-hover:scale-110 transition-transform"></i>
+                    <input type="text" id="statsDatePicker" 
+                           class="flex-1 bg-transparent border-none outline-none text-[#6A5243] text-lg font-black cursor-pointer"
+                           value="<?= $selectedDate ?>">
+                </div>
+            </div>
+
+            <!-- Separate Today Button -->
+            <button onclick="window.location.href='?view=statistics'" 
+                    class="px-10 h-[50px] bg-[#6A5243] hover:bg-[#523E32] text-white text-[1rem] font-black uppercase tracking-wider rounded-full transition-all active:scale-95 shadow-xl shadow-[#6A5243]/30 flex items-center justify-center gap-3 whitespace-nowrap min-w-[90px] leading-relaxed">
+                <i class="fas fa-history text-lg opacity-90"></i>
+                วันนี้
+            </button>
+        </div>
     </div>
 
     <!-- Summary Cards -->
@@ -106,7 +178,7 @@ $totalHours = $endHour - $startHour;
                 <i class="fas fa-handshake"></i>
             </div>
             <div>
-                <div class="text-[0.65rem] font-black text-[#A79A8B] uppercase tracking-widest mb-1">จำนวนการจองทั้งหมด</div>
+                <div class="text-[0.65rem] font-black text-[#A79A8B] uppercase tracking-widest mb-1">จำนวนการจองประจำวัน</div>
                 <div class="text-3xl font-black text-[#6A5243] leading-none"><?= array_sum($roomCounts) ?> <span class="text-sm font-bold text-[#A79A8B] ml-1">ครั้ง</span></div>
             </div>
         </div>
@@ -116,7 +188,7 @@ $totalHours = $endHour - $startHour;
                 <i class="fas fa-clock"></i>
             </div>
             <div>
-                <div class="text-[0.65rem] font-black text-[#A79A8B] uppercase tracking-widest mb-1">เวลาใช้งานรวม</div>
+                <div class="text-[0.65rem] font-black text-[#A79A8B] uppercase tracking-widest mb-1">เวลาใช้งานรวมประจำวัน</div>
                 <div class="text-3xl font-black text-[#6A5243] leading-none"><?= array_sum($roomHours) ?> <span class="text-sm font-bold text-[#A79A8B] ml-1">ชั่วโมง</span></div>
             </div>
         </div>
@@ -143,9 +215,9 @@ $totalHours = $endHour - $startHour;
                         <i class="fas fa-stream"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-black text-[#6A5243] leading-none">ตารางการใช้ห้องประชุมวันนี้</h3>
+                        <h3 class="text-xl font-black text-[#6A5243] leading-none">ตารางการใช้ห้องประชุม</h3>
                         <p class="text-[0.65rem] font-bold text-[#A79A8B] mt-1.5 flex items-center gap-1">
-                            <i class="far fa-calendar-alt opacity-50"></i> ประจำวันที่ <?= date('d/m/') . (date('Y') + 543) ?>
+                            <i class="far fa-calendar-alt opacity-50"></i> ประจำวันที่ <?= $displayDate ?>
                         </p>
                     </div>
                 </div>
@@ -365,8 +437,83 @@ $totalHours = $endHour - $startHour;
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Date Picker
+    flatpickr("#statsDatePicker", {
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altInputClass: "flex-1 bg-transparent border-none outline-none text-[#6A5243] text-lg font-black cursor-pointer",
+        altFormat: "j F Y",
+        locale: "th",
+        formatDate: (date, format, locale) => {
+            if (format === "j F Y") {
+                const day = date.getDate();
+                const month = locale.months.longhand[date.getMonth()];
+                const year = date.getFullYear() + 543;
+                return `${day} ${month} ${year}`;
+            }
+            return flatpickr.formatDate(date, format);
+        },
+        onReady: function(selectedDates, dateStr, instance) {
+            const updateYear = () => {
+                const yearInput = instance.calendarContainer.querySelector('.numInput.cur-year');
+                if (yearInput) {
+                    const adYear = parseInt(yearInput.value);
+                    if (adYear < 2500) {
+                        if (yearInput.dataset.updating === "true") return;
+                        yearInput.dataset.updating = "true";
+                        
+                        yearInput.style.setProperty('color', 'transparent', 'important');
+                        yearInput.style.setProperty('opacity', '1', 'important');
+                        
+                        let beDisplay = yearInput.parentNode.querySelector('.be-year-display');
+                        if (!beDisplay) {
+                            beDisplay = document.createElement('div');
+                            beDisplay.className = 'be-year-display absolute flex items-center justify-center pointer-events-none';
+                            // Match the lighter style of the month name
+                            beDisplay.style.cssText = `
+                                position: absolute; top: 0; bottom: 0; left: 0; width: 75%; 
+                                display: flex; align-items: center; justify-content: center; 
+                                pointer-events: none; color: #484848; 
+                                font-family: inherit; 
+                                font-weight: 500; font-size: 1.1rem;
+                                z-index: 5; background: transparent;
+                            `;
+                            yearInput.parentNode.style.position = 'relative';
+                            yearInput.parentNode.appendChild(beDisplay);
+                        }
+                        
+                        const beYear = adYear + 543;
+                        if (beDisplay.innerText !== beYear.toString()) {
+                            beDisplay.innerText = beYear;
+                        }
+                        
+                        yearInput.dataset.updating = "false";
+                    }
+                }
+            };
+            
+            const syncYear = () => {
+                updateYear();
+                if (instance.isOpen) requestAnimationFrame(syncYear);
+            };
+
+            instance.config.onOpen.push(() => {
+                updateYear();
+                requestAnimationFrame(syncYear);
+            });
+            
+            instance.config.onMonthChange.push(updateYear);
+            instance.config.onYearChange.push(updateYear);
+        },
+        onChange: function(selectedDates, dateStr) {
+            window.location.href = `?view=statistics&date=${dateStr}`;
+        }
+    });
+
     // Shared Colors (Earth Tone)
     const earthColors = [
         '#6A5243', '#D4B59D', '#A79A8B', '#8C7462', '#E6D6BD', '#523E32', '#C2A38A', '#9B8C7D'

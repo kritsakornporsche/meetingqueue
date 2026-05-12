@@ -158,25 +158,23 @@ $chartData = json_encode(array_values($roomStats));
         <form method="GET" action="dashboard.php" class="flex flex-nowrap items-center gap-4">
             <input type="hidden" name="view" value="reports">
             <div class="relative flex-shrink-0">
-                <select name="month" class="pl-5 pr-12 py-3.5 rounded-2xl border border-[#D4B59D]/40 focus:outline-none focus:border-[#D4B59D] bg-white text-[#6A5243] text-[0.95rem] font-bold shadow-sm cursor-pointer appearance-none min-w-[170px] transition-all hover:border-[#D4B59D]" style="-webkit-appearance: none; -moz-appearance: none;">
+                <select name="month" class="pl-5 pr-10 py-3.5 rounded-2xl border border-[#D4B59D]/40 focus:outline-none focus:border-[#D4B59D] bg-white text-[#6A5243] text-[0.95rem] font-bold shadow-sm cursor-pointer min-w-[170px] transition-all hover:border-[#D4B59D]">
                     <?php foreach($thai_months as $num => $name): ?>
                         <option value="<?= $num ?>" <?= ($month == $num) ? 'selected' : '' ?>><?= $name ?></option>
                     <?php endforeach; ?>
                 </select>
-                <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-[#D4B59D] pointer-events-none text-xs"></i>
             </div>
             <div class="relative flex-shrink-0">
-                <select name="year" class="pl-5 pr-12 py-3.5 rounded-2xl border border-[#D4B59D]/40 focus:outline-none focus:border-[#D4B59D] bg-white text-[#6A5243] text-[0.95rem] font-bold shadow-sm cursor-pointer appearance-none min-w-[130px] transition-all hover:border-[#D4B59D]" style="-webkit-appearance: none; -moz-appearance: none;">
+                <select name="year" class="pl-5 pr-10 py-3.5 rounded-2xl border border-[#D4B59D]/40 focus:outline-none focus:border-[#D4B59D] bg-white text-[#6A5243] text-[0.95rem] font-bold shadow-sm cursor-pointer min-w-[130px] transition-all hover:border-[#D4B59D]">
                     <?php for($y = date('Y')-2; $y <= date('Y')+1; $y++): ?>
                         <option value="<?= $y ?>" <?= ($year == $y) ? 'selected' : '' ?>><?= $y + 543 ?></option>
                     <?php endfor; ?>
                 </select>
-                <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-[#D4B59D] pointer-events-none text-xs"></i>
             </div>
-            <button type="submit" class="flex-shrink-0 whitespace-nowrap px-10 py-3.5 rounded-2xl bg-white border border-[#D4B59D]/60 text-[#6A5243] text-[0.95rem] font-black shadow-sm hover:bg-[#FDFBF7] hover:border-[#D4B59D] transition-all active:scale-95">
+            <button type="submit" class="flex-shrink-0 whitespace-nowrap rounded-full bg-white border border-[#D4B59D]/60 text-[#6A5243] text-[0.95rem] font-bold shadow-sm hover:bg-[#FDFBF7] hover:border-[#6A5243] transition-all active:scale-95" style="padding: 0.875rem 1.75rem;">
                 ดูรายงาน
             </button>
-            <button type="button" onclick="window.print()" class="flex-shrink-0 whitespace-nowrap px-10 py-3.5 rounded-2xl bg-gradient-to-r from-[#D4B59D] to-[#6A5243] text-white text-[0.95rem] font-black shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all active:scale-95 flex items-center gap-2">
+            <button type="button" onclick="window.print()" class="flex-shrink-0 whitespace-nowrap rounded-full bg-gradient-to-br from-[#6A5243] to-[#523E32] text-white text-[0.95rem] font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all active:scale-95 flex items-center gap-2" style="padding: 0.875rem 1.75rem;">
                 <i class="fas fa-file-pdf"></i> ออกรายงาน PDF
             </button>
         </form>

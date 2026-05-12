@@ -12,10 +12,12 @@ class BookingRepository {
     }
 
     public function getAll(array $filters = []) {
-        $sql = "SELECT b.*, r.name as room_name, r.location, u.first_name, u.last_name, u.emp_code, u.dept_name as user_dept 
+        $sql = "SELECT b.*, r.name as room_name, r.location, u.first_name, u.last_name, u.emp_code, u.dept_name as user_dept,
+                GROUP_CONCAT(DISTINCT CONCAT(bi.id, ':', bi.image_path) SEPARATOR '|') as image_list
                 FROM bookings b 
                 LEFT JOIN rooms r ON b.room_id = r.id 
                 JOIN users u ON b.user_id = u.id 
+                LEFT JOIN booking_images bi ON b.id = bi.booking_id
                 WHERE 1=1";
         $params = [];
 
@@ -67,7 +69,7 @@ class BookingRepository {
         }
 
         $order = (!empty($filters['upcoming'])) ? "ASC" : "DESC";
-        $sql .= " ORDER BY b.start_time $order";
+        $sql .= " GROUP BY b.id ORDER BY b.start_time $order";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
@@ -144,24 +146,37 @@ class BookingRepository {
         return $stmt->execute([':id' => $id]);
     }
 
-    public function getRoomUsageStats() {
+    public function getRoomUsageStats($date = null) {
         $sql = "SELECT r.name, COUNT(b.id) as total_bookings, SUM(TIMESTAMPDIFF(MINUTE, b.start_time, b.end_time)) / 60 as total_hours 
                 FROM rooms r 
-                LEFT JOIN bookings b ON r.id = b.room_id AND b.deleted_at IS NULL
-                GROUP BY r.id, r.name";
+                LEFT JOIN bookings b ON r.id = b.room_id AND b.deleted_at IS NULL";
+        
+        $params = [];
+        if ($date) {
+            $sql .= " AND DATE(b.start_time) = :date";
+            $params[':date'] = $date;
+        }
+
+        $sql .= " GROUP BY r.id, r.name";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
-    public function getDepartmentStats() {
+    public function getDepartmentStats($date = null) {
         $sql = "SELECT department_name, COUNT(*) as total_bookings 
                 FROM bookings 
-                WHERE department_name IS NOT NULL AND deleted_at IS NULL
-                GROUP BY department_name 
-                ORDER BY total_bookings DESC";
+                WHERE department_name IS NOT NULL AND deleted_at IS NULL";
+        
+        $params = [];
+        if ($date) {
+            $sql .= " AND DATE(start_time) = :date";
+            $params[':date'] = $date;
+        }
+
+        $sql .= " GROUP BY department_name ORDER BY total_bookings DESC";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 }
