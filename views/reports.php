@@ -110,38 +110,56 @@ $chartData = json_encode(array_values($roomStats));
             size: A4 landscape;
             margin: 1cm;
         }
-        body {
-            background: white !important;
+        
+        /* Override global hidden visibility from style.css */
+        body * {
+            visibility: hidden !important;
         }
-        aside, header, .no-print {
-            display: none !important;
+        
+        #printable-report, #printable-report * {
+            visibility: visible !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
-        main, .app-container, .content-wrapper {
+        
+        #printable-report {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
             margin: 0 !important;
             padding: 0 !important;
-            width: 100% !important;
-            max-width: none !important;
+            display: block !important;
         }
+
+        aside, header, .no-print, .no-print * {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        
         .report-card {
             border: none !important;
             box-shadow: none !important;
             padding: 0 !important;
             width: 100% !important;
+            background: white !important;
         }
+        
         .report-table {
             width: 100% !important;
+            border: 1px solid #000 !important;
         }
+        
+        .report-table th, .report-table td {
+            border: 1px solid #000 !important;
+            color: black !important;
+        }
+        
         .report-table th {
             background-color: #f3f4f6 !important;
-            -webkit-print-color-adjust: exact;
-            color: black !important;
         }
-        .report-table tfoot th {
-            background-color: #e5e7eb !important;
-            -webkit-print-color-adjust: exact;
-            color: black !important;
-        }
-        .report-title, .report-subtitle, .report-table td {
+        
+        .report-title, .report-subtitle {
             color: black !important;
         }
     }
@@ -189,9 +207,9 @@ $chartData = json_encode(array_values($roomStats));
         
         <!-- Chart Section -->
         <?php if(count($roomStats) > 0): ?>
-        <div class="mb-8 p-6 bg-white border border-[#EBE6DA] rounded-2xl shadow-sm no-print">
+        <div class="mb-8 p-6 no-print">
             <h3 class="text-lg font-bold text-[#6A5243] mb-4 text-center">สถิติการใช้งานห้องประชุม (ครั้ง)</h3>
-            <div style="height: 300px; position: relative; margin: 0 auto; max-width: 800px;">
+            <div style="height: 350px; position: relative; margin: 0 auto; max-width: 1100px;">
                 <canvas id="roomUsageChart"></canvas>
             </div>
         </div>

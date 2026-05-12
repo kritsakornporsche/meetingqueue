@@ -3,30 +3,30 @@ if (($_SESSION['user_data']['role'] ?? 'user') !== 'admin') {
     exit('Unauthorized access');
 }
 
-$page_title = 'ถังขยะ (Trash)';
+$page_title = 'ถังขยะ';
 $page_subtitle = 'รายการที่ถูกลบชั่วคราว คุณสามารถกู้คืนหรือลบทิ้งถาวรได้ที่นี่';
 ?>
 
 <div class="flex flex-col gap-6 w-full animate-fade">
     <!-- Header Section -->
-    <div class="bg-white p-8 rounded-[3rem] border border-accent/30 shadow-sm relative overflow-hidden">
+    <div class="bg-white p-8 rounded-[1.5rem] border border-accent/30 shadow-sm relative overflow-hidden">
         <div class="absolute top-0 right-0 w-64 h-64 bg-red-500/5 rounded-full -mr-32 -mt-32"></div>
         <div class="flex items-center gap-6 relative z-10">
-            <div class="w-16 h-16 rounded-[2rem] bg-red-500 flex items-center justify-center text-white shadow-xl shadow-red-500/20">
+            <div class="w-17.5 h-17.5 rounded-[2rem] bg-red-500 flex items-center justify-center text-white shadow-xl shadow-red-500/20">
                 <i class="fas fa-trash-alt text-2xl"></i>
             </div>
             <div class="flex-grow">
                 <h1 class="text-3xl font-black text-primary tracking-tight"><?= $page_title ?></h1>
                 <p class="text-text-muted font-bold opacity-80"><?= $page_subtitle ?></p>
             </div>
-            <a href="dashboard.php?view=admin_management" class="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-primary/90 transition-all">
+            <a href="dashboard.php?view=admin_management" class="min-w-[160px] h-[45px] px-8 bg-primary text-white rounded-[2rem] text-sm font-black flex items-center justify-center gap-2 hover:bg-primary/90 hover:shadow-lg transition-all shadow-md">
                 <i class="fas fa-arrow-left"></i> กลับไปหน้าจัดการ
             </a>
         </div>
     </div>
 
     <!-- Trash Table Card -->
-    <div class="bg-white rounded-[3rem] shadow-sm border border-accent/30 overflow-hidden">
+    <div class="bg-white rounded-[1rem] shadow-sm border border-accent/30 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -79,12 +79,12 @@ $page_subtitle = 'รายการที่ถูกลบชั่วคร�
                         ${new Date(b.deleted_at).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short', calendar: 'buddhist' })}
                     </td>
                     <td class="px-6 py-4">
-                        <div class="flex justify-center gap-2">
-                            <button onclick="restoreBooking(${b.id})" class="px-3 py-1.5 rounded-lg bg-green-100 text-green-600 font-bold text-xs hover:bg-green-600 hover:text-white transition-all shadow-sm">
-                                <i class="fas fa-undo mr-1"></i> กู้คืน
+                        <div class="flex justify-center gap-3">
+                            <button onclick="restoreBooking(${b.id})" class="min-w-[100px] h-[40px] px-6 rounded-full bg-green-50 text-green-600 font-black text-xs flex items-center justify-center gap-2 hover:bg-green-600 hover:text-white transition-all shadow-sm border border-green-200/50">
+                                <i class="fas fa-undo"></i> กู้คืน
                             </button>
-                            <button onclick="permanentDelete(${b.id})" class="px-3 py-1.5 rounded-lg bg-red-100 text-red-600 font-bold text-xs hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                                <i class="fas fa-times mr-1"></i> ลบทิ้งถาวร
+                            <button onclick="permanentDelete(${b.id})" class="min-w-[100px] h-[40px] px-6 rounded-full bg-red-50 text-red-600 font-black text-xs flex items-center justify-center gap-2 hover:bg-red-600 hover:text-white transition-all shadow-sm border border-red-200/50">
+                                <i class="fas fa-times"></i> ลบทิ้งถาวร
                             </button>
                         </div>
                     </td>

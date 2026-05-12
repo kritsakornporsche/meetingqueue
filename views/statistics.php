@@ -135,7 +135,7 @@ $displayDate = date('j', $time) . ' ' . $thai_months[date('m', $time)] . ' ' . (
             <div>
                 <h2 class="text-3xl font-black text-[#6A5243] leading-tight tracking-tight">สถิติการใช้งานห้องประชุม</h2>
                 <div class="flex items-center gap-2 mt-1.5">
-                    <span class="w-2 h-2 rounded-full bg-[#D4B59D]"></span>
+                    <span class="w-2 h-10 rounded-full bg-[#D4B59D]"></span>
                     <p class="text-sm font-bold text-[#A79A8B]">วิเคราะห์และติดตามข้อมูลการจองห้องประจำวัน</p>
                 </div>
             </div>
@@ -144,7 +144,7 @@ $displayDate = date('j', $time) . ' ' . $thai_months[date('m', $time)] . ' ' . (
         <!-- Filter Container -->
         <div class="flex items-center gap-4 self-start xl:self-auto">
             <!-- Filter Box (Date Picker) -->
-            <div class="flex items-center gap-2 bg-white/95 backdrop-blur-md p-2 rounded-[3rem] border border-[#EBE6DA] shadow-xl min-w-[480px]">
+            <div class="flex items-center gap-2 bg-white/95 backdrop-blur-md p-2 rounded-[3rem] border border-[#EBE6DA] shadow-xl min-w-[200px]">
                 <!-- Label Section -->
                 <div class="flex items-center gap-4 pl-6 pr-4 border-r border-[#EBE6DA]">
                     <div class="w-10 h-10 rounded-full bg-[#D4B59D]/15 flex items-center justify-center text-[#D4B59D]">
@@ -211,7 +211,7 @@ $displayDate = date('j', $time) . ' ' . $thai_months[date('m', $time)] . ' ' . (
         <div class="bg-white rounded-[1.5rem] p-8 shadow-sm border border-[#EBE6DA]/60 lg:col-span-2 overflow-hidden">
             <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
                 <div class="flex items-center gap-4 p-2 pl-0">
-                    <div class="w-12 h-12 rounded-2xl bg-[#D4B59D]/10 flex items-center justify-center text-[#D4B59D] text-xl shadow-sm border border-[#D4B59D]/20">
+                    <div class="w-12 h-14 rounded-2xl bg-[#D4B59D]/10 flex items-center justify-center text-[#D4B59D] text-xl shadow-sm border border-[#D4B59D]/20">
                         <i class="fas fa-stream"></i>
                     </div>
                     <div>
@@ -221,14 +221,14 @@ $displayDate = date('j', $time) . ' ' . $thai_months[date('m', $time)] . ' ' . (
                         </p>
                     </div>
                 </div>
-                <div class="flex items-center gap-5 px-5 py-3 bg-[#F9F8F6] rounded-[1.25rem] border border-[#EBE6DA]/60 shadow-inner-light">
+                <div class="flex items-center gap-8 px-5 py-3 bg-[#F9F8F6] rounded-[1.25rem] border border-[#EBE6DA]/60 shadow-inner-light">
                     <div class="flex items-center gap-2.5">
                         <span class="w-3.5 h-3.5 rounded-full bg-[#10b981] shadow-sm border border-white"></span>
-                        <span class="text-[0.7rem] font-black text-[#6A5243] uppercase tracking-wider">อนุมัติแล้ว</span>
+                        <span class="text-[0.9rem] font-black text-[#6A5243] uppercase tracking-wider">อนุมัติแล้ว</span>
                     </div>
                     <div class="flex items-center gap-2.5">
                         <span class="w-3.5 h-3.5 rounded-full bg-[#f59e0b] shadow-sm border border-white"></span>
-                        <span class="text-[0.7rem] font-black text-[#6A5243] uppercase tracking-wider">รออนุมัติ</span>
+                        <span class="text-[0.9rem] font-black text-[#6A5243] uppercase tracking-wider">รออนุมัติ</span>
                     </div>
                 </div>
             </div>
@@ -521,28 +521,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 1. Room Count Chart (Bar)
     const ctxRoomCount = document.getElementById('roomCountChart').getContext('2d');
+    
+    // Process labels for wrapping (multi-line) like in reports view
+    const rawLabels = <?= json_encode($roomLabels) ?>;
+    const multiLineLabels = rawLabels.map(label => {
+        if (label.includes('(')) {
+            return label.split('(').map((s, i) => i === 0 ? s.trim() : '(' + s.trim());
+        }
+        if (label.length > 15) {
+            return [label.substring(0, 15), label.substring(15)];
+        }
+        return label;
+    });
+
     new Chart(ctxRoomCount, {
         type: 'bar',
         data: {
-            labels: <?= json_encode($roomLabels) ?>,
+            labels: multiLineLabels,
             datasets: [{
                 label: 'จำนวนครั้งที่ใช้งาน',
                 data: <?= json_encode($roomCounts) ?>,
                 backgroundColor: '#D4B59D',
                 hoverBackgroundColor: '#6A5243',
-                borderRadius: 12,
-                barThickness: 32
+                borderColor: '#6A5243',
+                borderWidth: 1,
+                borderRadius: 8,
+                barThickness: 'flex',
+                maxBarThickness: 40
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: { bottom: 20 }
+            },
             plugins: { 
                 legend: { display: false },
                 tooltip: {
                     backgroundColor: 'rgba(106, 82, 67, 0.9)',
-                    titleFont: { size: 13, weight: 'bold', family: 'Outfit' },
-                    bodyFont: { size: 12, family: 'Outfit' },
+                    titleFont: { size: 13, weight: 'bold', family: 'Sarabun, Outfit' },
+                    bodyFont: { size: 12, family: 'Sarabun, Outfit' },
                     padding: 12,
                     cornerRadius: 12,
                     displayColors: false
@@ -552,15 +571,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 y: { 
                     beginAtZero: true, 
                     grid: { color: '#F3F0E6' },
-                    ticks: { font: { family: 'Outfit', weight: 'bold' }, color: '#A79A8B' }
+                    ticks: { 
+                        stepSize: 1,
+                        font: { family: 'Outfit', weight: 'bold', size: 11 }, 
+                        color: '#A79A8B' 
+                    }
                 },
                 x: { 
                     grid: { display: false },
                     ticks: { 
-                        font: { family: 'Outfit', size: 10, weight: 'bold' }, 
+                        font: { family: 'Sarabun, Outfit', size: 9, weight: 'bold' }, 
                         color: '#A79A8B',
-                        maxRotation: 45,
-                        minRotation: 45
+                        maxRotation: 0,
+                        minRotation: 0
                     } 
                 }
             }
@@ -583,14 +606,17 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: 30
+            },
             plugins: {
                 legend: { 
                     position: 'right', 
                     labels: { 
                         usePointStyle: true,
                         pointStyle: 'circle',
-                        padding: 20,
-                        font: { family: 'Outfit, Sarabun', size: 11, weight: 'bold' },
+                        padding: 15,
+                        font: { family: 'Outfit, Sarabun', size: 10, weight: 'bold' },
                         color: '#6A5243'
                     } 
                 },
@@ -601,7 +627,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     bodyFont: { family: 'Outfit' }
                 }
             },
-            cutout: '72%'
+            cutout: '75%'
         }
     });
 

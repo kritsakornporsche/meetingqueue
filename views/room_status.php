@@ -107,14 +107,36 @@ $current_time = time();
             }
 
             $is_active  = $current_meeting !== null;
-            $border_cls = $is_active ? 'border-red-300' : 'border-[#EBE6DA]';
-            $inner_bg   = $is_active ? 'bg-red-50'      : 'bg-[#F9F8F6]';
+            $has_next   = $next_meeting !== null;
+
+            if ($is_active) {
+                $status_label  = 'กำลังประชุมอยู่';
+                $status_color  = '#dc2626'; // Red
+                $status_bg     = '#fee2e2';
+                $status_border = '#fca5a5';
+                $inner_bg      = '#fff5f5';
+                $status_icon   = '🔴';
+            } elseif ($has_next) {
+                $status_label  = 'การประชุมที่กำลังจะมาถึง';
+                $status_color  = '#d97706'; // Yellow/Orange
+                $status_bg     = '#fef3c7';
+                $status_border = '#fde68a';
+                $inner_bg      = '#fffbeb';
+                $status_icon   = '🟡';
+            } else {
+                $status_label  = 'ห้องว่าง';
+                $status_color  = '#16a34a'; // Green
+                $status_bg     = '#dcfce7';
+                $status_border = '#bbf7d0';
+                $inner_bg      = '#f0fdf4';
+                $status_icon   = '🟢';
+            }
         ?>
         <div data-room-id="<?= $room['id'] ?>" style="
             display: flex;
             flex-direction: column;
             border-radius: 1.5rem;
-            border: 2px solid <?= $is_active ? '#fca5a5' : '#EBE6DA' ?>;
+            border: 2px solid <?= $status_border ?>;
             background: white;
             box-shadow: 0 2px 12px rgba(106,82,67,0.06);
             overflow: hidden;
@@ -128,8 +150,9 @@ $current_time = time();
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border-bottom: 1px solid <?= $is_active ? '#fecaca' : '#F0EDE6' ?>;
-                background: <?= $is_active ? '#fff5f5' : '#FDFBF7' ?>;
+                border-bottom: 1px solid <?= $status_border ?>;
+                background: <?= $inner_bg ?>;
+                opacity: 0.9;
                 overflow: visible;
             ">
                 <h3 style="
@@ -156,31 +179,31 @@ $current_time = time();
                 align-items: center;
                 justify-content: center;
                 padding: 1.25rem;
-                background: <?= $is_active ? '#fff5f5' : '#F9F8F6' ?>;
+                background: <?= $inner_bg ?>;
                 min-height: 130px;
                 text-align: center;
             ">
                 <?php if ($is_active): ?>
-                    <div style="display:flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
-                        <span style="width:7px;height:7px;border-radius:50%;background:#ef4444;animation:pulse 1.5s infinite;display:inline-block;"></span>
+                    <div style="display:flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:700;color:<?= $status_color ?>;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
+                        <span style="width:7px;height:7px;border-radius:50%;background:<?= $status_color ?>;animation:pulse 1.5s infinite;display:inline-block;"></span>
                         กำลังใช้งาน
                     </div>
                     <p style="font-size:0.82rem;font-weight:700;color:#6A5243;margin:0 0 0.75rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
                         <?= htmlspecialchars($current_meeting['title']) ?>
                     </p>
                     <div class="countdown-timer" data-target="<?= $current_meeting['end_time'] ?>" data-type="end"
-                         style="font-size:1.5rem;font-weight:900;color:#dc2626;font-family:monospace;letter-spacing:0.05em;">
+                         style="font-size:1.5rem;font-weight:900;color:<?= $status_color ?>;font-family:monospace;letter-spacing:0.05em;">
                         00:00:00
                     </div>
-                <?php elseif ($next_meeting): ?>
-                    <div style="font-size:0.68rem;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
+                <?php elseif ($has_next): ?>
+                    <div style="font-size:0.68rem;font-weight:700;color:<?= $status_color ?>;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
                         เตรียมประชุมถัดไป
                     </div>
                     <p style="font-size:0.82rem;font-weight:700;color:#6A5243;opacity:0.7;margin:0 0 0.75rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
                         <?= htmlspecialchars($next_meeting['title']) ?>
                     </p>
                     <div class="countdown-timer" data-target="<?= $next_meeting['start_time'] ?>" data-type="start"
-                         style="font-size:1.5rem;font-weight:900;color:#2563eb;font-family:monospace;letter-spacing:0.05em;">
+                         style="font-size:1.5rem;font-weight:900;color:<?= $status_color ?>;font-family:monospace;letter-spacing:0.05em;">
                         00:00:00
                     </div>
                 <?php else: ?>
@@ -199,11 +222,11 @@ $current_time = time();
                 font-weight: 800;
                 letter-spacing: 0.12em;
                 text-transform: uppercase;
-                color: <?= $is_active ? '#dc2626' : '#16a34a' ?>;
-                background: <?= $is_active ? '#fee2e2' : '#dcfce7' ?>;
-                border-top: 1px solid <?= $is_active ? '#fecaca' : '#bbf7d0' ?>;
+                color: <?= $status_color ?>;
+                background: <?= $status_bg ?>;
+                border-top: 1px solid <?= $status_border ?>;
             ">
-                <?= $is_active ? '🔴 Occupied' : '🟢 Available' ?>
+                <?= $status_icon . ' ' . $status_label ?>
             </div>
         </div>
         <?php endforeach; ?>
@@ -223,8 +246,8 @@ function updateCountdowns() {
     const clockDisplay = document.getElementById('current-time-display');
     if (clockDisplay) {
         clockDisplay.innerText = new Date(now).toLocaleTimeString('th-TH', { 
-            hour: '2-digit', minute: '2-digit', second: '2-digit' 
-        });
+            hour: '2-digit', minute: '2-digit' 
+        }) + ' น.';
     }
 
     timers.forEach(timer => {
