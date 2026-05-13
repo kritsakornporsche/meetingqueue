@@ -5,7 +5,7 @@
     @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     
     /* 2-Step Progress Bar */
-    .progress-bar-premium { display: flex; justify-content: center; gap: 6rem; margin-bottom: 2rem; position: relative; max-width: 360px; margin-left: auto; margin-right: auto; }
+    .progress-bar-premium { display: flex; flex-wrap: wrap; justify-content: center; gap: 4rem; margin-bottom: 2rem; position: relative; max-width: 360px; margin-left: auto; margin-right: auto; }
     .progress-bar-premium::before { content: ''; position: absolute; top: 19px; left: 15%; width: 70%; height: 2px; background: #EBE6DA; z-index: 1; border-radius: 10px; }
     .progress-step-premium { width: 40px; height: 40px; border-radius: 14px; background: white; border: 2px solid #EBE6DA; display: flex; align-items: center; justify-content: center; z-index: 2; position: relative; transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); font-weight: 800; color: #A79A8B; font-size: 0.95rem; }
     .progress-step-premium.active { border-color: #6A5243; background: #6A5243; color: white; transform: scale(1.08); box-shadow: 0 6px 16px rgba(106, 82, 67, 0.18); }
@@ -255,8 +255,8 @@
         <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[#6A5243]/5 text-[#6A5243] text-[0.75rem] font-bold uppercase tracking-[0.15em] mb-4 border border-[#6A5243]/10">
             <i class="fas fa-bolt text-[#D4B59D]"></i> Instant Booking System
         </div>
-        <h2 class="text-2xl md:text-3xl font-bold text-[#6A5243] mb-3 tracking-tight">แบบฟอร์มการจอง</h2>
-        <p class="text-sm text-[#A79A8B] font-medium max-w-xl mx-auto leading-relaxed opacity-80">กรุณาเลือกรายละเอียดตามขั้นตอนด้านล่าง เพื่อความรวดเร็วในการพิจารณาอนุมัติ</p>
+        <h2 class="text-2xl md:text-3xl font-black text-[#6A5243] mb-3 tracking-tight leading-relaxed py-1">แบบฟอร์มการจอง</h2>
+        <p style="text-align: center !important; display: block !important; width: 100% !important; margin: 0 auto !important;" class="text-[0.95rem] text-[#A79A8B] font-bold leading-relaxed opacity-90 px-4">กรุณาเลือกรายละเอียดตามขั้นตอนด้านล่าง เพื่อความรวดเร็วในการพิจารณาอนุมัติ</p>
     </div>
 
     <!-- Progress Indicator (2 steps) -->
@@ -471,7 +471,7 @@
             </div>
 
             <!-- Wizard Controls -->
-            <div class="flex justify-between items-center mt-8 pt-6 border-t border-[#F0EDE6]">
+            <div class="flex flex-wrap justify-between items-center gap-4 mt-8 pt-6 border-t border-[#F0EDE6]">
                 <button type="button" id="prevBtn" onclick="moveStep(-1)" class="px-6 py-3 rounded-xl border-2 border-[#EBE6DA] bg-white text-[#A79A8B] text-sm font-bold hover:border-[#D4B59D] hover:text-[#6A5243] hover:bg-[#FDFBF7] transition-all flex items-center gap-2" style="opacity:0; pointer-events:none;">
                     <i class="fas fa-arrow-left text-xs"></i> ย้อนกลับ
                 </button>
@@ -494,11 +494,21 @@
 
 <!-- Admin Room Image Manager Modal -->
 <?php if($is_admin): ?>
-<div id="imageManageModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-[2rem] w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-        <div class="p-6 border-b border-[#EBE6DA] flex justify-between items-center bg-[#FDFBF7]">
-            <h3 class="text-xl font-bold text-[#6A5243]"><i class="fas fa-images text-[#D4B59D]"></i> จัดการรูปภาพห้อง <span id="imgModalRoomName"></span></h3>
-            <button type="button" onclick="closeImageManageModal()" class="w-10 h-10 rounded-full bg-white border border-[#EBE6DA] text-[#A79A8B] hover:text-red-500 hover:border-red-200 transition-all flex items-center justify-center"><i class="fas fa-times"></i></button>
+<div id="imageManageModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[1000] hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-[1rem] w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+        <div class="px-8 py-10 border-b border-[#EBE6DA] flex items-start justify-between gap-6 bg-[#FDFBF7]">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-white shadow-sm border border-[#EBE6DA] flex items-center justify-center flex-shrink-0 text-[#D4B59D]">
+                    <i class="fas fa-images text-xl"></i>
+                </div>
+                <div class="pt-1">
+                    <h3 class="text-xl font-black text-[#6A5243] leading-none mb-2">จัดการรูปภาพห้อง</h3>
+                    <p id="imgModalRoomName" class="text-sm font-bold text-[#A79A8B] leading-relaxed max-w-[700px]"></p>
+                </div>
+            </div>
+            <button type="button" onclick="closeImageManageModal()" class="w-10 h-10 rounded-full bg-white border border-[#EBE6DA] text-[#A79A8B] hover:text-red-500 hover:border-red-200 transition-all flex items-center justify-center flex-shrink-0 shadow-sm active:scale-95">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
         <div class="p-6 overflow-y-auto flex-grow bg-[#F9F8F6]">
             <!-- Current Images -->
@@ -783,7 +793,15 @@
             const images = JSON.parse(decodeURIComponent(imagesJsonStr));
             const grid = document.getElementById('currentImagesGrid');
             if (!images || images.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center py-6 text-[#A79A8B] font-bold bg-white rounded-xl border-2 border-dashed border-[#EBE6DA]">ยังไม่มีรูปภาพ</div>';
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 flex flex-col items-center justify-center text-[#A79A8B] bg-white rounded-3xl border-2 border-dashed border-[#EBE6DA]/60">
+                        <div class="w-16 h-16 rounded-full bg-[#FDFBF7] flex items-center justify-center mb-4 text-[#D4B59D] opacity-60">
+                            <i class="fas fa-image text-3xl"></i>
+                        </div>
+                        <p class="font-bold">ยังไม่มีรูปภาพประกอบสำหรับห้องนี้</p>
+                        <p class="text-xs mt-1 opacity-70">คุณสามารถเพิ่มรูปภาพได้จากส่วนอัปโหลดด้านล่าง</p>
+                    </div>
+                `;
                 return;
             }
             

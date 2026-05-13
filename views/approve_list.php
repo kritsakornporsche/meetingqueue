@@ -148,16 +148,15 @@ if ($is_admin_view) {
 </style>
 
 <div class="flex flex-col gap-6 w-full animate-fade">
-    <!-- Header -->
-    <div class="bg-white p-8 rounded-[3rem] border border-accent/30 shadow-sm relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full -mr-32 -mt-32"></div>
+    <!-- Header Section (Borderless) -->
+    <div class="flex items-center justify-between gap-6 px-4">
         <div class="flex items-center gap-6 relative z-10">
             <div class="w-16 h-16 rounded-[2rem] bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20">
                 <i class="fas <?= $icon ?> text-2xl"></i>
             </div>
             <div>
-                <h1 class="text-3xl font-black text-primary tracking-tight"><?= $page_title ?></h1>
-                <p class="text-text-muted font-bold opacity-80"><?= $page_subtitle ?></p>
+                <h1 class="text-3xl font-black text-primary tracking-tight leading-relaxed py-2"><?= $page_title ?></h1>
+                <p class="text-text-muted font-bold opacity-80 leading-normal"><?= $page_subtitle ?></p>
             </div>
         </div>
     </div>
@@ -240,9 +239,9 @@ if ($is_admin_view) {
                         <th>ห้องประชุม/สถานที่</th>
                         <th>วัน-เวลา</th>
                         <th>ฝ่าย/งาน</th>
-                        <th class="text-center">สถานะ</th>
+                        <th class="text-left px-10" style="text-align: left !important; padding-right: 40px !important;">สถานะ</th>
                         <?php if ($current_view === 'approve_list'): ?>
-                        <th class="text-center">การจัดการ</th>
+                        <th class="text-left" style="text-align: left !important;">การจัดการ</th>
                         <?php endif; ?>
                     </tr>
                 </thead>
@@ -392,12 +391,12 @@ function renderTable() {
                 <div class="text-xs text-text-muted font-semibold">${MeetQueue.utils.formatTime(b.start_time)} - ${MeetQueue.utils.formatTime(b.end_time)}</div>
             </td>
             <td onclick="viewDetail(${b.id})"><span class="text-xs font-bold px-2 py-1 bg-accent/20 rounded-md text-primary">${b.department_name || '-'}</span></td>
-            <td class="text-center" onclick="viewDetail(${b.id})">
+            <td class="text-left px-10" style="text-align: left !important; padding-right: 40px !important;" onclick="viewDetail(${b.id})">
                 <span class="badge badge-${MeetQueue.utils.getStatusClass(b.status)}">${MeetQueue.utils.translateStatus(b.status)}</span>
             </td>
             ${currentView === 'approve_list' ? `
-            <td class="text-center">
-                <div class="flex justify-center gap-2">
+            <td>
+                <div class="flex justify-start gap-2">
                     ${b.status === 'pending' ? `
                         <button onclick="updateStatus(${b.id}, 'approved')" class="w-8 h-8 rounded-lg bg-green-100 text-green-600 hover:bg-green-600 hover:text-white transition-all shadow-sm" title="อนุมัติ"><i class="fas fa-check text-xs"></i></button>
                         <button onclick="updateStatus(${b.id}, 'rejected')" class="w-8 h-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-sm" title="ปฏิเสธ"><i class="fas fa-times text-xs"></i></button>

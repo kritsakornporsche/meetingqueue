@@ -8,21 +8,20 @@ $page_subtitle = 'รายการที่ถูกลบชั่วคร�
 ?>
 
 <div class="flex flex-col gap-6 w-full animate-fade">
-    <!-- Header Section -->
-    <div class="bg-white p-8 rounded-[1.5rem] border border-accent/30 shadow-sm relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-red-500/5 rounded-full -mr-32 -mt-32"></div>
+    <!-- Header Section (Borderless) -->
+    <div class="flex items-center justify-between gap-6 px-4">
         <div class="flex items-center gap-6 relative z-10">
             <div class="w-17.5 h-17.5 rounded-[2rem] bg-red-500 flex items-center justify-center text-white shadow-xl shadow-red-500/20">
                 <i class="fas fa-trash-alt text-2xl"></i>
             </div>
             <div class="flex-grow">
-                <h1 class="text-3xl font-black text-primary tracking-tight"><?= $page_title ?></h1>
+                <h1 class="text-3xl font-black text-primary leading-relaxed py-1 tracking-tight"><?= $page_title ?></h1>
                 <p class="text-text-muted font-bold opacity-80"><?= $page_subtitle ?></p>
             </div>
-            <a href="dashboard.php?view=admin_management" class="min-w-[160px] h-[45px] px-8 bg-primary text-white rounded-[2rem] text-sm font-black flex items-center justify-center gap-2 hover:bg-primary/90 hover:shadow-lg transition-all shadow-md">
-                <i class="fas fa-arrow-left"></i> กลับไปหน้าจัดการ
-            </a>
         </div>
+        <a href="dashboard.php?view=admin_management" class="min-w-[160px] h-[45px] px-8 bg-primary text-white rounded-[2rem] text-sm font-black flex items-center justify-center gap-2 hover:bg-primary/90 hover:shadow-lg transition-all shadow-md">
+            <i class="fas fa-arrow-left"></i> กลับไปหน้าจัดการ
+        </a>
     </div>
 
     <!-- Trash Table Card -->
@@ -35,7 +34,7 @@ $page_subtitle = 'รายการที่ถูกลบชั่วคร�
                         <th class="px-6 py-4 text-[0.65rem] font-black text-text-muted uppercase tracking-widest border-b border-accent/10">การประชุม</th>
                         <th class="px-6 py-4 text-[0.65rem] font-black text-text-muted uppercase tracking-widest border-b border-accent/10">ผู้จอง</th>
                         <th class="px-6 py-4 text-[0.65rem] font-black text-text-muted uppercase tracking-widest border-b border-accent/10">วันที่ลบ</th>
-                        <th class="px-6 py-4 text-[0.65rem] font-black text-text-muted uppercase tracking-widest border-b border-accent/10 text-center">จัดการ</th>
+                        <th class="px-6 py-4 text-[0.65rem] font-black text-text-muted uppercase tracking-widest border-b border-accent/10">จัดการ</th>
                     </tr>
                 </thead>
                 <tbody id="trashTableBody" class="divide-y divide-accent/10">
@@ -50,7 +49,7 @@ $page_subtitle = 'รายการที่ถูกลบชั่วคร�
                 </tbody>
             </table>
         </div>
-        <div class="p-6 bg-accent/5 border-t border-accent/10 text-xs font-bold text-text-muted" id="trashStats">
+        <div style="padding-left: 10px !important; padding-top: 10px !important; padding-bottom: 10px !important;" class="bg-accent/5 border-t border-accent/10 text-xs font-bold text-text-muted leading-relaxed" id="trashStats">
             มีรายการในถังขยะทั้งหมด 0 รายการ
         </div>
     </div>
@@ -79,7 +78,7 @@ $page_subtitle = 'รายการที่ถูกลบชั่วคร�
                         ${new Date(b.deleted_at).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short', calendar: 'buddhist' })}
                     </td>
                     <td class="px-6 py-4">
-                        <div class="flex justify-center gap-3">
+                        <div class="flex justify-start gap-3">
                             <button onclick="restoreBooking(${b.id})" class="min-w-[100px] h-[40px] px-6 rounded-full bg-green-50 text-green-600 font-black text-xs flex items-center justify-center gap-2 hover:bg-green-600 hover:text-white transition-all shadow-sm border border-green-200/50">
                                 <i class="fas fa-undo"></i> กู้คืน
                             </button>

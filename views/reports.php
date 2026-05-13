@@ -173,7 +173,7 @@ $chartData = json_encode(array_values($roomStats));
             <i class="fas fa-chart-line text-[#D4B59D]"></i> ระบบรายงาน
         </h2>
         
-        <form method="GET" action="dashboard.php" class="flex flex-nowrap items-center gap-4">
+        <form method="GET" action="dashboard.php" class="flex flex-wrap items-center gap-3 sm:gap-4">
             <input type="hidden" name="view" value="reports">
             <div class="relative flex-shrink-0">
                 <select name="month" class="pl-5 pr-10 py-3.5 rounded-2xl border border-[#D4B59D]/40 focus:outline-none focus:border-[#D4B59D] bg-white text-[#6A5243] text-[0.95rem] font-bold shadow-sm cursor-pointer min-w-[170px] transition-all hover:border-[#D4B59D]">

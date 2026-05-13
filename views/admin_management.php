@@ -123,25 +123,24 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
             font-size: 0.65rem;
         }
     </style>
-    <!-- Header Section -->
-    <div class="bg-white p-8 rounded-[2rem] border border-accent/30 shadow-sm relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full -mr-32 -mt-32"></div>
+    <!-- Header Section (Borderless) -->
+    <div class="flex flex-wrap items-center justify-between gap-6 px-4">
         <div class="flex items-center gap-6 relative z-10">
             <div class="w-18 h-18 rounded-[2rem] bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20">
                 <i class="fas fa-tasks text-2xl"></i>
             </div>
             <div class="flex-grow">
-                <h1 class="text-3xl font-black text-primary tracking-tight"><?= $page_title ?></h1>
+                <h1 class="text-3xl font-black text-primary leading-relaxed py-1 tracking-tight"><?= $page_title ?></h1>
                 <p class="text-text-muted font-bold opacity-80"><?= $page_subtitle ?></p>
             </div>
-            <div class="flex gap-6">
-                <a href="dashboard.php?view=trash_management" class="min-w-[150px] h-[50px] px-24 bg-red-50 text-red-600 rounded-[2rem] text-[1.1rem] font-black flex items-center justify-center gap-1.5 hover:bg-red-100 hover:shadow-lg hover:shadow-red-200/50 transition-all border border-red-200/60 shadow-sm">
-                    <i class="fas fa-trash-alt"></i> ดูถังขยะ
-                </a>
-                <button onclick="exportData('excel')" class="min-w-[150px] h-[50px] px-24 bg-green-500 text-white rounded-[2rem] text-[1.1rem] font-black flex items-center justify-center gap-1.5 hover:bg-green-600 hover:shadow-lg hover:shadow-green-200/60 transition-all shadow-md">
-                    <i class="fas fa-file-excel"></i> Export Excel
-                </button>
-            </div>
+        </div>
+        <div class="flex flex-wrap gap-4 sm:gap-6">
+            <a href="dashboard.php?view=trash_management" class="min-w-[150px] h-[50px] px-8 bg-red-50 text-red-600 rounded-[2rem] text-sm font-black flex items-center justify-center gap-1.5 hover:bg-red-100 hover:shadow-lg hover:shadow-red-200/50 transition-all border border-red-200/60 shadow-sm">
+                <i class="fas fa-trash-alt"></i> ดูถังขยะ
+            </a>
+            <button onclick="exportData('excel')" class="min-w-[150px] h-[50px] px-8 bg-green-500 text-white rounded-[2rem] text-sm font-black flex items-center justify-center gap-1.5 hover:bg-green-600 hover:shadow-lg hover:shadow-green-200/60 transition-all shadow-md">
+                <i class="fas fa-file-excel"></i> Export Excel
+            </button>
         </div>
     </div>
 
@@ -209,8 +208,8 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
                         <th class="px-6 py-4 text-[0.65rem] font-black text-text-muted uppercase tracking-widest border-b border-accent/10">การประชุม</th>
                         <th class="px-6 py-4 text-[0.65rem] font-black text-text-muted uppercase tracking-widest border-b border-accent/10">ผู้จอง / ฝ่าย</th>
                         <th class="px-6 py-4 text-[0.65rem] font-black text-text-muted uppercase tracking-widest border-b border-accent/10">วัน-เวลา</th>
-                        <th class="px-6 py-4 text-[0.65rem] font-black text-text-muted uppercase tracking-widest border-b border-accent/10 text-center">สถานะ</th>
-                        <th class="px-6 py-4 text-[0.65rem] font-black text-text-muted uppercase tracking-widest border-b border-accent/10 text-center">จัดการ</th>
+                        <th class="px-6 py-4 text-[0.65rem] font-black text-text-muted uppercase tracking-widest border-b border-accent/10">สถานะ</th>
+                        <th class="px-6 py-4 text-[0.65rem] font-black text-text-muted uppercase tracking-widest border-b border-accent/10">จัดการ</th>
                     </tr>
                 </thead>
                 <tbody id="adminBookingTable" class="divide-y divide-accent/10">
@@ -460,13 +459,13 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
                         <div class="text-xs font-bold text-primary">${formatDate(b.start_time)}</div>
                         <div class="text-[0.65rem] font-bold text-text-muted">${formatTime(b.start_time)} - ${formatTime(b.end_time)}</div>
                     </td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="px-6 py-4">
                         <span class="px-3 py-1 rounded-full text-[0.6rem] font-black uppercase tracking-widest ${statusClass.bg} ${statusClass.text} border ${statusClass.border}">
                             ${translateStatus(b.status)}
                         </span>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="flex justify-center gap-2">
+                        <div class="flex justify-start gap-2">
                             <button onclick="viewDetail(${b.id})" class="w-8 h-8 rounded-lg bg-accent/20 text-primary hover:bg-primary hover:text-white transition-all shadow-sm" title="ดูรายละเอียด"><i class="fas fa-eye text-xs"></i></button>
                             <button onclick="deleteBooking(${b.id})" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" title="ลบการจอง"><i class="fas fa-trash text-xs"></i></button>
                         </div>
@@ -564,7 +563,37 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
     }
 
     function exportData(type) {
-        // Implement export logic (or just notify)
-        Swal.fire('กำลังประมวลผล', 'ระบบกำลังส่งออกข้อมูลเป็น ' + type.toUpperCase(), 'info');
+        if (type !== 'excel') return;
+        
+        // Get current filters to export matching data
+        const search = document.getElementById('adminSearch')?.value || '';
+        const status = document.getElementById('adminStatusFilter')?.value || '';
+        const booker = document.getElementById('filterBooker')?.value || '';
+        const room = document.getElementById('filterRoom')?.value || '';
+        const from = document.getElementById('adminDateFrom')?.value || '';
+        const to = document.getElementById('adminDateTo')?.value || '';
+
+        // Build query string
+        const params = new URLSearchParams({
+            search: search,
+            status: status,
+            booker: booker,
+            room: room,
+            from: from,
+            to: to
+        });
+
+        Swal.fire({
+            title: 'กำลังเตรียมข้อมูล',
+            text: 'ระบบกำลังสร้างไฟล์ Excel กรุณารอสักครู่...',
+            icon: 'info',
+            timer: 2000,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+                // Trigger download
+                window.location.href = `api/export_excel.php?${params.toString()}`;
+            }
+        });
     }
 </script>

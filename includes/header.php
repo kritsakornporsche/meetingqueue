@@ -1,6 +1,6 @@
 <?php
 $user = $_SESSION['user_data'];
-$photo_url = "https://192.168.9.7/auth_files/photo/" . $user['emp_code'] . ".jpg";
+$photo_url = !empty($user['photo']) ? $user['photo'] : "https://192.168.9.7/auth_files/photo/" . $user['emp_code'] . ".jpg";
 $fallback_avatar = 'https://ui-avatars.com/api/?name=' . urlencode($user['first_name']) . '&background=6A5243&color=fff&size=80';
 $view = $_GET['view'] ?? 'calendar';
 $titles = [
@@ -43,6 +43,7 @@ $titles = [
                 'admin_management' => ['หน้าหลัก' => 'calendar', 'จัดการการประชุม' => 'admin_management'],
                 'trash_management' => ['หน้าหลัก' => 'calendar', 'ถังขยะ' => 'trash_management'],
                 'booking_result'   => ['หน้าหลัก' => 'calendar', 'รายละเอียดการจอง' => null],
+                'profile'          => ['หน้าหลัก' => 'calendar', 'ข้อมูลส่วนตัว' => 'profile'],
             ];
             $crumbs = $breadcrumb_map[$view] ?? ['หน้าหลัก' => 'calendar'];
             $crumb_parts = [];
@@ -150,6 +151,15 @@ $titles = [
             </nav>
         </div>
         <?php endif; ?>
+
+        <!-- Account Section -->
+        <div class="popup-menu-section border-t border-[#D4B59D]/10 pt-4 mt-2">
+            <nav class="popup-nav">
+                <a href="dashboard.php?view=profile" class="popup-nav-link <?php echo ($_GET['view'] ?? '') == 'profile' ? 'active' : ''; ?>">
+                    <i class="fas fa-user-circle"></i><span>ข้อมูลส่วนตัว (Profile)</span>
+                </a>
+            </nav>
+        </div>
     </div>
     
     <div class="popup-menu-footer">

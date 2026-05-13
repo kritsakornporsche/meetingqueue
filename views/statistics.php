@@ -133,7 +133,7 @@ $displayDate = date('j', $time) . ' ' . $thai_months[date('m', $time)] . ' ' . (
                 <i class="fas fa-chart-pie text-2xl"></i>
             </div>
             <div>
-                <h2 class="text-3xl font-black text-[#6A5243] leading-tight tracking-tight">สถิติการใช้งานห้องประชุม</h2>
+                <h2 class="text-3xl font-black text-[#6A5243] leading-relaxed py-1 tracking-tight">สถิติการใช้งานห้องประชุม</h2>
                 <div class="flex items-center gap-2 mt-1.5">
                     <span class="w-2 h-10 rounded-full bg-[#D4B59D]"></span>
                     <p class="text-sm font-bold text-[#A79A8B]">วิเคราะห์และติดตามข้อมูลการจองห้องประจำวัน</p>
@@ -142,7 +142,7 @@ $displayDate = date('j', $time) . ' ' . $thai_months[date('m', $time)] . ' ' . (
         </div>
         
         <!-- Filter Container -->
-        <div class="flex items-center gap-4 self-start xl:self-auto">
+        <div class="flex flex-wrap items-center gap-4 self-start xl:self-auto">
             <!-- Filter Box (Date Picker) -->
             <div class="flex items-center gap-2 bg-white/95 backdrop-blur-md p-2 rounded-[3rem] border border-[#EBE6DA] shadow-xl min-w-[200px]">
                 <!-- Label Section -->

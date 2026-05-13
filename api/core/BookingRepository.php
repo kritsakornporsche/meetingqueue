@@ -20,6 +20,12 @@ class BookingRepository {
                 LEFT JOIN booking_images bi ON b.id = bi.booking_id
                 WHERE 1=1";
         $params = [];
+        
+        // Search Filter
+        if (!empty($filters['search'])) {
+            $sql .= " AND (b.title LIKE :search OR u.first_name LIKE :search OR u.last_name LIKE :search OR u.emp_code LIKE :search)";
+            $params[':search'] = '%' . $filters['search'] . '%';
+        }
 
         // Trash logic
         if (!empty($filters['only_trashed'])) {
