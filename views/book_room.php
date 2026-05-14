@@ -495,15 +495,15 @@
 <!-- Admin Room Image Manager Modal -->
 <?php if($is_admin): ?>
 <div id="imageManageModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[1000] hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-[1rem] w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-        <div class="px-8 py-10 border-b border-[#EBE6DA] flex items-start justify-between gap-6 bg-[#FDFBF7]">
-            <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-white shadow-sm border border-[#EBE6DA] flex items-center justify-center flex-shrink-0 text-[#D4B59D]">
-                    <i class="fas fa-images text-xl"></i>
+    <div class="bg-white rounded-[1.25rem] w-full max-w-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+        <div class="px-8 py-8 border-b border-[#EBE6DA] flex items-start justify-between gap-6 bg-[#FDFBF7]">
+            <div class="flex items-start gap-5">
+                <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-[#EBE6DA] flex items-center justify-center flex-shrink-0 text-[#D4B59D]">
+                    <i class="fas fa-images text-2xl"></i>
                 </div>
                 <div class="pt-1">
-                    <h3 class="text-xl font-black text-[#6A5243] leading-none mb-2">จัดการรูปภาพห้อง</h3>
-                    <p id="imgModalRoomName" class="text-sm font-bold text-[#A79A8B] leading-relaxed max-w-[700px]"></p>
+                    <h3 class="text-2xl font-black text-[#6A5243] leading-tight mb-3">จัดการรูปภาพห้อง</h3>
+                    <p id="imgModalRoomName" class="text-[0.95rem] font-bold text-[#A79A8B] leading-relaxed max-w-[700px]"></p>
                 </div>
             </div>
             <button type="button" onclick="closeImageManageModal()" class="w-10 h-10 rounded-full bg-white border border-[#EBE6DA] text-[#A79A8B] hover:text-red-500 hover:border-red-200 transition-all flex items-center justify-center flex-shrink-0 shadow-sm active:scale-95">
@@ -520,7 +520,7 @@
             <div class="bg-white p-6 rounded-2xl border-2 border-dashed border-[#D4B59D]/40 text-center">
                 <h4 class="font-bold text-[#6A5243] mb-4">อัปโหลดรูปภาพใหม่</h4>
                 <input type="file" id="newRoomImage" accept="image/*" class="hidden" onchange="uploadRoomImage()">
-                <label for="newRoomImage" class="inline-flex items-center gap-2 px-6 py-3 bg-[#6A5243] text-white rounded-xl cursor-pointer hover:bg-[#523E32] transition-colors shadow-md">
+                <label for="newRoomImage" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white font-bold rounded-xl cursor-pointer hover:bg-emerald-600 transition-all shadow-md hover:-translate-y-0.5 active:scale-95">
                     <i class="fas fa-upload"></i> เลือกรูปภาพ (Max 5MB)
                 </label>
             </div>

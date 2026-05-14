@@ -127,7 +127,7 @@ async function loadUsers() {
             }
             
             tableBody.innerHTML = result.data.map(user => `
-                <tr class="border-b border-border hover:bg-primary/5 transition-colors">
+                <tr class="border-b border-border hover:bg-primary/5 transition-colors" onclick="window.location.href='dashboard.php?view=profile&id=${user.id}'" style="cursor: pointer;">
                     <td class="p-3">
                         <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name)}&background=4f46e5&color=fff" 
                              class="w-10 h-10 rounded-full shadow-sm" alt="avatar">

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $bookingId = $_GET['id'] ?? null;
 
 if (!$bookingId) {
@@ -17,33 +17,35 @@ if (!$bookingId) {
         <p id="resultSubtitle" class="text-sm text-[#A79A8B] font-medium mb-7">กรุณารอสักครู่</p>
 
         <!-- Status Timeline Tracker -->
-        <div id="timelineContainer" class="hidden max-w-lg mx-auto">
-            <div class="flex items-center justify-between relative">
-                <div class="absolute left-[10%] right-[10%] top-[20px] h-[3px] bg-[#EBE6DA] z-0 rounded-full"></div>
-                <div id="timelineProgress" class="absolute left-[10%] top-[20px] h-[3px] bg-[#6A5243] z-0 rounded-full transition-all duration-1000 w-0"></div>
-                <div class="relative z-10 flex flex-col items-center w-1/4">
-                    <div id="step1-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#A79A8B] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500">
-                        <i class="fas fa-paper-plane text-xs"></i>
+        <div id="timelineContainer" class="hidden w-full flex justify-center mt-2 mb-2">
+            <div class="w-full max-w-md relative">
+                <div class="flex items-center justify-between relative">
+                    <div class="absolute left-[10%] right-[10%] top-[20px] h-[3px] bg-[#EBE6DA] z-0 rounded-full"></div>
+                    <div id="timelineProgress" class="absolute left-[10%] top-[20px] h-[3px] bg-[#6A5243] z-0 rounded-full transition-all duration-1000 w-0"></div>
+                    <div class="relative z-10 flex flex-col items-center w-1/4">
+                        <div id="step1-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#A79A8B] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500">
+                            <i class="fas fa-paper-plane text-xs"></i>
+                        </div>
+                        <span class="mt-1.5 text-[0.6rem] font-bold text-[#A79A8B] leading-tight text-center" id="step1-text">ยังไม่อนุมัติ</span>
                     </div>
-                    <span class="mt-1.5 text-[0.6rem] font-bold text-[#A79A8B] leading-tight text-center" id="step1-text">ยังไม่อนุมัติ</span>
-                </div>
-                <div class="relative z-10 flex flex-col items-center w-1/4">
-                    <div id="step2-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#EBE6DA] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500">
-                        <i class="fas fa-check-double text-xs"></i>
+                    <div class="relative z-10 flex flex-col items-center w-1/4">
+                        <div id="step2-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#EBE6DA] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500">
+                            <i class="fas fa-check-double text-xs"></i>
+                        </div>
+                        <span class="mt-1.5 text-[0.6rem] font-bold text-[#A79A8B] leading-tight text-center" id="step2-text">อนุมัติแล้ว</span>
                     </div>
-                    <span class="mt-1.5 text-[0.6rem] font-bold text-[#A79A8B] leading-tight text-center" id="step2-text">อนุมัติแล้ว</span>
-                </div>
-                <div class="relative z-10 flex flex-col items-center w-1/4">
-                    <div id="step3-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#EBE6DA] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500">
-                        <i class="fas fa-door-closed text-xs"></i>
+                    <div class="relative z-10 flex flex-col items-center w-1/4">
+                        <div id="step3-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#EBE6DA] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500">
+                            <i class="fas fa-door-closed text-xs"></i>
+                        </div>
+                        <span class="mt-1.5 text-[0.6rem] font-bold text-[#A79A8B] leading-tight text-center" id="step3-text">เสร็จสิ้น<br>การประชุม</span>
                     </div>
-                    <span class="mt-1.5 text-[0.6rem] font-bold text-[#A79A8B] leading-tight text-center" id="step3-text">เสร็จสิ้น<br>การประชุม</span>
-                </div>
-                <div class="relative z-10 flex flex-col items-center w-1/4">
-                    <div id="step4-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#EBE6DA] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500">
-                        <i class="fas fa-star text-xs"></i>
+                    <div class="relative z-10 flex flex-col items-center w-1/4">
+                        <div id="step4-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#EBE6DA] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500">
+                            <i class="fas fa-star text-xs"></i>
+                        </div>
+                        <span class="mt-1.5 text-[0.6rem] font-bold text-[#A79A8B] leading-tight text-center" id="step4-text">ประเมินแล้ว</span>
                     </div>
-                    <span class="mt-1.5 text-[0.6rem] font-bold text-[#A79A8B] leading-tight text-center" id="step4-text">ประเมินแล้ว</span>
                 </div>
             </div>
         </div>
@@ -212,6 +214,14 @@ function renderBookingResult(booking) {
             title.textContent = 'การประชุมถูกยกเลิก';
             subtitle.textContent = 'รายการนี้ได้ถูกยกเลิกแล้ว';
             break;
+        case 'completed':
+            badgeStyle = 'background:#dcfce7; color:#166534; border:1px solid #bbf7d0;';
+            statusText = '<i class="fas fa-check-circle"></i> เสร็จสิ้น';
+            iconHtml = '<i class="fas fa-calendar-check"></i>';
+            iconBg = 'bg-emerald-100'; iconColor = 'text-emerald-600';
+            title.textContent = 'การประชุมเสร็จสิ้น';
+            subtitle.textContent = 'ขอบคุณที่ใช้บริการห้องประชุม';
+            break;
     }
 
     iconContainer.className = `w-20 h-20 rounded-full flex items-center justify-center text-3xl mx-auto mb-5 shadow-md transition-all duration-500 ${iconBg} ${iconColor}`;
@@ -243,7 +253,7 @@ function renderBookingResult(booking) {
         let progressPercent = 0;
         const now = new Date();
         const endTime = new Date(booking.end_time);
-        const isCompleted = (booking.status === 'completed' || booking.status === 'approved') && endTime < now;
+        const isCompleted = (booking.status === 'completed') || (booking.status === 'approved' && endTime < now);
 
         checkEvaluationStatus(booking.id).then(isEvaluated => {
             document.getElementById('step1-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#6A5243] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500';

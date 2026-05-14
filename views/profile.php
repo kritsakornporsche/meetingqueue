@@ -9,14 +9,30 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Fetch fresh user data from database
+$view_user_id = isset($_GET['id']) ? intval($_GET['id']) : $_SESSION['user_id'];
+$is_owner = ($view_user_id === $_SESSION['user_id']);
+
 try {
     $pdo = getLocalDB();
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-    $stmt->execute([$_SESSION['user_id']]);
+    $stmt->execute([$view_user_id]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    $_SESSION['user_data'] = $user;
+    
+    if (!$user) {
+        echo "<div style='padding: 50px; text-align: center; font-family: Sarabun, sans-serif;'><h2>ไม่พบผู้ใช้งานนี้</h2></div>";
+        exit;
+    }
+    
+    if ($is_owner) {
+        $_SESSION['user_data'] = $user;
+    }
 } catch (Exception $e) {
-    $user = $_SESSION['user_data'];
+    if ($is_owner) {
+        $user = $_SESSION['user_data'];
+    } else {
+        echo "<div style='padding: 50px; text-align: center; font-family: Sarabun, sans-serif;'><h2>เกิดข้อผิดพลาดในการโหลดข้อมูล</h2></div>";
+        exit;
+    }
 }
 
 $role = $user['role'] ?? 'user';
@@ -35,9 +51,11 @@ $fallback_avatar = 'https://ui-avatars.com/api/?name=' . urlencode($user['first_
                     <div style="width: 140px; height: 140px; border-radius: 50%; overflow: hidden; border: 5px solid white; box-shadow: 0 8px 20px rgba(106, 82, 67, 0.15); background: white;">
                         <img src="<?php echo $photo_url; ?>" onerror="this.src='<?php echo $fallback_avatar; ?>'" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
+                    <?php if ($is_owner): ?>
                     <button onclick="openEditModal()" style="position: absolute; bottom: 5px; right: 5px; width: 36px; height: 36px; background: #6A5243; color: white; border-radius: 50%; border: 3px solid white; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
                         <i class="fas fa-camera" style="font-size: 14px;"></i>
                     </button>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Basic Info -->
@@ -52,11 +70,13 @@ $fallback_avatar = 'https://ui-avatars.com/api/?name=' . urlencode($user['first_
                         <span><i class="fas fa-id-badge" style="color: #D4B59D; margin-right: 6px;"></i> รหัส: <?php echo htmlspecialchars($user['emp_code']); ?></span>
                         <span><i class="fas fa-at" style="color: #D4B59D; margin-right: 6px;"></i> <?php echo htmlspecialchars($user['username']); ?></span>
                     </div>
+                    <?php if ($is_owner): ?>
                     <div style="margin-top: 25px;">
                         <button onclick="openEditModal()" class="btn" style="background: white; border: 1.5px solid rgba(106, 82, 67, 0.2); color: #6A5243; border-radius: 30px; padding: 10px 25px; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s;">
                             <i class="fas fa-user-edit"></i> แก้ไขข้อมูลส่วนตัว
                         </button>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
