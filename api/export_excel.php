@@ -33,7 +33,7 @@ echo "\xEF\xBB\xBF"; // UTF-8 BOM for Thai characters
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <table border="1">
     <thead>
-        <tr style="background-color: #6A5243; color: #ffffff; font-weight: bold;">
+        <tr style="background-color: #f2f2f2; color: #000000; font-weight: bold;">
             <th>ID</th>
             <th>หัวข้อการประชุม</th>
             <th>ผู้จอง</th>

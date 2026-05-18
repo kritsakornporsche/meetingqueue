@@ -28,7 +28,7 @@ if ($is_admin_view) {
 
 <style>
 .filter-panel {
-    background: white;
+    background: var(--card, white);
     border-radius: var(--radius);
     border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
@@ -46,7 +46,7 @@ if ($is_admin_view) {
     display: none;
     border-top: 1px solid var(--border);
     padding: 1rem;
-    background: #fdfbf7;
+    background: var(--sidebar-bg, #fdfbf7);
     gap: 0.75rem;
     flex-wrap: wrap;
 }
@@ -83,7 +83,7 @@ if ($is_admin_view) {
     font-weight: 700;
     cursor: pointer;
     border: 1px solid var(--border);
-    background: white;
+    background: var(--card, white);
     color: var(--text-main);
     transition: var(--transition);
     white-space: nowrap;
@@ -162,7 +162,7 @@ if ($is_admin_view) {
     </div>
 
 <div class="card">
-    <div class="card-header" style="background: #fffdf2;">
+    <div class="card-header" style="background: var(--sidebar-bg, #fffdf2);">
         <div class="card-title">
             <i class="fas fa-desktop" style="color: #64748b;"></i>
             จองห้องประชุม > <?php echo $breadcrumb; ?>

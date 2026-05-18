@@ -514,9 +514,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Shared Colors (Earth Tone)
-    const earthColors = [
-        '#6A5243', '#D4B59D', '#A79A8B', '#8C7462', '#E6D6BD', '#523E32', '#C2A38A', '#9B8C7D'
+    // Shared Colors (Professional Blue)
+    const professionalColors = [
+        '#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#1D4ED8', '#1E40AF', '#64748B', '#94A3B8'
     ];
 
     // 1. Room Count Chart (Bar)
@@ -541,9 +541,9 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 label: 'จำนวนครั้งที่ใช้งาน',
                 data: <?= json_encode($roomCounts) ?>,
-                backgroundColor: '#D4B59D',
-                hoverBackgroundColor: '#6A5243',
-                borderColor: '#6A5243',
+                backgroundColor: '#3B82F6',
+                hoverBackgroundColor: '#2563EB',
+                borderColor: '#2563EB',
                 borderWidth: 1,
                 borderRadius: 8,
                 barThickness: 'flex',
@@ -559,7 +559,7 @@ document.addEventListener('DOMContentLoaded', function() {
             plugins: { 
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: 'rgba(106, 82, 67, 0.9)',
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
                     titleFont: { size: 13, weight: 'bold', family: 'Sarabun, Outfit' },
                     bodyFont: { size: 12, family: 'Sarabun, Outfit' },
                     padding: 12,
@@ -570,7 +570,7 @@ document.addEventListener('DOMContentLoaded', function() {
             scales: {
                 y: { 
                     beginAtZero: true, 
-                    grid: { color: '#F3F0E6' },
+                    grid: { color: 'rgba(148, 163, 184, 0.15)' },
                     ticks: { 
                         stepSize: 1,
                         font: { family: 'Outfit', weight: 'bold', size: 11 }, 
@@ -598,7 +598,7 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: <?= json_encode($roomLabels) ?>,
             datasets: [{
                 data: <?= json_encode($roomHours) ?>,
-                backgroundColor: earthColors.slice(0, <?= count($roomLabels) ?>),
+                backgroundColor: professionalColors.slice(0, <?= count($roomLabels) ?>),
                 borderWidth: 0,
                 hoverOffset: 15
             }]
@@ -617,11 +617,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         pointStyle: 'circle',
                         padding: 15,
                         font: { family: 'Outfit, Sarabun', size: 10, weight: 'bold' },
-                        color: '#6A5243'
+                        color: 'var(--text-main)'
                     } 
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(106, 82, 67, 0.9)',
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
                     padding: 12,
                     cornerRadius: 12,
                     bodyFont: { family: 'Outfit' }
@@ -696,8 +696,8 @@ function toggleGanttSidebar() {
             datasets: [{
                 label: 'จำนวนครั้งที่ใช้งาน',
                 data: <?= json_encode($deptCounts) ?>,
-                backgroundColor: '#A79A8B',
-                hoverBackgroundColor: '#6A5243',
+                backgroundColor: '#60A5FA',
+                hoverBackgroundColor: '#2563EB',
                 borderRadius: 8,
                 barThickness: 20
             }]
@@ -709,7 +709,7 @@ function toggleGanttSidebar() {
             plugins: { 
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: 'rgba(106, 82, 67, 0.9)',
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
                     padding: 12,
                     cornerRadius: 12
                 }
@@ -717,12 +717,12 @@ function toggleGanttSidebar() {
             scales: {
                 x: { 
                     beginAtZero: true, 
-                    grid: { color: '#F3F0E6' },
-                    ticks: { font: { family: 'Outfit', weight: 'bold' }, color: '#A79A8B' }
+                    grid: { color: 'rgba(148, 163, 184, 0.15)' },
+                    ticks: { font: { family: 'Outfit', weight: 'bold' }, color: '#94A3B8' }
                 },
                 y: { 
                     grid: { display: false },
-                    ticks: { font: { family: 'Outfit, Sarabun', size: 11, weight: 'bold' }, color: '#6A5243' }
+                    ticks: { font: { family: 'Outfit, Sarabun', size: 11, weight: 'bold' }, color: 'var(--text-main)' }
                 }
             }
         }
@@ -737,7 +737,7 @@ function toggleGanttSidebar() {
             datasets: [{
                 label: 'จำนวนครั้งที่ถูกยืม',
                 data: <?= json_encode($eqCounts) ?>,
-                backgroundColor: ['#8C7462', '#C2A38A', '#A79A8B', '#6A5243'],
+                backgroundColor: ['#2563EB', '#3B82F6', '#60A5FA', '#93C5FD'],
                 borderRadius: 12,
                 barThickness: 40
             }]
@@ -748,7 +748,7 @@ function toggleGanttSidebar() {
             plugins: { 
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: 'rgba(106, 82, 67, 0.9)',
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
                     padding: 12,
                     cornerRadius: 12
                 }
@@ -756,12 +756,12 @@ function toggleGanttSidebar() {
             scales: {
                 y: { 
                     beginAtZero: true, 
-                    grid: { color: '#F3F0E6' },
-                    ticks: { font: { family: 'Outfit', weight: 'bold' }, color: '#A79A8B' }
+                    grid: { color: 'rgba(148, 163, 184, 0.15)' },
+                    ticks: { font: { family: 'Outfit', weight: 'bold' }, color: '#94A3B8' }
                 },
                 x: {
                     grid: { display: false },
-                    ticks: { font: { family: 'Outfit, Sarabun', weight: 'bold' }, color: '#6A5243' }
+                    ticks: { font: { family: 'Outfit, Sarabun', weight: 'bold' }, color: 'var(--text-main)' }
                 }
             }
         }

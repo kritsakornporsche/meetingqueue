@@ -17,6 +17,7 @@ $view = $_GET['view'] ?? 'calendar';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบจองห้องประชุม รพ.พาน</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- FullCalendar CSS -->
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
@@ -35,14 +36,14 @@ $view = $_GET['view'] ?? 'calendar';
     <style type="text/tailwindcss">
         @theme {
             --font-sans: 'Outfit', 'Sarabun', sans-serif;
-            --color-primary: #6A5243;
-            --color-secondary: #D4B59D;
-            --color-accent: #E6D6BD;
-            --color-background: #EBE6DA;
-            --color-surface: #F3F0E6;
-            --color-text-main: #6A5243;
-            --color-text-muted: #A79A8B;
-            --color-border: #D4B59D;
+            --color-primary: var(--primary);
+            --color-secondary: var(--secondary);
+            --color-accent: var(--accent);
+            --color-background: var(--bg);
+            --color-surface: var(--card);
+            --color-text-main: var(--text-main);
+            --color-text-muted: var(--text-muted);
+            --color-border: var(--border);
         }
     </style>
 </head>

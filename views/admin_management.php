@@ -10,10 +10,10 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
 <div class="flex flex-col gap-6 w-full animate-fade">
     <style>
         .filter-panel {
-            background: white;
+            background: var(--card, white);
             border-radius: 1rem;
-            border: 1px solid rgba(106, 82, 67, 0.15);
-            box-shadow: 0 2px 8px -2px rgba(106, 82, 67, 0.05);
+            border: 1px solid var(--border, rgba(106, 82, 67, 0.15));
+            box-shadow: 0 2px 8px -2px rgba(var(--shadow-rgb, 106, 82, 67), 0.05);
             margin-bottom: 1.25rem;
             overflow: hidden;
         }
@@ -26,9 +26,9 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
         }
         .filter-panel-advanced {
             display: none;
-            border-top: 1px solid rgba(106, 82, 67, 0.1);
+            border-top: 1px solid var(--border, rgba(106, 82, 67, 0.1));
             padding: 1rem;
-            background: #fdfbf7;
+            background: var(--sidebar-bg, #fdfbf7);
             gap: 0.75rem;
             flex-wrap: wrap;
         }
@@ -43,7 +43,7 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
         .filter-group label {
             font-size: 0.72rem;
             font-weight: 700;
-            color: #A79A8B;
+            color: var(--text-muted, #A79A8B);
             text-transform: uppercase;
             letter-spacing: 0.05em;
             margin-bottom: 0;
@@ -53,9 +53,9 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
             padding: 0.55rem 0.85rem;
             font-size: 0.85rem;
             border-radius: 0.6rem;
-            border: 1px solid rgba(106, 82, 67, 0.15);
-            background: white;
-            color: #6A5243;
+            border: 1px solid var(--border, rgba(106, 82, 67, 0.15));
+            background: var(--card, white);
+            color: var(--text-main, #6A5243);
         }
         .filter-toggle-btn {
             display: inline-flex;
@@ -66,14 +66,14 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
             font-size: 0.82rem;
             font-weight: 700;
             cursor: pointer;
-            border: 1px solid rgba(106, 82, 67, 0.15);
-            background: white;
-            color: #6A5243;
+            border: 1px solid var(--border, rgba(106, 82, 67, 0.15));
+            background: var(--card, white);
+            color: var(--text-main, #6A5243);
             transition: all 0.2s;
             white-space: nowrap;
         }
-        .filter-toggle-btn:hover { background: #EBE6DA; border-color: #D4B59D; }
-        .filter-toggle-btn.active { background: #6A5243; color: white; border-color: #6A5243; }
+        .filter-toggle-btn:hover { background: var(--sidebar-bg, #EBE6DA); border-color: var(--secondary, #D4B59D); }
+        .filter-toggle-btn.active { background: var(--primary, #6A5243); color: white; border-color: var(--primary, #6A5243); }
         .filter-toggle-btn .filter-count {
             background: rgba(255,255,255,0.3);
             border-radius: 99px;
@@ -114,7 +114,7 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
             border-radius: 99px;
             font-size: 0.72rem;
             font-weight: 700;
-            color: #6A5243;
+            color: var(--primary, #6A5243);
         }
         .filter-chip button {
             all: unset;

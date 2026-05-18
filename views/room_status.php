@@ -132,16 +132,20 @@ $current_time = time();
                 $status_icon   = '🟢';
             }
         ?>
-        <div data-room-id="<?= $room['id'] ?>" style="
+        <div data-room-id="<?= $room['id'] ?>" class="room-status-card <?= $is_active ? 'status-active' : ($has_next ? 'status-upcoming' : 'status-available') ?>" style="
+            --status-color: <?= $status_color ?>;
+            --status-bg: <?= $status_bg ?>;
+            --status-border: <?= $status_border ?>;
+            --inner-bg: <?= $inner_bg ?>;
             display: flex;
             flex-direction: column;
             border-radius: 1.5rem;
-            border: 2px solid <?= $status_border ?>;
-            background: white;
-            box-shadow: 0 2px 12px rgba(106,82,67,0.06);
+            border: 2px solid var(--status-border);
+            background: var(--card, #ffffff);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
             overflow: hidden;
-            transition: box-shadow 0.2s, outline 0.3s;
-        " onmouseover="this.style.boxShadow='0 8px 24px rgba(106,82,67,0.12)'" onmouseout="this.style.boxShadow='0 2px 12px rgba(106,82,67,0.06)'">
+            transition: box-shadow 0.2s, border-color 0.2s;
+        " onmouseover="this.style.boxShadow='0 8px 24px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='0 2px 12px rgba(0,0,0,0.04)'">
 
             <!-- Room Name Header — fixed height, text clamped -->
             <div style="
@@ -150,15 +154,15 @@ $current_time = time();
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border-bottom: 1px solid <?= $status_border ?>;
-                background: <?= $inner_bg ?>;
+                border-bottom: 1px solid var(--status-border);
+                background: var(--inner-bg);
                 opacity: 0.9;
                 overflow: visible;
             ">
                 <h3 style="
                     font-size: 0.88rem;
                     font-weight: 800;
-                    color: #6A5243;
+                    color: var(--text-main, #2D241E);
                     text-align: center;
                     line-height: 2;
                     display: -webkit-box;
@@ -179,37 +183,37 @@ $current_time = time();
                 align-items: center;
                 justify-content: center;
                 padding: 1.25rem;
-                background: <?= $inner_bg ?>;
+                background: var(--inner-bg);
                 min-height: 130px;
                 text-align: center;
             ">
                 <?php if ($is_active): ?>
-                    <div style="display:flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:700;color:<?= $status_color ?>;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
-                        <span style="width:7px;height:7px;border-radius:50%;background:<?= $status_color ?>;animation:pulse 1.5s infinite;display:inline-block;"></span>
+                    <div style="display:flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:700;color:var(--status-color);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
+                        <span style="width:7px;height:7px;border-radius:50%;background:var(--status-color);animation:pulse 1.5s infinite;display:inline-block;"></span>
                         กำลังใช้งาน
                     </div>
-                    <p style="font-size:0.82rem;font-weight:700;color:#6A5243;margin:0 0 0.75rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                    <p style="font-size:0.82rem;font-weight:700;color:var(--text-main, #2D241E);margin:0 0 0.75rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
                         <?= htmlspecialchars($current_meeting['title']) ?>
                     </p>
                     <div class="countdown-timer" data-target="<?= $current_meeting['end_time'] ?>" data-type="end"
-                         style="font-size:1.5rem;font-weight:900;color:<?= $status_color ?>;font-family:monospace;letter-spacing:0.05em;">
-                        00:00:00
+                         style="font-size:1.5rem;font-weight:900;color:var(--status-color);font-family:monospace;letter-spacing:0.05em;">
+                        00:00
                     </div>
                 <?php elseif ($has_next): ?>
-                    <div style="font-size:0.68rem;font-weight:700;color:<?= $status_color ?>;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
+                    <div style="font-size:0.68rem;font-weight:700;color:var(--status-color);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
                         เตรียมประชุมถัดไป
                     </div>
-                    <p style="font-size:0.82rem;font-weight:700;color:#6A5243;opacity:0.7;margin:0 0 0.75rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                    <p style="font-size:0.82rem;font-weight:700;color:var(--text-muted, #7c7067);opacity:0.8;margin:0 0 0.75rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
                         <?= htmlspecialchars($next_meeting['title']) ?>
                     </p>
                     <div class="countdown-timer" data-target="<?= $next_meeting['start_time'] ?>" data-type="start"
-                         style="font-size:1.5rem;font-weight:900;color:<?= $status_color ?>;font-family:monospace;letter-spacing:0.05em;">
-                        00:00:00
+                         style="font-size:1.5rem;font-weight:900;color:var(--status-color);font-family:monospace;letter-spacing:0.05em;">
+                        00:00
                     </div>
                 <?php else: ?>
                     <div style="opacity:0.3;display:flex;flex-direction:column;align-items:center;gap:0.4rem;">
-                        <i class="fas fa-calendar-check" style="font-size:2rem;color:#6A5243;"></i>
-                        <p style="font-size:0.8rem;font-weight:700;color:#6A5243;margin:0;">ไม่มีการประชุม</p>
+                        <i class="fas fa-calendar-check" style="font-size:2rem;color:var(--text-main, #2D241E);"></i>
+                        <p style="font-size:0.8rem;font-weight:700;color:var(--text-main, #2D241E);margin:0;">ไม่มีการประชุม</p>
                     </div>
                 <?php endif; ?>
             </div>
@@ -222,9 +226,9 @@ $current_time = time();
                 font-weight: 800;
                 letter-spacing: 0.12em;
                 text-transform: uppercase;
-                color: <?= $status_color ?>;
-                background: <?= $status_bg ?>;
-                border-top: 1px solid <?= $status_border ?>;
+                color: var(--status-color);
+                background: var(--status-bg);
+                border-top: 1px solid var(--status-border);
             ">
                 <?= $status_icon . ' ' . $status_label ?>
             </div>
@@ -257,7 +261,7 @@ function updateCountdowns() {
         const distance = targetDate - now;
         
         if (distance < 0) {
-            timer.innerHTML = "00:00:00";
+            timer.innerHTML = "00:00";
             if (timer.dataset.reloaded !== "true") {
                 timer.dataset.reloaded = "true";
                 setTimeout(() => location.reload(), 3000);
@@ -273,7 +277,7 @@ function updateCountdowns() {
         const mStr = mins.toString().padStart(2, '0');
         const sStr = seconds.toString().padStart(2, '0');
         
-        timer.innerHTML = `${hStr}:${mStr}:${sStr}`;
+        timer.innerHTML = `${hStr}:${mStr}`;
     });
 }
 

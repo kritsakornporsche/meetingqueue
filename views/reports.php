@@ -65,11 +65,11 @@ $chartData = json_encode(array_values($roomStats));
     .report-title {
         font-size: 1.25rem;
         font-weight: bold;
-        color: #000;
+        color: var(--text-main, #000);
         margin-bottom: 0.25rem;
     }
     .report-subtitle {
-        color: #000;
+        color: var(--text-main, #000);
         font-size: 1rem;
         font-weight: bold;
     }
@@ -84,42 +84,47 @@ $chartData = json_encode(array_values($roomStats));
         font-size: 0.85rem;
     }
     .report-table th, .report-table td {
-        border: 1px solid #000;
+        border: 1px solid var(--border, #000);
         padding: 0.5rem;
-        color: #000;
+        color: var(--text-main, #000);
     }
     .report-table th {
         text-align: center;
         font-weight: bold;
-        background-color: #f8f9fa;
+        background-color: var(--sidebar-bg, #f8f9fa);
     }
     .report-table tr:hover td {
-        background-color: #f9fafb;
+        background-color: rgba(212,181,157,0.03);
     }
     .report-table tfoot th {
-        background-color: #EBE6DA;
-        color: #6A5243;
+        background-color: var(--sidebar-bg, #EBE6DA);
+        color: var(--primary, #6A5243);
         padding: 1rem 1.5rem;
         font-weight: 700;
-        border-top: 2px solid #D4B59D;
+        border-top: 2px solid var(--secondary, #D4B59D);
     }
     
     /* PDF Print Styles */
     @media print {
         @page {
             size: A4 landscape;
-            margin: 1cm;
+            margin: 0.8cm;
         }
         
         /* Override global hidden visibility from style.css */
         body * {
             visibility: hidden !important;
+            font-family: 'THSarabunNew', 'Sarabun', sans-serif !important;
+            background: transparent !important;
+            color: black !important;
         }
         
         #printable-report, #printable-report * {
             visibility: visible !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+            font-family: 'THSarabunNew', 'Sarabun', sans-serif !important;
+            color: black !important;
         }
         
         #printable-report {
@@ -130,6 +135,9 @@ $chartData = json_encode(array_values($roomStats));
             margin: 0 !important;
             padding: 0 !important;
             display: block !important;
+            background: white !important;
+            color: black !important;
+            font-family: 'THSarabunNew', 'Sarabun', sans-serif !important;
         }
 
         aside, header, .no-print, .no-print * {
@@ -148,19 +156,35 @@ $chartData = json_encode(array_values($roomStats));
         .report-table {
             width: 100% !important;
             border: 1px solid #000 !important;
+            border-collapse: collapse !important;
         }
         
         .report-table th, .report-table td {
             border: 1px solid #000 !important;
             color: black !important;
+            background: white !important;
+            padding: 4px 6px !important;
+            font-size: 13pt !important;
+            line-height: 1.25 !important;
         }
         
         .report-table th {
-            background-color: #f3f4f6 !important;
+            background-color: #f2f2f2 !important;
+            font-weight: bold !important;
+            text-align: center !important;
         }
-        
-        .report-title, .report-subtitle {
+        .report-title {
             color: black !important;
+            font-size: 18pt !important;
+            font-weight: bold !important;
+            text-align: center !important;
+            margin-bottom: 5px !important;
+        }
+        .report-subtitle {
+            color: black !important;
+            font-size: 14pt !important;
+            text-align: center !important;
+            margin-bottom: 15px !important;
         }
     }
 </style>
@@ -238,8 +262,8 @@ $chartData = json_encode(array_values($roomStats));
                     datasets: [{
                         label: 'จำนวนครั้งที่ใช้งาน',
                         data: <?= $chartData ?>,
-                        backgroundColor: '#D4B59D',
-                        borderColor: '#6A5243',
+                        backgroundColor: '#3B82F6',
+                        borderColor: '#2563EB',
                         borderWidth: 1,
                         borderRadius: 8
                     }]
@@ -253,7 +277,7 @@ $chartData = json_encode(array_values($roomStats));
                     plugins: {
                         legend: { display: false },
                         tooltip: {
-                            backgroundColor: 'rgba(106, 82, 67, 0.9)',
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
                             padding: 12,
                             cornerRadius: 12,
                             titleFont: { family: 'Sarabun, Outfit', size: 14 },
@@ -264,13 +288,13 @@ $chartData = json_encode(array_values($roomStats));
                         y: { 
                             beginAtZero: true, 
                             ticks: { stepSize: 1, font: { family: 'Outfit', size: 12, weight: 'bold' } },
-                            grid: { color: '#F3F0E6' }
+                            grid: { color: 'rgba(148, 163, 184, 0.15)' }
                         },
                         x: {
                             grid: { display: false },
                             ticks: {
                                 font: { family: 'Sarabun, Outfit', size: 12, weight: 'bold' },
-                                color: '#6A5243',
+                                color: 'var(--text-main)',
                                 maxRotation: 0,
                                 minRotation: 0,
                                 padding: 10
