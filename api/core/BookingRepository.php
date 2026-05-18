@@ -74,11 +74,21 @@ class BookingRepository {
             $sql .= " AND b.start_time >= NOW() AND b.status IN ('approved', 'pending')";
         }
 
-        $order = (!empty($filters['upcoming'])) ? "ASC" : "DESC";
-        $sql .= " GROUP BY b.id ORDER BY b.start_time $order";
+        if (!empty($filters['upcoming'])) {
+            $sql .= " GROUP BY b.id ORDER BY b.start_time ASC";
+        } else {
+            $sql .= " GROUP BY b.id ORDER BY b.id DESC";
+        }
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
-        return $stmt->fetchAll();
+        $results = $stmt->fetchAll();
+        
+        foreach ($results as &$r) {
+            if (isset($r['first_name'])) $r['first_name'] = cleanName($r['first_name']);
+            if (isset($r['last_name'])) $r['last_name'] = cleanName($r['last_name']);
+        }
+        
+        return $results;
     }
 
     public function checkConflicts($roomId, $startTime, $endTime) {

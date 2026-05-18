@@ -29,6 +29,10 @@ try {
         // Remove password from session data
         unset($user['password']);
         
+        // Clean out any 13-digit IDs embedded in names
+        if (isset($user['first_name'])) $user['first_name'] = cleanName($user['first_name']);
+        if (isset($user['last_name'])) $user['last_name'] = cleanName($user['last_name']);
+        
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['role'] = $user['role'];

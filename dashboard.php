@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user = $_SESSION['user_data'];
-$view = $_GET['view'] ?? 'calendar';
+$view = $_GET['view'] ?? (($user['role'] ?? 'user') === 'admin' ? 'approve_list' : 'calendar');
 ?>
 <!DOCTYPE html>
 <html lang="th">

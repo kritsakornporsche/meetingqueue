@@ -16,7 +16,7 @@ try {
         SELECT
             DATE(start_time) AS day,
             COUNT(*) AS total,
-            SUM(status = 'approved')  AS approved,
+            SUM(status IN ('approved', 'completed')) AS approved,
             SUM(status = 'pending')   AS pending,
             SUM(status = 'rejected')  AS rejected
         FROM bookings

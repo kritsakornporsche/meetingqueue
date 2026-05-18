@@ -48,7 +48,6 @@
                 <tr class="border-b border-border bg-surface">
                     <th class="p-3 font-semibold text-primary">รูปภาพ</th>
                     <th class="p-3 font-semibold text-primary">ชื่อ-นามสกุล</th>
-                    <th class="p-3 font-semibold text-primary">รหัสพนักงาน</th>
                     <th class="p-3 font-semibold text-primary">ตำแหน่ง</th>
                     <th class="p-3 font-semibold text-primary">แผนก</th>
                     <th class="p-3 font-semibold text-primary">สิทธิ์</th>
@@ -79,13 +78,11 @@ function filterUsers() {
         if (row.id === 'loadingRow' || row.id === 'noUserRow') continue;
 
         const fullName = row.cells[1].textContent.toLowerCase();
-        const employeeId = row.cells[2].textContent.toLowerCase();
-        const position = row.cells[3].textContent.toLowerCase();
-        const department = row.cells[4].textContent.toLowerCase();
-        const role = row.cells[5].textContent.trim().toUpperCase();
+        const position = row.cells[2].textContent.toLowerCase();
+        const department = row.cells[3].textContent.toLowerCase();
+        const role = row.cells[4].textContent.trim().toUpperCase();
 
         const matchesSearch = fullName.includes(searchText) || 
-                             employeeId.includes(searchText) || 
                              position.includes(searchText) || 
                              department.includes(searchText);
                              
@@ -136,7 +133,6 @@ async function loadUsers() {
                         <div class="font-medium text-primary">${user.first_name} ${user.last_name || ''}</div>
                         <div class="text-xs text-text-muted">Username: ${user.username}</div>
                     </td>
-                    <td class="p-3 text-sm font-mono text-secondary">${user.emp_code}</td>
                     <td class="p-3 text-sm">${user.position_name || '-'}</td>
                     <td class="p-3 text-sm">${user.dept_name || '-'}</td>
                     <td class="p-3">

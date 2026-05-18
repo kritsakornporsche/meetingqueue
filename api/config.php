@@ -59,6 +59,19 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Global helper to remove long numeric IDs (like 13-digit ID cards) appended to names
+function cleanName($name) {
+    if (!$name) return $name;
+    // Remove any sequence of 10 or more digits, along with surrounding spaces
+    return trim(preg_replace('/\s*\d{10,}\s*/', '', $name));
+}
+
+// Auto-sanitize logged in user's session name
+if (isset($_SESSION['user_data'])) {
+    if (isset($_SESSION['user_data']['first_name'])) $_SESSION['user_data']['first_name'] = cleanName($_SESSION['user_data']['first_name']);
+    if (isset($_SESSION['user_data']['last_name'])) $_SESSION['user_data']['last_name'] = cleanName($_SESSION['user_data']['last_name']);
+}
+
 // Core Classes
 require_once __DIR__ . '/core/Database.php';
 require_once __DIR__ . '/core/BookingRepository.php';

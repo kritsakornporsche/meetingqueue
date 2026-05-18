@@ -37,7 +37,6 @@ echo "\xEF\xBB\xBF"; // UTF-8 BOM for Thai characters
             <th>ID</th>
             <th>หัวข้อการประชุม</th>
             <th>ผู้จอง</th>
-            <th>รหัสพนักงาน</th>
             <th>ฝ่าย/หน่วยงาน</th>
             <th>ห้องประชุม</th>
             <th>วันที่เริ่มต้น</th>
@@ -54,7 +53,6 @@ echo "\xEF\xBB\xBF"; // UTF-8 BOM for Thai characters
                 <td><?php echo $b['id']; ?></td>
                 <td><?php echo htmlspecialchars($b['title']); ?></td>
                 <td><?php echo htmlspecialchars($b['first_name'] . ' ' . $b['last_name']); ?></td>
-                <td><?php echo "'" . $b['emp_code']; ?></td> <!-- Force string in Excel -->
                 <td><?php echo htmlspecialchars($b['department_name'] ?? '-'); ?></td>
                 <td><?php echo htmlspecialchars($b['room_name'] ?? 'ภายนอก'); ?></td>
                 <td><?php echo date('d/m/Y', strtotime($b['start_time'])); ?></td>

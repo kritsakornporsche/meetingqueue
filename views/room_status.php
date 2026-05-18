@@ -188,27 +188,31 @@ $current_time = time();
                 text-align: center;
             ">
                 <?php if ($is_active): ?>
-                    <div style="display:flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:700;color:var(--status-color);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
-                        <span style="width:7px;height:7px;border-radius:50%;background:var(--status-color);animation:pulse 1.5s infinite;display:inline-block;"></span>
-                        กำลังใช้งาน
+                    <div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:0.85rem;font-weight:800;color:var(--status-color);margin-bottom:0.4rem;text-align:center;">
+                        <span style="width:7px;height:7px;border-radius:50%;background:var(--status-color);animation:pulse 1.5s infinite;display:inline-block;flex-shrink:0;"></span>
+                        <span style="display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;"><?= htmlspecialchars($current_meeting['title']) ?></span>
                     </div>
-                    <p style="font-size:0.82rem;font-weight:700;color:var(--text-main, #2D241E);margin:0 0 0.75rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                        <?= htmlspecialchars($current_meeting['title']) ?>
+                    <p style="font-size:0.75rem;font-weight:700;color:var(--text-main, #2D241E);margin:0 0 0.2rem;text-align:center;">
+                        <?= htmlspecialchars(trim($current_meeting['first_name'] . ' ' . $current_meeting['last_name'])) ?>
                     </p>
-                    <div class="countdown-timer" data-target="<?= $current_meeting['end_time'] ?>" data-type="end"
-                         style="font-size:1.5rem;font-weight:900;color:var(--status-color);font-family:monospace;letter-spacing:0.05em;">
-                        00:00
+                    <p style="font-size:0.7rem;font-weight:600;color:var(--text-muted, #7c7067);margin:0 0 0.75rem;text-align:center;">
+                        <i class="fas fa-phone-alt"></i> <?= htmlspecialchars($current_meeting['phone'] ?: '-') ?>
+                    </p>
+                    <div style="font-size:1.3rem;font-weight:900;color:var(--status-color);letter-spacing:0.02em;text-align:center;">
+                        <?= date('H:i', strtotime($current_meeting['start_time'])) ?> น. - <?= date('H:i', strtotime($current_meeting['end_time'])) ?> น.
                     </div>
                 <?php elseif ($has_next): ?>
-                    <div style="font-size:0.68rem;font-weight:700;color:var(--status-color);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
-                        เตรียมประชุมถัดไป
-                    </div>
-                    <p style="font-size:0.82rem;font-weight:700;color:var(--text-muted, #7c7067);opacity:0.8;margin:0 0 0.75rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                    <div style="font-size:0.85rem;font-weight:800;color:var(--status-color);margin-bottom:0.4rem;text-align:center;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;">
                         <?= htmlspecialchars($next_meeting['title']) ?>
+                    </div>
+                    <p style="font-size:0.75rem;font-weight:700;color:var(--text-main, #2D241E);margin:0 0 0.2rem;text-align:center;">
+                        <?= htmlspecialchars(trim($next_meeting['first_name'] . ' ' . $next_meeting['last_name'])) ?>
                     </p>
-                    <div class="countdown-timer" data-target="<?= $next_meeting['start_time'] ?>" data-type="start"
-                         style="font-size:1.5rem;font-weight:900;color:var(--status-color);font-family:monospace;letter-spacing:0.05em;">
-                        00:00
+                    <p style="font-size:0.7rem;font-weight:600;color:var(--text-muted, #7c7067);margin:0 0 0.75rem;text-align:center;">
+                        <i class="fas fa-phone-alt"></i> <?= htmlspecialchars($next_meeting['phone'] ?: '-') ?>
+                    </p>
+                    <div style="font-size:1.3rem;font-weight:900;color:var(--status-color);letter-spacing:0.02em;text-align:center;">
+                        <?= date('H:i', strtotime($next_meeting['start_time'])) ?> น. - <?= date('H:i', strtotime($next_meeting['end_time'])) ?> น.
                     </div>
                 <?php else: ?>
                     <div style="opacity:0.3;display:flex;flex-direction:column;align-items:center;gap:0.4rem;">

@@ -258,13 +258,19 @@ if ($is_admin_view) {
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // ── Reset all filters on fresh page load (prevent browser state restoration) ──
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialStatus = urlParams.get('status');
+
     ['searchInput','filterTitle','filterBooker','filterDept','filterDateFrom','filterDateTo'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
     });
+    
     const statusEl = document.getElementById('statusFilter');
-    if (statusEl) statusEl.value = '';
+    if (statusEl) {
+        statusEl.value = initialStatus ? initialStatus : '';
+    }
+    
     const roomEl = document.getElementById('filterRoom');
     if (roomEl) roomEl.value = '';
 
@@ -306,9 +312,12 @@ async function loadApproveList() {
 
     if (data.success) {
         MeetQueue.setState({ bookings: data.bookings });
-        if (view === 'approve_list') {
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        if (view === 'approve_list' && !urlParams.has('status')) {
             document.getElementById('statusFilter').value = 'pending';
         }
+        
         renderTable();
         updateFilterUI();
     } else {
@@ -372,7 +381,6 @@ function renderTable() {
                     </div>
                     <div class="flex flex-col">
                         <span class="font-bold text-primary">${b.first_name}</span>
-                        <span class="text-[0.65rem] text-text-muted font-bold uppercase">${b.emp_code}</span>
                     </div>
                 </div>
             </td>

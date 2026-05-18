@@ -23,6 +23,10 @@ try {
         exit;
     }
     
+    // Clean out the 13-digit ID from names
+    $user['first_name'] = cleanName($user['first_name']);
+    $user['last_name'] = cleanName($user['last_name']);
+    
     if ($is_owner) {
         $_SESSION['user_data'] = $user;
     }
@@ -67,7 +71,6 @@ $fallback_avatar = 'https://ui-avatars.com/api/?name=' . urlencode($user['first_
                         </span>
                     </div>
                     <div style="display: flex; flex-wrap: wrap; gap: 20px; color: #A79A8B; font-weight: 700; font-size: 15px;">
-                        <span><i class="fas fa-id-badge" style="color: #D4B59D; margin-right: 6px;"></i> รหัส: <?php echo htmlspecialchars($user['emp_code']); ?></span>
                         <span><i class="fas fa-at" style="color: #D4B59D; margin-right: 6px;"></i> <?php echo htmlspecialchars($user['username']); ?></span>
                     </div>
                     <?php if ($is_owner): ?>

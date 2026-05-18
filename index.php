@@ -11,6 +11,11 @@ try {
     $pdo = getLocalDB();
     $usersStmt = $pdo->query("SELECT username, first_name, last_name FROM users ORDER BY first_name");
     $users = $usersStmt->fetchAll();
+    
+    foreach ($users as &$u) {
+        if (isset($u['first_name'])) $u['first_name'] = cleanName($u['first_name']);
+        if (isset($u['last_name'])) $u['last_name'] = cleanName($u['last_name']);
+    }
 } catch (Exception $e) {
     $users = [];
 }

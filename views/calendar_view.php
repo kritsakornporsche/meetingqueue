@@ -13,6 +13,7 @@ $pending_count = 0;
 if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
     $pending_count = \App\Core\Database::getInstance()->getConnection()->query("SELECT COUNT(*) FROM bookings WHERE status = 'pending'")->fetchColumn();
 }
+$base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard.php?view=requests' : 'dashboard.php?view=status';
 ?>
 
 <style>
@@ -236,34 +237,34 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
         <span class="monthly-summary-sub" id="summaryMonthLabel">กำลังโหลด...</span>
     </div>
     <div class="stat-cards">
-        <div class="stat-card stat-card-total">
+        <a href="<?= $base_link ?>" class="stat-card stat-card-total" style="text-decoration: none; cursor: pointer;">
             <div class="stat-card-icon"><i class="fas fa-calendar-alt"></i></div>
             <div class="stat-card-body">
                 <div class="stat-card-num" id="stat-total">–</div>
                 <div class="stat-card-label">รายการทั้งหมด</div>
             </div>
-        </div>
-        <div class="stat-card stat-card-approved">
+        </a>
+        <a href="<?= $base_link ?>&status=approved" class="stat-card stat-card-approved" style="text-decoration: none; cursor: pointer;">
             <div class="stat-card-icon"><i class="fas fa-check-circle"></i></div>
             <div class="stat-card-body">
                 <div class="stat-card-num" id="stat-approved">–</div>
                 <div class="stat-card-label">อนุมัติแล้ว</div>
             </div>
-        </div>
-        <div class="stat-card stat-card-pending">
+        </a>
+        <a href="<?= $base_link ?>&status=pending" class="stat-card stat-card-pending" style="text-decoration: none; cursor: pointer;">
             <div class="stat-card-icon"><i class="fas fa-hourglass-half"></i></div>
             <div class="stat-card-body">
                 <div class="stat-card-num" id="stat-pending">–</div>
                 <div class="stat-card-label">รออนุมัติ</div>
             </div>
-        </div>
-        <div class="stat-card stat-card-rejected">
+        </a>
+        <a href="<?= $base_link ?>&status=rejected" class="stat-card stat-card-rejected" style="text-decoration: none; cursor: pointer;">
             <div class="stat-card-icon"><i class="fas fa-times-circle"></i></div>
             <div class="stat-card-body">
                 <div class="stat-card-num" id="stat-rejected">–</div>
                 <div class="stat-card-label">ปฏิเสธ</div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="monthly-chart-wrap">
         <canvas id="monthlyBarChart"></canvas>

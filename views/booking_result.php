@@ -138,15 +138,18 @@ if (!$bookingId) {
         </div>
 
         <!-- Footer -->
-        <div style="background:#F9F8F6; padding:1.1rem 2.25rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; border-top:1px solid #EBE6DA; flex-wrap:wrap;">
-            <p style="font-size:0.65rem; font-weight:600; color:#A79A8B; display:flex; align-items:center; gap:0.5rem;">
-                <i class="fas fa-info-circle" style="color:#D4B59D;"></i> โปรดเก็บรหัสอ้างอิงไว้เพื่อใช้สำหรับติดตามสถานะการจอง
+        <div style="background:var(--card, #F9F8F6); padding:1.1rem 2.25rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; border-top:1px solid var(--border, #EBE6DA); flex-wrap:wrap;">
+            <p style="font-size:0.65rem; font-weight:600; color:var(--text-muted, #A79A8B); display:flex; align-items:center; gap:0.5rem; margin:0;">
+                <i class="fas fa-info-circle" style="color:var(--secondary, #D4B59D);"></i> โปรดเก็บรหัสอ้างอิงไว้เพื่อใช้สำหรับติดตามสถานะการจอง
             </p>
-            <div style="display:flex; gap:0.625rem;">
-                <button onclick="window.print()" style="padding:0.5rem 1.1rem; border-radius:0.625rem; background:white; border:1px solid #EBE6DA; color:#6A5243; font-weight:700; font-size:0.75rem; display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+            <div style="display:flex; gap:0.625rem; margin-left:auto; flex-wrap:wrap; justify-content:flex-end;">
+                <button onclick="window.print()" style="padding:0.5rem 1.1rem; border-radius:0.625rem; background:var(--card, white); border:1px solid var(--border, #EBE6DA); color:var(--primary, #6A5243); font-weight:700; font-size:0.75rem; display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
                     <i class="fas fa-print"></i> พิมพ์เอกสาร
                 </button>
-                <a href="dashboard.php?view=approve_list" style="padding:0.5rem 1.1rem; border-radius:0.625rem; background:#6A5243; color:white; font-weight:700; font-size:0.75rem; display:flex; align-items:center; gap:0.4rem; text-decoration:none;">
+                <a href="dashboard.php" style="padding:0.5rem 1.1rem; border-radius:0.625rem; background:var(--card, white); border:1px solid var(--primary, #6A5243); color:var(--primary, #6A5243); font-weight:700; font-size:0.75rem; display:flex; align-items:center; gap:0.4rem; text-decoration:none;">
+                    <i class="fas fa-home"></i> กลับหน้าหลัก
+                </a>
+                <a href="dashboard.php?view=approve_list" style="padding:0.5rem 1.1rem; border-radius:0.625rem; background:var(--primary, #6A5243); color:white; font-weight:700; font-size:0.75rem; display:flex; align-items:center; gap:0.4rem; text-decoration:none;">
                     <i class="fas fa-list"></i> ดูรายการทั้งหมด
                 </a>
             </div>
