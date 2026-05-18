@@ -5,15 +5,41 @@
  */
 
 // Local Database (Meeting Queue)
-define('DB_HOST', '192.168.9.234'); // Hospital IP
-define('DB_USER', 'meetingqueue');   // Remote DB user
-define('DB_PASS', 'Meeting@11190');   // Remote DB password
+$local_online = false;
+$fp = @fsockopen('192.168.9.234', 3306, $errno, $errstr, 0.4);
+if ($fp) {
+    $local_online = true;
+    fclose($fp);
+}
+
+if ($local_online) {
+    define('DB_HOST', '192.168.9.234'); // Hospital IP
+    define('DB_USER', 'meetingqueue');   // Remote DB user
+    define('DB_PASS', 'Meeting@11190');   // Remote DB password
+} else {
+    define('DB_HOST', 'localhost');      // Local Development fallback
+    define('DB_USER', 'root');           // Default XAMPP user
+    define('DB_PASS', '');               // Default XAMPP password (empty)
+}
 define('DB_NAME', 'meetingqueue_db');
 
 // External Database (ZK BioTime Authentication API)
-define('ZK_HOST', '192.168.9.7');   // Hospital IP
-define('ZK_USER', 'meeting7');
-define('ZK_PASS', 'meeting@11190');
+$zk_online = false;
+$fp_zk = @fsockopen('192.168.9.7', 3306, $errno, $errstr, 0.4);
+if ($fp_zk) {
+    $zk_online = true;
+    fclose($fp_zk);
+}
+
+if ($zk_online) {
+    define('ZK_HOST', '192.168.9.7');   // Hospital IP
+    define('ZK_USER', 'meeting7');
+    define('ZK_PASS', 'meeting@11190');
+} else {
+    define('ZK_HOST', 'localhost');        // Local Development (MOCK/Local) fallback
+    define('ZK_USER', 'root');
+    define('ZK_PASS', '');
+}
 define('ZK_NAME', 'zkbiotime');
 
 

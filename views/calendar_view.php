@@ -467,6 +467,17 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                 <div class="flex-grow">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-12 relative pl-6 border-l-2 border-[#EBE6DA]">
                         <?php 
+                        $thai_months = [
+                            1 => 'ม.ค.', 2 => 'ก.พ.', 3 => 'มี.ค.', 4 => 'เม.ย.', 5 => 'พ.ค.', 6 => 'มิ.ย.',
+                            7 => 'ก.ค.', 8 => 'ส.ค.', 9 => 'ก.ย.', 10 => 'ต.ค.', 11 => 'พ.ย.', 12 => 'ธ.ค.'
+                        ];
+                        $status_map = [
+                            'pending' => 'รออนุมัติ',
+                            'approved' => 'อนุมัติแล้ว',
+                            'rejected' => 'ปฏิเสธ',
+                            'cancelled' => 'ยกเลิก',
+                            'completed' => 'เสร็จสิ้น'
+                        ];
                         // Show more bookings since we have more space
                         $extended_recent = array_slice($recent_bookings, 0, 9);
                         foreach($extended_recent as $i => $rb): 
@@ -482,14 +493,19 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                             <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full <?= $color[0] ?> ring-4 ring-white"></div>
                             <h4 class="text-sm font-bold text-[#6A5243]"><?= htmlspecialchars($rb['title']) ?></h4>
                             <p class="text-[0.7rem] font-bold text-[#D4B59D] mt-0.5">
-                                <i class="far fa-calendar-alt mr-1"></i> <?= date('j M ', strtotime($rb['start_time'])) . (date('Y', strtotime($rb['start_time'])) + 543) ?>
+                                <?php
+                                $time = strtotime($rb['start_time']);
+                                $thai_month = $thai_months[(int)date('n', $time)] ?? '';
+                                $formatted_date = date('j ', $time) . $thai_month . ' ' . (date('Y', $time) + 543);
+                                ?>
+                                <i class="far fa-calendar-alt mr-1"></i> <?= $formatted_date ?>
                                 <i class="far fa-clock ml-2 mr-1"></i> <?= date('H:i', strtotime($rb['start_time'])) ?> น.
                             </p>
                             <p class="text-xs text-[#A79A8B] mt-0.5">
                                 <?= $rb['room_name'] ?? 'ภายนอก' ?> • <?= $rb['first_name'] ?>
                             </p>
                             <p class="text-[0.65rem] font-semibold <?= $color[1] ?> mt-1 uppercase tracking-wider">
-                                <?= $rb['status'] ?>
+                                <?= $status_map[$rb['status']] ?? $rb['status'] ?>
                             </p>
                         </div>
                         <?php endforeach; ?>

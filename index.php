@@ -113,12 +113,6 @@ try {
                 <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
             </button>
         </form>
-
-        <div class="mt-8 text-center">
-            <a href="test_connection.php" class="text-sm font-medium text-secondary hover:text-accent transition-colors flex items-center justify-center gap-1">
-                <i class="fas fa-stethoscope"></i> ตรวจสอบสถานะการเชื่อมต่อ
-            </a>
-        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
