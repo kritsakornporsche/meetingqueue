@@ -212,4 +212,45 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize custom date pickers
     MeetQueue.ui.initDatePickers();
+
+    // Theme Toggle Logic
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const htmlElement = document.documentElement;
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    htmlElement.setAttribute('data-theme', savedTheme);
+    
+    function updateThemeUI(theme) {
+        if (!themeToggleBtn) return;
+        let iconClass = 'fas fa-palette';
+        let textLabel = 'ธีมเอิร์ธโทน';
+        
+        if (theme === 'dark') {
+            iconClass = 'fas fa-moon';
+            textLabel = 'ธีมดาร์กไนท์';
+        } else if (theme === 'white') {
+            iconClass = 'fas fa-circle';
+            textLabel = 'ธีมสีขาวคลีน';
+        }
+        themeToggleBtn.innerHTML = `<i class="${iconClass}"></i> ${textLabel}`;
+    }
+
+    if (themeToggleBtn) {
+        updateThemeUI(savedTheme);
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme') || 'light';
+            let newTheme = 'light';
+            if (currentTheme === 'light') {
+                newTheme = 'dark';
+            } else if (currentTheme === 'dark') {
+                newTheme = 'white';
+            } else {
+                newTheme = 'light';
+            }
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeUI(newTheme);
+        });
+    }
 });

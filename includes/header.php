@@ -163,8 +163,13 @@ $titles = [
     </div>
     
     <div class="popup-menu-footer">
-        <a href="api/logout.php" class="popup-logout-btn">
-            <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
-        </a>
+        <div style="display: flex; gap: 0.5rem;">
+            <button id="themeToggleBtn" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex: 1; padding: 0.65rem; border-radius: 0.75rem; background: var(--bg); color: var(--text-main); font-weight: 700; font-size: 0.82rem; cursor: pointer; border: 1px solid var(--border); transition: all 0.2s;">
+                <i class="fas fa-moon"></i> โหมดสี
+            </button>
+            <a href="api/logout.php" class="popup-logout-btn" style="flex: 1;">
+                <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+            </a>
+        </div>
     </div>
 </div>
