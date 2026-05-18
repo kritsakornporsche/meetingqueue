@@ -728,10 +728,70 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
             </div>
             <div class="bg-[#EBE6DA]/30 px-8 py-5 border-t border-[#6A5243]/10 flex justify-between items-center" style="padding: 1.25rem 2rem;">
                 <div id="modalAdminActions" class="flex gap-2 hidden">
-                    <button type="button" id="deleteBookingBtn" class="inline-flex justify-center rounded-xl bg-[#FCE8E6] px-4 py-2.5 text-sm font-bold text-[#D93025] hover:bg-red-100 transition-all border border-[#D93025]/30 shadow-sm hover:-translate-y-0.5">ลบ</button>
-                    <button type="button" id="editBookingBtn" class="inline-flex justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-[#D4B59D] hover:bg-[#EBE6DA] transition-all border border-[#D4B59D]/50 shadow-sm hover:-translate-y-0.5">แก้ไขเวลา</button>
+                    <button type="button" id="deleteBookingBtn" class="inline-flex justify-center rounded-xl bg-[#FCE8E6] px-6 py-4 text-sm font-bold text-[#D93025] hover:bg-red-100 transition-all border border-[#D93025]/30 shadow-sm hover:-translate-y-0.5">ลบ</button>
+                    <button type="button" id="editBookingBtn" class="inline-flex justify-center rounded-xl bg-white px-6 py-4 text-sm font-bold text-[#D4B59D] hover:bg-[#EBE6DA] transition-all border border-[#D4B59D]/50 shadow-sm hover:-translate-y-0.5">แก้ไขเวลา</button>
+                    <button type="button" id="rescheduleBtn" class="inline-flex justify-center rounded-xl bg-white px-6 py-4 text-sm font-bold text-[#D93025] hover:bg-[#FCE8E6] transition-all border-2 border-[#D93025] shadow-sm hover:-translate-y-0.5">ย้ายวัน</button>
                 </div>
                 <button type="button" id="closeModalBtn" class="inline-flex justify-center rounded-xl bg-[#6A5243] px-8 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-[#523E32] transition-all duration-200 hover:shadow-md hover:-translate-y-0.5" style="padding: 0.625rem 2rem;">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reschedule Modal -->
+<div id="rescheduleModal" class="fixed inset-0 z-[60] hidden overflow-y-auto" aria-labelledby="reschedule-modal-title" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-gray-900/40 transition-opacity backdrop-blur-[2px]" id="rescheduleModalBackdrop"></div>
+    <div class="flex min-h-full items-center justify-center p-4 text-center" style="padding: 1.5rem;">
+        <div class="relative transform overflow-hidden rounded-3xl bg-white/95 backdrop-blur-xl text-left shadow-2xl transition-all w-full max-w-2xl border border-white/60 ring-1 ring-black/5">
+            <div style="padding: 2rem;">
+                <div class="flex items-center gap-5 border-b border-[#6A5243]/10 pb-6 mb-6" style="padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+                    <div class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#EBE6DA] to-[#D4B59D] shadow-inner" style="width: 4rem; height: 4rem;">
+                        <i class="fas fa-calendar-alt text-[#6A5243] text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold leading-tight text-[#6A5243] mb-1" style="margin-bottom: 0.25rem;">ย้ายวันประชุม</h3>
+                        <p class="text-sm font-medium text-[#A79A8B]">กรุณาระบุวันที่ใหม่ที่คุณต้องการเลื่อนการประชุม</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8" style="row-gap: 1.5rem; column-gap: 2rem;">
+                    <!-- Current Info -->
+                    <div class="flex items-start gap-4" style="gap: 1rem;">
+                        <div class="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#EBE6DA]/50" style="width: 2.5rem; height: 2.5rem;">
+                            <i class="fas fa-clock text-[#A79A8B]"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-[#A79A8B] uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">ช่วงเวลาเดิมที่จองไว้</p>
+                            <p class="text-base font-semibold text-[#6A5243]" id="rescheduleTimeDisplay">00:00 - 00:00 น.</p>
+                        </div>
+                    </div>
+
+                    <!-- New Date Input -->
+                    <div class="flex items-start gap-4" style="gap: 1rem;">
+                        <div class="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#FCE8E6]" style="width: 2.5rem; height: 2.5rem;">
+                            <i class="fas fa-calendar-check text-[#D93025]"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <p class="text-xs font-bold text-[#D93025] uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">เลือกวันที่ใหม่</p>
+                            <div class="bg-white/50 border border-[#D4B59D]/20 rounded-2xl px-4 py-2 hover:border-[#D93025]/50 transition-all shadow-sm">
+                                <input type="date" id="newMeetingDate" class="w-full bg-transparent border-none p-0 text-base font-bold text-[#6A5243] focus:ring-0 outline-none cursor-pointer leading-tight">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guidance Note -->
+                <div class="mt-8 p-4 rounded-xl bg-[#FDFBF7] border border-[#D4B59D]/20 flex gap-3 items-center" style="margin-top: 1rem;">
+                    <i class="fas fa-info-circle text-[#D4B59D]"></i>
+                    <p class="text-xs text-[#A79A8B] font-medium leading-relaxed">
+                        ระบบจะรักษาช่วงเวลาและห้องประชุมเดิมไว้ หากต้องการแก้ไขส่วนอื่นโปรดใช้เมนู "แก้ไขเวลา"
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-[#EBE6DA]/30 px-8 py-5 border-t border-[#6A5243]/10 flex justify-between items-center" style="padding: 1.25rem 2rem;">
+                <button type="button" id="cancelRescheduleBtn" class="inline-flex justify-center rounded-xl bg-white px-6 py-2 text-sm font-bold text-[#A79A8B] hover:text-[#6A5243] transition-all border border-[#D4B59D]/30 shadow-sm">ยกเลิก</button>
+                <button type="button" id="confirmRescheduleBtn" class="inline-flex justify-center rounded-xl bg-[#6A5243] px-8 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-[#523E32] transition-all duration-200 hover:shadow-md hover:-translate-y-0.5" style="padding: 0.625rem 2rem;">ยืนยันการย้ายวัน</button>
             </div>
         </div>
     </div>
@@ -1184,6 +1244,73 @@ if (($_SESSION['user_data']['role'] ?? 'user') === 'admin') {
                                 });
                             }
                         });
+                    };
+
+                    document.getElementById('rescheduleBtn').onclick = () => {
+                        const event = info.event;
+                        const start = event.start;
+                        const end = event.end || start;
+                        
+                        const pad = (n) => n < 10 ? '0' + n : n;
+                        const dateStr = start.getFullYear() + '-' + pad(start.getMonth()+1) + '-' + pad(start.getDate());
+                        document.getElementById('newMeetingDate').value = dateStr;
+                        
+                        const timeStart = pad(start.getHours()) + ':' + pad(start.getMinutes());
+                        const timeEnd = pad(end.getHours()) + ':' + pad(end.getMinutes());
+                        document.getElementById('rescheduleTimeDisplay').textContent = timeStart + ' - ' + timeEnd + ' น.';
+                        
+                        document.getElementById('rescheduleModal').classList.remove('hidden');
+                    };
+
+                    document.getElementById('confirmRescheduleBtn').onclick = () => {
+                        const newDate = document.getElementById('newMeetingDate').value;
+                        if (!newDate) {
+                            MeetQueue.utils.notify('warning', 'กรุณาเลือกวันที่');
+                            return;
+                        }
+                        
+                        const event = info.event;
+                        const start = event.start;
+                        const end = event.end || start;
+                        
+                        const pad = (n) => n < 10 ? '0' + n : n;
+                        const timeStart = pad(start.getHours()) + ':' + pad(start.getMinutes()) + ':' + pad(start.getSeconds());
+                        const timeEnd = pad(end.getHours()) + ':' + pad(end.getMinutes()) + ':' + pad(end.getSeconds());
+                        
+                        const newStart = newDate + ' ' + timeStart;
+                        const newEnd = newDate + ' ' + timeEnd;
+                        const roomId = event.extendedProps.room_id || null;
+                        
+                        fetch('api/bookings.php', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                action: 'update_time', 
+                                booking_id: event.id, 
+                                start_time: newStart, 
+                                end_time: newEnd, 
+                                room_id: roomId 
+                            })
+                        }).then(r => r.json()).then(data => {
+                            if (data.success) {
+                                MeetQueue.utils.notify('success', 'ย้ายวันสำเร็จ');
+                                calendarInstance.refetchEvents();
+                                document.getElementById('rescheduleModal').classList.add('hidden');
+                                closeModal();
+                            } else {
+                                MeetQueue.utils.notify('error', 'ผิดพลาด', data.message);
+                            }
+                        }).catch(() => {
+                            MeetQueue.utils.notify('error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
+                        });
+                    };
+
+                    document.getElementById('cancelRescheduleBtn').onclick = () => {
+                        document.getElementById('rescheduleModal').classList.add('hidden');
+                    };
+
+                    document.getElementById('rescheduleModalBackdrop').onclick = () => {
+                        document.getElementById('rescheduleModal').classList.add('hidden');
                     };
                 } else {
                     document.getElementById('modalAdminActions').classList.add('hidden');
