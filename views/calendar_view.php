@@ -933,9 +933,8 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         }
         
         if (calendarInstance) {
-            let eventSource = calendarInstance.getEventSources()[0];
-            if (eventSource) eventSource.remove();
-            calendarInstance.addEventSource('api/calendar_events.php?room_id=' + currentRoomFilter);
+            calendarInstance.refetchEvents();
+            calendarInstance.refetchResources();
         }
     }
 
@@ -1045,12 +1044,18 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            const resources = data.rooms.map(room => ({
+                            let list = data.rooms;
+                            if (currentRoomFilter !== 'all') {
+                                list = list.filter(r => r.id == currentRoomFilter);
+                            }
+                            const resources = list.map(room => ({
                                 id: room.id,
                                 title: room.name,
                                 capacity: room.capacity
                             }));
-                            resources.push({ id: 'external', title: 'ภายนอกสถานที่' });
+                            if (currentRoomFilter === 'all' || currentRoomFilter === 'external') {
+                                resources.push({ id: 'external', title: 'ภายนอกสถานที่' });
+                            }
                             successCallback(resources);
                         } else {
                             failureCallback();
@@ -1158,7 +1163,18 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                     })
                     .catch(function(){});
             },
-            events: 'api/calendar_events.php',
+            events: function(fetchInfo, successCallback, failureCallback) {
+                let url = 'api/calendar_events.php?start=' + fetchInfo.startStr.slice(0, 10) + '&end=' + fetchInfo.endStr.slice(0, 10);
+                if (currentRoomFilter !== 'all') {
+                    url += '&room_id=' + currentRoomFilter;
+                }
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        successCallback(data);
+                    })
+                    .catch(err => failureCallback(err));
+            },
             eventDrop: function(info) {
                 if (!isAdmin) {
                     info.revert();
