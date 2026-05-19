@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once 'api/config.php';
 use App\Repository\BookingRepository;
 
@@ -40,13 +40,13 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         overflow-y: auto;
         overflow-x: hidden;
         scrollbar-width: thin;
-        scrollbar-color: rgba(212,181,157,0.4) transparent;
+        scrollbar-color: rgba(59,130,246,0.4) transparent;
         padding-right: 0.25rem;
     }
     .room-panel::-webkit-scrollbar { width: 4px; }
     .room-panel::-webkit-scrollbar-track { background: transparent; }
-    .room-panel::-webkit-scrollbar-thumb { background: rgba(212,181,157,0.5); border-radius: 10px; }
-    .room-panel::-webkit-scrollbar-thumb:hover { background: rgba(212,181,157,0.8); }
+    .room-panel::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.5); border-radius: 10px; }
+    .room-panel::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246,0.8); }
 
     /* Mobile-first Room Cards Layout */
     .room-card-wrapper {
@@ -67,7 +67,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         background: white;
         border-radius: 1rem;
         padding: 1rem;
-        border: 1px solid rgba(212, 181, 157, 0.2);
+        border: 1px solid rgba(59, 130, 246, 0.2);
         width: 100%;
         box-sizing: border-box;
         display: flex;
@@ -77,17 +77,17 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         transition: all 0.2s ease;
     }
     .room-card:hover {
-        border-color: rgba(212, 181, 157, 0.6);
-        box-shadow: 0 4px 12px rgba(106, 82, 67, 0.05);
+        border-color: rgba(59, 130, 246, 0.6);
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
         transform: translateY(-2px);
     }
     .room-card.active {
-        border-color: #6A5243;
-        box-shadow: 0 0 0 1px #6A5243, 0 4px 12px rgba(106, 82, 67, 0.1);
-        background: #FDFBF7;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 1px var(--primary), 0 4px 12px rgba(15, 23, 42, 0.1);
+        background: var(--white);
     }
     .room-card.active .room-card-icon {
-        background: #6A5243;
+        background: var(--primary);
         color: white;
     }
     .room-card-header {
@@ -108,11 +108,11 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         width: 2.5rem;
         height: 2.5rem;
         border-radius: 0.75rem;
-        background: linear-gradient(to bottom right, #EBE6DA, #D4B59D);
+        background: linear-gradient(to bottom right, var(--border), var(--secondary));
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #6A5243;
+        color: var(--primary);
         font-weight: bold;
         font-size: 0.875rem;
         flex-shrink: 0;
@@ -125,7 +125,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
     }
     .room-card-title {
         font-weight: 700;
-        color: #6A5243;
+        color: var(--primary);
         font-size: 0.875rem;
         line-height: 1.25;
         white-space: normal;
@@ -134,7 +134,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
     }
     .room-card-subtitle {
         font-size: 0.65rem;
-        color: #A79A8B;
+        color: var(--text-muted);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -155,7 +155,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         align-items: center;
         gap: 0.75rem;
         font-size: 0.7rem;
-        color: #A79A8B;
+        color: var(--text-muted);
         font-weight: 500;
         flex-wrap: wrap;
     }
@@ -176,11 +176,11 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;
     }
     .monthly-summary-title {
-        font-size: 0.85rem; font-weight: 700; color: #6A5243;
+        font-size: 0.85rem; font-weight: 700; color: var(--primary);
         display: flex; align-items: center; gap: 0.5rem;
     }
-    .monthly-summary-title i { color: #D4B59D; }
-    .monthly-summary-sub { font-size: 0.7rem; color: #A79A8B; font-weight: 500; }
+    .monthly-summary-title i { color: var(--secondary); }
+    .monthly-summary-sub { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
 
     .stat-cards {
         display: grid;
@@ -222,8 +222,8 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
 
     .monthly-chart-wrap {
         background: white; border-radius: 1rem; padding: 0.85rem 1rem 0.6rem;
-        border: 1px solid rgba(212,181,157,0.2);
-        box-shadow: 0 2px 8px rgba(106,82,67,0.04);
+        border: 1px solid rgba(59,130,246,0.2);
+        box-shadow: 0 2px 8px rgba(15,23,42,0.04);
     }
     .monthly-chart-wrap canvas { max-height: 110px; }
 </style>
@@ -323,11 +323,11 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                         legend:{
                             position:'top', align:'end',
                             labels:{ boxWidth:10, boxHeight:10, borderRadius:3, useBorderRadius:true,
-                                font:{size:10,family:"'Outfit','Sarabun',sans-serif"}, color:'#A79A8B', padding:8 }
+                                font:{size:10,family:"'Outfit','Sarabun',sans-serif"}, color:'var(--text-muted)', padding:8 }
                         },
                         tooltip:{
-                            backgroundColor:'rgba(253,251,247,0.97)', titleColor:'#6A5243', bodyColor:'#6A5243',
-                            borderColor:'rgba(212,181,157,0.3)', borderWidth:1, padding:8,
+                            backgroundColor:'rgba(253,251,247,0.97)', titleColor:'var(--primary)', bodyColor:'var(--primary)',
+                            borderColor:'rgba(59,130,246,0.3)', borderWidth:1, padding:8,
                             titleFont:{size:11,weight:'bold',family:"'Outfit','Sarabun',sans-serif"},
                             bodyFont:{size:10,family:"'Outfit','Sarabun',sans-serif"},
                             callbacks:{ title: ctx=>'วันที่ '+ctx[0].label }
@@ -335,9 +335,9 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                     },
                     scales:{
                         x:{ grid:{display:false}, border:{display:false},
-                            ticks:{font:{size:9,family:"'Outfit','Sarabun',sans-serif"},color:'#C9BCB0',maxRotation:0,autoSkip:true,maxTicksLimit:16} },
-                        y:{ beginAtZero:true, grid:{color:'rgba(212,181,157,0.1)'}, border:{display:false},
-                            ticks:{font:{size:9,family:"'Outfit','Sarabun',sans-serif"},color:'#C9BCB0',stepSize:1,maxTicksLimit:5} }
+                            ticks:{font:{size:9,family:"'Outfit','Sarabun',sans-serif"},color:'var(--text-muted)',maxRotation:0,autoSkip:true,maxTicksLimit:16} },
+                        y:{ beginAtZero:true, grid:{color:'rgba(59,130,246,0.1)'}, border:{display:false},
+                            ticks:{font:{size:9,family:"'Outfit','Sarabun',sans-serif"},color:'var(--text-muted)',stepSize:1,maxTicksLimit:5} }
                     }
                 }
             });
@@ -356,10 +356,10 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
     <div class="flex flex-col gap-4" style="padding-right: 0.5rem;">
         <div class="flex items-center justify-between mb-2">
             <div>
-                <h2 class="text-xl font-bold text-[#6A5243]">ห้องประชุม</h2>
-                <p class="text-xs text-[#A79A8B]">ทั้งหมด <?= count($rooms) ?> ห้อง</p>
+                <h2 class="text-xl font-bold text-primary">ห้องประชุม</h2>
+                <p class="text-xs text-text-muted">ทั้งหมด <?= count($rooms) ?> ห้อง</p>
             </div>
-            <button onclick="document.getElementById('filterContainer').classList.toggle('hidden')" class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#6A5243] shadow-sm hover:bg-[#EBE6DA] transition-colors border border-[#D4B59D]/30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#D4B59D]">
+            <button onclick="document.getElementById('filterContainer').classList.toggle('hidden')" class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary shadow-sm hover:bg-slate-200 transition-colors border border-blue-400/30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400">
                 <i class="fas fa-sliders-h text-xs"></i>
             </button>
         </div>
@@ -389,7 +389,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                 $rand = $index % 3;
             ?>
             <div class="room-card relative group" data-room-id="<?= $room['id'] ?>" data-status="<?= $statusText[$rand] ?>" onclick="filterCalendarByRoom(<?= $room['id'] ?>, this)">
-                <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#D4B59D] to-[#6A5243] opacity-0 group-hover:opacity-100 transition-opacity" style="border-radius: 1rem 0 0 1rem;"></div>
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-300 to-[var(--primary)] opacity-0 group-hover:opacity-100 transition-opacity" style="border-radius: 1rem 0 0 1rem;"></div>
                 
                 <div class="room-card-header">
                     <div class="room-card-info">
@@ -409,10 +409,10 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                 
                 <div class="room-card-footer">
                     <span style="display: flex; align-items: center; gap: 0.25rem; white-space: nowrap;">
-                        <i class="fas fa-users" style="color: #D4B59D;"></i> <?= $room['capacity'] ?> คน
+                        <i class="fas fa-users" style="color: var(--secondary);"></i> <?= $room['capacity'] ?> คน
                     </span>
                     <span style="display: flex; align-items: center; gap: 0.25rem; white-space: nowrap;">
-                        <i class="fas fa-tv" style="color: #D4B59D;"></i> TV/Projector
+                        <i class="fas fa-tv" style="color: var(--secondary);"></i> TV/Projector
                     </span>
                 </div>
             </div>
@@ -427,14 +427,14 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         <!-- Top: Calendar Section -->
         <div class="dash-card flex-grow relative overflow-hidden mb-6 w-full box-border">
             <!-- Decorative accent -->
-            <div class="absolute top-0 right-0 w-64 h-64 bg-[#D4B59D]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div class="absolute top-0 right-0 w-64 h-64 bg-[var(--secondary)]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
             
             <div class="flex flex-wrap justify-between items-center mb-6 relative z-10 gap-4">
                 <div class="min-w-0">
-                    <h2 class="text-xl font-bold text-[#6A5243] flex items-center gap-2 truncate">
-                        <i class="fas fa-calendar-alt text-[#D4B59D]"></i> ปฏิทินการจองรวม
+                    <h2 class="text-xl font-bold text-primary flex items-center gap-2 truncate">
+                        <i class="fas fa-calendar-alt text-[var(--secondary)]"></i> ปฏิทินการจองรวม
                     </h2>
-                    <p class="text-xs text-[#A79A8B] mt-1">อัปเดตแบบ Real-time</p>
+                    <p class="text-xs text-text-muted mt-1">อัปเดตแบบ Real-time</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
                     <?php if (($_SESSION['user_data']['role'] ?? 'user') === 'admin'): ?>
@@ -460,12 +460,12 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
             <!-- Status / Timeline -->
             <div class="dash-card flex flex-col">
                 <div class="flex justify-between items-center mb-5">
-                    <h3 class="font-bold text-[#6A5243] text-lg">การประชุมที่จะถึง</h3>
-                    <a href="dashboard.php?view=approve_list" class="text-xs font-bold text-[#D4B59D] hover:text-[#6A5243] transition-colors">ดูทั้งหมด</a>
+                    <h3 class="font-bold text-primary text-lg">การประชุมที่จะถึง</h3>
+                    <a href="dashboard.php?view=approve_list" class="text-xs font-bold text-[var(--secondary)] hover:text-primary transition-colors">ดูทั้งหมด</a>
                 </div>
                 
                 <div class="flex-grow">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-12 relative pl-6 border-l-2 border-[#EBE6DA]">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-12 relative pl-6 border-l-2 border-slate-200">
                         <?php 
                         $thai_months = [
                             1 => 'ม.ค.', 2 => 'ก.พ.', 3 => 'มี.ค.', 4 => 'เม.ย.', 5 => 'พ.ค.', 6 => 'มิ.ย.',
@@ -485,14 +485,14 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                                 'approved' => ['bg-[#10b981]', 'text-[#10b981]'],
                                 'pending' => ['bg-[#f59e0b]', 'text-[#f59e0b]'],
                                 'rejected' => ['bg-[#ef4444]', 'text-[#ef4444]'],
-                                'completed' => ['bg-[#6A5243]', 'text-[#6A5243]']
+                                'completed' => ['bg-blue-600', 'text-primary']
                             ];
                             $color = $statusColors[$rb['status']] ?? ['bg-gray-400', 'text-gray-400'];
                         ?>
                         <div class="relative">
                             <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full <?= $color[0] ?> ring-4 ring-white"></div>
-                            <h4 class="text-sm font-bold text-[#6A5243]"><?= htmlspecialchars($rb['title']) ?></h4>
-                            <p class="text-[0.7rem] font-bold text-[#D4B59D] mt-0.5">
+                            <h4 class="text-sm font-bold text-primary"><?= htmlspecialchars($rb['title']) ?></h4>
+                            <p class="text-[0.7rem] font-bold text-[var(--secondary)] mt-0.5">
                                 <?php
                                 $time = strtotime($rb['start_time']);
                                 $thai_month = $thai_months[(int)date('n', $time)] ?? '';
@@ -501,7 +501,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                                 <i class="far fa-calendar-alt mr-1"></i> <?= $formatted_date ?>
                                 <i class="far fa-clock ml-2 mr-1"></i> <?= date('H:i', strtotime($rb['start_time'])) ?> น.
                             </p>
-                            <p class="text-xs text-[#A79A8B] mt-0.5">
+                            <p class="text-xs text-text-muted mt-0.5">
                                 <?= $rb['room_name'] ?? 'ภายนอก' ?> • <?= $rb['first_name'] ?>
                             </p>
                             <p class="text-[0.65rem] font-semibold <?= $color[1] ?> mt-1 uppercase tracking-wider">
@@ -511,7 +511,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                         <?php endforeach; ?>
                         
                         <?php if(empty($recent_bookings)): ?>
-                            <p class="text-sm text-[#A79A8B]">ไม่มีประวัติการจอง</p>
+                            <p class="text-sm text-text-muted">ไม่มีประวัติการจอง</p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -531,8 +531,8 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         color: var(--text-main);
     }
     .fc .fc-button-primary {
-        background: #F9F8F6;
-        border: 1px solid rgba(212, 181, 157, 0.3);
+        background: var(--sidebar-bg);
+        border: 1px solid rgba(59, 130, 246, 0.3);
         color: var(--text-muted);
         text-transform: capitalize;
         border-radius: 0.5rem;
@@ -548,17 +548,17 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.1) !important;
     }
     .fc-theme-standard td, .fc-theme-standard th, .fc-theme-standard .fc-scrollgrid {
-        border-color: rgba(212, 181, 157, 0.2);
+        border-color: rgba(59, 130, 246, 0.2);
     }
     .fc-col-header-cell-cushion {
-        color: #A79A8B;
+        color: var(--text-muted);
         font-weight: 600;
         font-size: 0.8rem;
         padding: 0.5rem !important;
     }
     .fc-daygrid-day-number {
         font-weight: 700;
-        color: #6A5243;
+        color: var(--primary);
     }
     
     /* Weekend / Holiday Styling */
@@ -585,7 +585,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         cursor: pointer;
     }
     .fc-daygrid-day-frame:hover {
-        background-color: rgba(212, 181, 157, 0.15) !important;
+        background-color: rgba(59, 130, 246, 0.15) !important;
     }
 
     /* Hide event pills in month view — replaced by count badges */
@@ -692,13 +692,13 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
     <div class="flex min-h-full items-center justify-center p-4 text-center" style="padding: 1.5rem;">
         <div class="relative transform overflow-hidden rounded-3xl bg-white/95 backdrop-blur-xl text-left shadow-2xl transition-all w-full max-w-2xl border border-white/60 ring-1 ring-black/5">
             <div style="padding: 2rem;">
-                <div class="flex items-start justify-between border-b border-[#6A5243]/10 pb-6 mb-6" style="padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+                <div class="flex items-start justify-between border-b border-blue-600/10 pb-6 mb-6" style="padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
                     <div class="flex items-center gap-5" style="gap: 1.25rem;">
-                        <div class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#EBE6DA] to-[#D4B59D] shadow-inner" style="width: 4rem; height: 4rem;">
-                            <i class="fas fa-calendar-check text-[#6A5243] text-2xl"></i>
+                        <div class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-200 to-blue-400 shadow-inner" style="width: 4rem; height: 4rem;">
+                            <i class="fas fa-calendar-check text-primary text-2xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-2xl font-bold leading-tight text-[#6A5243] mb-2" id="modalTitle" style="margin-bottom: 0.5rem;">รายละเอียดการจอง</h3>
+                            <h3 class="text-2xl font-bold leading-tight text-primary mb-2" id="modalTitle" style="margin-bottom: 0.5rem;">รายละเอียดการจอง</h3>
                             <span id="modalStatus" class="inline-block px-3 py-1 text-xs font-bold rounded-full tracking-wide">สถานะ</span>
                         </div>
                     </div>
@@ -706,50 +706,50 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8" style="row-gap: 1.5rem; column-gap: 2rem;">
                     <div class="flex items-start gap-4" style="gap: 1rem;">
-                        <div class="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#EBE6DA]/50" style="width: 2.5rem; height: 2.5rem;">
-                            <i class="fas fa-door-open text-[#A79A8B]"></i>
+                        <div class="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-slate-200/50" style="width: 2.5rem; height: 2.5rem;">
+                            <i class="fas fa-door-open text-text-muted"></i>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-[#A79A8B] uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">ห้องประชุม</p>
-                            <p class="text-base font-semibold text-[#6A5243]" id="modalRoom">N/A</p>
+                            <p class="text-xs font-bold text-text-muted uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">ห้องประชุม</p>
+                            <p class="text-base font-semibold text-primary" id="modalRoom">N/A</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4" style="gap: 1rem;">
-                        <div class="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#EBE6DA]/50" style="width: 2.5rem; height: 2.5rem;">
-                            <i class="fas fa-clock text-[#A79A8B]"></i>
+                        <div class="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-slate-200/50" style="width: 2.5rem; height: 2.5rem;">
+                            <i class="fas fa-clock text-text-muted"></i>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-[#A79A8B] uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">วันและเวลา</p>
-                            <p class="text-base font-semibold text-[#6A5243]" id="modalTime">N/A</p>
+                            <p class="text-xs font-bold text-text-muted uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">วันและเวลา</p>
+                            <p class="text-base font-semibold text-primary" id="modalTime">N/A</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4" style="gap: 1rem;">
-                        <div class="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#EBE6DA]/50" style="width: 2.5rem; height: 2.5rem;">
-                            <i class="fas fa-users text-[#A79A8B]"></i>
+                        <div class="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-slate-200/50" style="width: 2.5rem; height: 2.5rem;">
+                            <i class="fas fa-users text-text-muted"></i>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-[#A79A8B] uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">จำนวนผู้เข้าร่วม</p>
-                            <p class="text-base font-semibold text-[#6A5243]" id="modalParticipants">N/A</p>
+                            <p class="text-xs font-bold text-text-muted uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">จำนวนผู้เข้าร่วม</p>
+                            <p class="text-base font-semibold text-primary" id="modalParticipants">N/A</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4" style="gap: 1rem;">
-                        <div class="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#EBE6DA]/50" style="width: 2.5rem; height: 2.5rem;">
-                            <i class="fas fa-user-circle text-[#A79A8B]"></i>
+                        <div class="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-slate-200/50" style="width: 2.5rem; height: 2.5rem;">
+                            <i class="fas fa-user-circle text-text-muted"></i>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-[#A79A8B] uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">ผู้จอง</p>
-                            <p class="text-base font-semibold text-[#6A5243]" id="modalUser">N/A</p>
+                            <p class="text-xs font-bold text-text-muted uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">ผู้จอง</p>
+                            <p class="text-base font-semibold text-primary" id="modalUser">N/A</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="bg-[#EBE6DA]/30 px-8 py-5 border-t border-[#6A5243]/10 flex justify-between items-center" style="padding: 1.25rem 2rem;">
+            <div class="bg-slate-200/30 px-8 py-5 border-t border-blue-600/10 flex justify-between items-center" style="padding: 1.25rem 2rem;">
                 <div id="modalAdminActions" class="flex gap-2 hidden">
                     <button type="button" id="deleteBookingBtn" class="inline-flex justify-center rounded-xl bg-[#FCE8E6] px-6 py-4 text-sm font-bold text-[#D93025] hover:bg-red-100 transition-all border border-[#D93025]/30 shadow-sm hover:-translate-y-0.5">ลบ</button>
-                    <button type="button" id="editBookingBtn" class="inline-flex justify-center rounded-xl bg-white px-6 py-4 text-sm font-bold text-[#D4B59D] hover:bg-[#EBE6DA] transition-all border border-[#D4B59D]/50 shadow-sm hover:-translate-y-0.5">แก้ไขเวลา</button>
+                    <button type="button" id="editBookingBtn" class="inline-flex justify-center rounded-xl bg-white px-6 py-4 text-sm font-bold text-[var(--secondary)] hover:bg-slate-200 transition-all border border-blue-400/50 shadow-sm hover:-translate-y-0.5">แก้ไขเวลา</button>
                     <button type="button" id="rescheduleBtn" class="inline-flex justify-center rounded-xl bg-white px-6 py-4 text-sm font-bold text-[#D93025] hover:bg-[#FCE8E6] transition-all border-2 border-[#D93025] shadow-sm hover:-translate-y-0.5">ย้ายวัน</button>
                 </div>
-                <button type="button" id="closeModalBtn" class="inline-flex justify-center rounded-xl bg-[#6A5243] px-8 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-[#523E32] transition-all duration-200 hover:shadow-md hover:-translate-y-0.5" style="padding: 0.625rem 2rem;">ปิดหน้าต่าง</button>
+                <button type="button" id="closeModalBtn" class="inline-flex justify-center rounded-xl bg-blue-600 px-8 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-blue-800 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5" style="padding: 0.625rem 2rem;">ปิดหน้าต่าง</button>
             </div>
         </div>
     </div>
@@ -761,25 +761,25 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
     <div class="flex min-h-full items-center justify-center p-4 text-center" style="padding: 1.5rem;">
         <div class="relative transform overflow-hidden rounded-3xl bg-white/95 backdrop-blur-xl text-left shadow-2xl transition-all w-full max-w-2xl border border-white/60 ring-1 ring-black/5">
             <div style="padding: 2rem;">
-                <div class="flex items-center gap-5 border-b border-[#6A5243]/10 pb-6 mb-6" style="padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
-                    <div class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#EBE6DA] to-[#D4B59D] shadow-inner" style="width: 4rem; height: 4rem;">
-                        <i class="fas fa-calendar-alt text-[#6A5243] text-2xl"></i>
+                <div class="flex items-center gap-5 border-b border-blue-600/10 pb-6 mb-6" style="padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+                    <div class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-200 to-blue-400 shadow-inner" style="width: 4rem; height: 4rem;">
+                        <i class="fas fa-calendar-alt text-primary text-2xl"></i>
                     </div>
                     <div>
-                        <h3 class="text-2xl font-bold leading-tight text-[#6A5243] mb-1" style="margin-bottom: 0.25rem;">ย้ายวันประชุม</h3>
-                        <p class="text-sm font-medium text-[#A79A8B]">กรุณาระบุวันที่ใหม่ที่คุณต้องการเลื่อนการประชุม</p>
+                        <h3 class="text-2xl font-bold leading-tight text-primary mb-1" style="margin-bottom: 0.25rem;">ย้ายวันประชุม</h3>
+                        <p class="text-sm font-medium text-text-muted">กรุณาระบุวันที่ใหม่ที่คุณต้องการเลื่อนการประชุม</p>
                     </div>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8" style="row-gap: 1.5rem; column-gap: 2rem;">
                     <!-- Current Info -->
                     <div class="flex items-start gap-4" style="gap: 1rem;">
-                        <div class="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#EBE6DA]/50" style="width: 2.5rem; height: 2.5rem;">
-                            <i class="fas fa-clock text-[#A79A8B]"></i>
+                        <div class="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-slate-200/50" style="width: 2.5rem; height: 2.5rem;">
+                            <i class="fas fa-clock text-text-muted"></i>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-[#A79A8B] uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">ช่วงเวลาเดิมที่จองไว้</p>
-                            <p class="text-base font-semibold text-[#6A5243]" id="rescheduleTimeDisplay">00:00 - 00:00 น.</p>
+                            <p class="text-xs font-bold text-text-muted uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">ช่วงเวลาเดิมที่จองไว้</p>
+                            <p class="text-base font-semibold text-primary" id="rescheduleTimeDisplay">00:00 - 00:00 น.</p>
                         </div>
                     </div>
 
@@ -790,25 +790,25 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                         </div>
                         <div class="flex-grow">
                             <p class="text-xs font-bold text-[#D93025] uppercase tracking-wider mb-1" style="margin-bottom: 0.25rem;">เลือกวันที่ใหม่</p>
-                            <div class="bg-white/50 border border-[#D4B59D]/20 rounded-2xl px-4 py-2 hover:border-[#D93025]/50 transition-all shadow-sm">
-                                <input type="date" id="newMeetingDate" class="w-full bg-transparent border-none p-0 text-base font-bold text-[#6A5243] focus:ring-0 outline-none cursor-pointer leading-tight">
+                            <div class="bg-white/50 border border-blue-400/20 rounded-2xl px-4 py-2 hover:border-[#D93025]/50 transition-all shadow-sm">
+                                <input type="date" id="newMeetingDate" class="w-full bg-transparent border-none p-0 text-base font-bold text-primary focus:ring-0 outline-none cursor-pointer leading-tight">
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Guidance Note -->
-                <div class="mt-8 p-4 rounded-xl bg-[#FDFBF7] border border-[#D4B59D]/20 flex gap-3 items-center" style="margin-top: 1rem;">
-                    <i class="fas fa-info-circle text-[#D4B59D]"></i>
-                    <p class="text-xs text-[#A79A8B] font-medium leading-relaxed">
+                <div class="mt-8 p-4 rounded-xl bg-white border border-blue-400/20 flex gap-3 items-center" style="margin-top: 1rem;">
+                    <i class="fas fa-info-circle text-[var(--secondary)]"></i>
+                    <p class="text-xs text-text-muted font-medium leading-relaxed">
                         ระบบจะรักษาช่วงเวลาและห้องประชุมเดิมไว้ หากต้องการแก้ไขส่วนอื่นโปรดใช้เมนู "แก้ไขเวลา"
                     </p>
                 </div>
             </div>
 
-            <div class="bg-[#EBE6DA]/30 px-8 py-5 border-t border-[#6A5243]/10 flex justify-between items-center" style="padding: 1.25rem 2rem;">
-                <button type="button" id="cancelRescheduleBtn" class="inline-flex justify-center rounded-xl bg-white px-6 py-2 text-sm font-bold text-[#A79A8B] hover:text-[#6A5243] transition-all border border-[#D4B59D]/30 shadow-sm">ยกเลิก</button>
-                <button type="button" id="confirmRescheduleBtn" class="inline-flex justify-center rounded-xl bg-[#6A5243] px-8 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-[#523E32] transition-all duration-200 hover:shadow-md hover:-translate-y-0.5" style="padding: 0.625rem 2rem;">ยืนยันการย้ายวัน</button>
+            <div class="bg-slate-200/30 px-8 py-5 border-t border-blue-600/10 flex justify-between items-center" style="padding: 1.25rem 2rem;">
+                <button type="button" id="cancelRescheduleBtn" class="inline-flex justify-center rounded-xl bg-white px-6 py-2 text-sm font-bold text-text-muted hover:text-primary transition-all border border-blue-400/30 shadow-sm">ยกเลิก</button>
+                <button type="button" id="confirmRescheduleBtn" class="inline-flex justify-center rounded-xl bg-blue-600 px-8 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-blue-800 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5" style="padding: 0.625rem 2rem;">ยืนยันการย้ายวัน</button>
             </div>
         </div>
     </div>
@@ -1078,7 +1078,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                     showCancelButton: true,
                     confirmButtonText: 'ตกลง',
                     cancelButtonText: 'ยกเลิก',
-                    confirmButtonColor: '#6A5243'
+                    confirmButtonColor: '#2563EB'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         fetch('api/bookings.php', {
@@ -1126,7 +1126,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                     showCancelButton: true,
                     confirmButtonText: 'ตกลง',
                     cancelButtonText: 'ยกเลิก',
-                    confirmButtonColor: '#6A5243'
+                    confirmButtonColor: '#2563EB'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         fetch('api/bookings.php', {
@@ -1170,7 +1170,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                     statusColor = 'bg-[#FCE8E6] text-[#D93025] border border-[#D93025]/20';
                 } else if (props.status === 'completed') {
                     statusText = 'เสร็จสิ้น';
-                    statusColor = 'bg-[#EBE6DA] text-[#6A5243] border border-[#D4B59D]/40';
+                    statusColor = 'bg-slate-200 text-primary border border-blue-400/40';
                 }
                 
                 statusBadge.textContent = statusText;
@@ -1189,7 +1189,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                             confirmButtonText: 'ลบ',
                             cancelButtonText: 'ยกเลิก',
                             confirmButtonColor: '#d33',
-                            cancelButtonColor: '#A79A8B'
+                            cancelButtonColor: '#94a3b8'
                         }).then((res) => {
                             if (res.isConfirmed) {
                                 fetch('api/bookings.php', {
@@ -1221,20 +1221,20 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                             html: `
                                 <div class="flex flex-col gap-4 text-left mt-4 px-2">
                                     <div>
-                                        <label class="block text-sm font-bold text-[#6A5243] mb-1">เวลาเริ่ม</label>
-                                        <input type="datetime-local" id="swal-start" class="w-full rounded-xl border border-[#D4B59D]/50 px-4 py-2 focus:ring-2 focus:ring-[#6A5243] focus:border-transparent" value="${startLocal}">
+                                        <label class="block text-sm font-bold text-primary mb-1">เวลาเริ่ม</label>
+                                        <input type="datetime-local" id="swal-start" class="w-full rounded-xl border border-blue-400/50 px-4 py-2 focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent" value="${startLocal}">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-bold text-[#6A5243] mb-1">เวลาสิ้นสุด</label>
-                                        <input type="datetime-local" id="swal-end" class="w-full rounded-xl border border-[#D4B59D]/50 px-4 py-2 focus:ring-2 focus:ring-[#6A5243] focus:border-transparent" value="${endLocal}">
+                                        <label class="block text-sm font-bold text-primary mb-1">เวลาสิ้นสุด</label>
+                                        <input type="datetime-local" id="swal-end" class="w-full rounded-xl border border-blue-400/50 px-4 py-2 focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent" value="${endLocal}">
                                     </div>
                                 </div>
                             `,
                             showCancelButton: true,
                             confirmButtonText: 'บันทึก',
                             cancelButtonText: 'ยกเลิก',
-                            confirmButtonColor: '#6A5243',
-                            cancelButtonColor: '#A79A8B',
+                            confirmButtonColor: '#2563EB',
+                            cancelButtonColor: '#94a3b8',
                             preConfirm: () => {
                                 return {
                                     start: document.getElementById('swal-start').value,

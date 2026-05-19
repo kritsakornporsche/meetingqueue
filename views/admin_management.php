@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (($_SESSION['user_data']['role'] ?? 'user') !== 'admin') {
     exit('Unauthorized access');
 }
@@ -12,7 +12,7 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
         .filter-panel {
             background: var(--card, white);
             border-radius: 1rem;
-            border: 1px solid var(--border, rgba(106, 82, 67, 0.15));
+            border: 1px solid var(--border, rgba(15, 23, 42, 0.15));
             box-shadow: 0 2px 8px -2px rgba(var(--shadow-rgb, 106, 82, 67), 0.05);
             margin-bottom: 1.25rem;
             overflow: hidden;
@@ -26,9 +26,9 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
         }
         .filter-panel-advanced {
             display: none;
-            border-top: 1px solid var(--border, rgba(106, 82, 67, 0.1));
+            border-top: 1px solid var(--border, rgba(15, 23, 42, 0.1));
             padding: 1rem;
-            background: var(--sidebar-bg, #fdfbf7);
+            background: var(--sidebar-bg, var(--white));
             gap: 0.75rem;
             flex-wrap: wrap;
         }
@@ -43,7 +43,7 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
         .filter-group label {
             font-size: 0.72rem;
             font-weight: 700;
-            color: var(--text-muted, #A79A8B);
+            color: var(--text-muted, var(--text-muted));
             text-transform: uppercase;
             letter-spacing: 0.05em;
             margin-bottom: 0;
@@ -53,9 +53,9 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
             padding: 0.55rem 0.85rem;
             font-size: 0.85rem;
             border-radius: 0.6rem;
-            border: 1px solid var(--border, rgba(106, 82, 67, 0.15));
+            border: 1px solid var(--border, rgba(15, 23, 42, 0.15));
             background: var(--card, white);
-            color: var(--text-main, #6A5243);
+            color: var(--text-main, var(--primary));
         }
         .filter-toggle-btn {
             display: inline-flex;
@@ -66,14 +66,14 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
             font-size: 0.82rem;
             font-weight: 700;
             cursor: pointer;
-            border: 1px solid var(--border, rgba(106, 82, 67, 0.15));
+            border: 1px solid var(--border, rgba(15, 23, 42, 0.15));
             background: var(--card, white);
-            color: var(--text-main, #6A5243);
+            color: var(--text-main, var(--primary));
             transition: all 0.2s;
             white-space: nowrap;
         }
-        .filter-toggle-btn:hover { background: var(--sidebar-bg, #EBE6DA); border-color: var(--secondary, #D4B59D); }
-        .filter-toggle-btn.active { background: var(--primary, #6A5243); color: white; border-color: var(--primary, #6A5243); }
+        .filter-toggle-btn:hover { background: var(--sidebar-bg, var(--border)); border-color: var(--secondary, var(--secondary)); }
+        .filter-toggle-btn.active { background: var(--primary, var(--primary)); color: white; border-color: var(--primary, var(--primary)); }
         .filter-toggle-btn .filter-count {
             background: rgba(255,255,255,0.3);
             border-radius: 99px;
@@ -109,12 +109,12 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
             align-items: center;
             gap: 0.35rem;
             padding: 0.25rem 0.6rem;
-            background: rgba(106, 82, 67, 0.08);
-            border: 1px solid rgba(106, 82, 67, 0.18);
+            background: rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(15, 23, 42, 0.18);
             border-radius: 99px;
             font-size: 0.72rem;
             font-weight: 700;
-            color: var(--primary, #6A5243);
+            color: var(--primary, var(--primary));
         }
         .filter-chip button {
             all: unset;
@@ -426,12 +426,14 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
             tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center font-bold text-text-muted">ไม่พบข้อมูลที่ต้องการ</td></tr>`;
             stats.innerText = `แสดงทั้งหมด 0 รายการ`;
             if (pagination) pagination.innerHTML = '';
+            
+            if (window.adminPaginator) {
+                window.adminPaginator.refresh();
+            }
             return;
         }
 
-        const itemsToShow = filteredBookings.slice(0, displayLimit);
-
-        tbody.innerHTML = itemsToShow.map(b => {
+        tbody.innerHTML = filteredBookings.map(b => {
             const statusClass = getStatusStyles(b.status);
             return `
                 <tr class="hover:bg-primary/5 transition-colors group">
@@ -474,23 +476,21 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
             `;
         }).join('');
 
-        stats.innerText = `แสดง ${itemsToShow.length} จากทั้งหมด ${filteredBookings.length} รายการ`;
+        stats.innerText = `ข้อมูลถูกโหลดสำเร็จ (${filteredBookings.length} รายการ)`;
 
-        // Handle "Load More" button
-        if (displayLimit < filteredBookings.length) {
-            pagination.innerHTML = `
-                <button onclick="loadMore()" class="px-8 py-2 bg-white border-2 border-primary/20 text-primary font-black text-xs rounded-3xl hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm flex items-center gap-2">
-                    <i class="fas fa-plus-circle"></i> ดูเพิ่มเติม
-                </button>
-            `;
+        if (!window.adminPaginator) {
+            window.adminPaginator = new MeetQueuePaginator({
+                container: '#adminBookingTable',
+                itemSelector: 'tr',
+                pageSize: 10
+            });
         } else {
-            pagination.innerHTML = '';
+            window.adminPaginator.refresh();
         }
-    }
-
-    function loadMore() {
-        displayLimit += 10;
-        renderTable();
+        
+        if (pagination) {
+            pagination.innerHTML = ''; // Clear old pagination div since paginator creates its own
+        }
     }
 
     function resetFilters() {

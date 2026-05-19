@@ -1,4 +1,4 @@
-<style>
+﻿<style>
     /* Premium Animations & Transitions */
     .step-container { display: none; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
     .step-container.active { display: block; }
@@ -6,33 +6,33 @@
     
     /* 2-Step Progress Bar */
     .progress-bar-premium { display: flex; flex-wrap: wrap; justify-content: center; gap: 4rem; margin-bottom: 2rem; position: relative; max-width: 360px; margin-left: auto; margin-right: auto; }
-    .progress-bar-premium::before { content: ''; position: absolute; top: 19px; left: 15%; width: 70%; height: 2px; background: #EBE6DA; z-index: 1; border-radius: 10px; }
-    .progress-step-premium { width: 40px; height: 40px; border-radius: 14px; background: white; border: 2px solid #EBE6DA; display: flex; align-items: center; justify-content: center; z-index: 2; position: relative; transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); font-weight: 800; color: #A79A8B; font-size: 0.95rem; }
-    .progress-step-premium.active { border-color: #6A5243; background: #6A5243; color: white; transform: scale(1.08); box-shadow: 0 6px 16px rgba(106, 82, 67, 0.18); }
-    .progress-step-premium.completed { border-color: #D4B59D; background: #D4B59D; color: white; }
-    .progress-label-premium { position: absolute; top: 46px; font-size: 0.68rem; font-weight: 700; color: #A79A8B; white-space: nowrap; left: 50%; transform: translateX(-50%); letter-spacing: 0.02em; }
-    .progress-step-premium.active .progress-label-premium { color: #6A5243; }
+    .progress-bar-premium::before { content: ''; position: absolute; top: 19px; left: 15%; width: 70%; height: 2px; background: var(--border); z-index: 1; border-radius: 10px; }
+    .progress-step-premium { width: 40px; height: 40px; border-radius: 14px; background: white; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; z-index: 2; position: relative; transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); font-weight: 800; color: var(--text-muted); font-size: 0.95rem; }
+    .progress-step-premium.active { border-color: var(--primary); background: var(--primary); color: white; transform: scale(1.08); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.18); }
+    .progress-step-premium.completed { border-color: var(--secondary); background: var(--secondary); color: white; }
+    .progress-label-premium { position: absolute; top: 46px; font-size: 0.68rem; font-weight: 700; color: var(--text-muted); white-space: nowrap; left: 50%; transform: translateX(-50%); letter-spacing: 0.02em; }
+    .progress-step-premium.active .progress-label-premium { color: var(--primary); }
 
-    .room-card-premium { border: 1.5px solid #EBE6DA; border-radius: 1rem; padding: 0.85rem 1rem; cursor: pointer; transition: all 0.25s; background: white; min-height: 90px; display: flex; flex-direction: column; justify-content: space-between; }
-    .room-card-premium:hover { border-color: #D4B59D; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(106,82,67,0.06); }
-    .room-card-premium.active { border-color: #6A5243; background: #FDFBF7; box-shadow: 0 0 0 2px #6A5243; }
-    .room-card-premium.active h4 { color: #6A5243; }
+    .room-card-premium { border: 1.5px solid var(--border); border-radius: 1rem; padding: 0.85rem 1rem; cursor: pointer; transition: all 0.25s; background: white; min-height: 90px; display: flex; flex-direction: column; justify-content: space-between; }
+    .room-card-premium:hover { border-color: var(--secondary); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.06); }
+    .room-card-premium.active { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 0 0 2px var(--primary); }
+    .room-card-premium.active h4 { color: var(--primary); }
 
-    .quick-btn-premium { border: 1.5px solid #EBE6DA; padding: 0.4rem 0.9rem; border-radius: 0.75rem; font-size: 0.8rem; font-weight: 600; transition: all 0.2s; background: white; color: #6A5243; }
-    .quick-btn-premium:hover { border-color: #D4B59D; }
-    .quick-btn-premium.active { border-color: #6A5243; background: #6A5243; color: white; }
+    .quick-btn-premium { border: 1.5px solid var(--border); padding: 0.4rem 0.9rem; border-radius: 0.75rem; font-size: 0.8rem; font-weight: 600; transition: all 0.2s; background: white; color: var(--primary); }
+    .quick-btn-premium:hover { border-color: var(--secondary); }
+    .quick-btn-premium.active { border-color: var(--primary); background: var(--primary); color: white; }
 
-    .premium-input { width: 100%; padding: 0.75rem 1rem; border-radius: 0.875rem; background: #F9F8F6; border: none; outline: none; transition: all 0.25s; color: #2D241E; font-weight: 500; font-size: 0.9rem; font-family: inherit; }
-    .premium-input:focus { background: white; box-shadow: 0 0 0 2px rgba(212,181,157,0.5); }
+    .premium-input { width: 100%; padding: 0.75rem 1rem; border-radius: 0.875rem; background: var(--sidebar-bg); border: none; outline: none; transition: all 0.25s; color: var(--text-main); font-weight: 500; font-size: 0.9rem; font-family: inherit; }
+    .premium-input:focus { background: white; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); }
 
-    .label-premium { font-size: 0.85rem; font-weight: 700; color: #4A3A2F; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.5rem; }
-    .label-premium i { color: #D4B59D; font-size: 0.9rem; }
+    .label-premium { font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.5rem; }
+    .label-premium i { color: var(--secondary); font-size: 0.9rem; }
 
     /* Equipment Icon Cards */
     .equip-grid { display: flex; flex-wrap: wrap; gap: 1rem 0.75rem; padding-bottom: 0.5rem; }
-    .equip-card { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; padding: 0.75rem 1rem 0.65rem; border-radius: 0.875rem; background: #F9F8F6; border: 1.5px solid transparent; cursor: pointer; transition: all 0.2s; min-width: 72px; user-select: none; margin-bottom: 0.35rem; }
-    .equip-card:hover { background: #F3EFE8; border-color: #D4B59D; }
-    .equip-card.active { background: #6A5243; border-color: #6A5243; position: relative; }
+    .equip-card { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; padding: 0.75rem 1rem 0.65rem; border-radius: 0.875rem; background: var(--sidebar-bg); border: 1.5px solid transparent; cursor: pointer; transition: all 0.2s; min-width: 72px; user-select: none; margin-bottom: 0.35rem; }
+    .equip-card:hover { background: var(--sidebar-active-bg); border-color: var(--secondary); }
+    .equip-card.active { background: var(--primary); border-color: var(--primary); position: relative; }
     .equip-card.active i, .equip-card.active span { color: white !important; }
     .equip-card.active::after {
         content: '\2713';
@@ -53,20 +53,20 @@
         border: 2px solid white;
         z-index: 2;
     }
-    .equip-card i { font-size: 1.1rem; color: #A79A8B; transition: color 0.2s; }
-    .equip-card span { font-size: 0.7rem; font-weight: 700; color: #6A5243; white-space: nowrap; }
-    .equip-other-input { margin-top: 0.5rem; width: 100%; padding: 0.55rem 0.8rem; border-radius: 0.75rem; background: #F9F8F6; border: none; font-size: 0.82rem; font-family: inherit; color: #2D241E; display: none; }
-    .equip-other-input:focus { outline: none; box-shadow: 0 0 0 2px rgba(212,181,157,0.5); background: white; }
+    .equip-card i { font-size: 1.1rem; color: var(--text-muted); transition: color 0.2s; }
+    .equip-card span { font-size: 0.7rem; font-weight: 700; color: var(--primary); white-space: nowrap; }
+    .equip-other-input { margin-top: 0.5rem; width: 100%; padding: 0.55rem 0.8rem; border-radius: 0.75rem; background: var(--sidebar-bg); border: none; font-size: 0.82rem; font-family: inherit; color: var(--text-main); display: none; }
+    .equip-other-input:focus { outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); background: white; }
 
     /* Summary panel */
-    .summary-panel { background: #6A5243; border-radius: 1.25rem; padding: 1.25rem; color: white; }
+    .summary-panel { background: var(--primary); border-radius: 1.25rem; padding: 1.25rem; color: white; }
     .summary-row { margin-bottom: 0.85rem; }
     .summary-row:last-child { margin-bottom: 0; }
     .summary-label { font-size: 0.62rem; font-weight: 700; opacity: 0.55; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.2rem; }
-    .summary-value { font-size: 0.88rem; font-weight: 700; color: #F3DFC8; word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; }
+    .summary-value { font-size: 0.88rem; font-weight: 700; color: var(--accent); word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; }
 
     /* Loading Overlay */
-    .loading-overlay { position: fixed; inset: 0; background: rgba(235, 230, 218, 0.9); backdrop-filter: blur(10px); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
+    .loading-overlay { position: fixed; inset: 0; background: rgba(241, 245, 249, 0.9); backdrop-filter: blur(10px); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
     .loading-overlay.active { display: flex; animation: fadeIn 0.4s ease-out; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -74,57 +74,57 @@
     .room-search-box { margin-bottom: 0.75rem; }
     .room-search-input-wrap {
         position: relative; display: flex; align-items: center;
-        background: #F9F8F6; border-radius: 0.875rem; border: 1.5px solid #EBE6DA;
+        background: var(--sidebar-bg); border-radius: 0.875rem; border: 1.5px solid var(--border);
         transition: all 0.25s;
     }
     .room-search-input-wrap:focus-within {
-        background: white; border-color: #D4B59D;
-        box-shadow: 0 0 0 3px rgba(212,181,157,0.18);
+        background: white; border-color: var(--secondary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
     }
-    .room-search-icon { position: absolute; left: 0.85rem; color: #A79A8B; font-size: 0.85rem; pointer-events: none; }
+    .room-search-icon { position: absolute; left: 0.85rem; color: var(--text-muted); font-size: 0.85rem; pointer-events: none; }
     .room-search-input {
         width: 100%; padding: 0.7rem 2.5rem 0.7rem 2.5rem; border: none; background: transparent;
-        font-size: 0.88rem; font-weight: 600; color: #2D241E; font-family: inherit; outline: none;
+        font-size: 0.88rem; font-weight: 600; color: var(--text-main); font-family: inherit; outline: none;
     }
-    .room-search-input::placeholder { color: #C9BCB0; font-weight: 500; }
+    .room-search-input::placeholder { color: var(--text-muted); font-weight: 500; }
     .room-search-clear {
         position: absolute; right: 0.6rem; width: 1.6rem; height: 1.6rem;
-        border-radius: 50%; border: none; background: #EBE6DA; color: #A79A8B;
+        border-radius: 50%; border: none; background: var(--border); color: var(--text-muted);
         cursor: pointer; display: flex; align-items: center; justify-content: center;
         font-size: 0.65rem; transition: all 0.2s;
     }
-    .room-search-clear:hover { background: #D4B59D; color: white; }
+    .room-search-clear:hover { background: var(--secondary); color: white; }
 
     /* ── Keyword Pills ── */
     .room-keywords-wrap {
         display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem;
         max-height: 72px; overflow-y: auto;
-        scrollbar-width: thin; scrollbar-color: rgba(212,181,157,0.35) transparent;
+        scrollbar-width: thin; scrollbar-color: rgba(59, 130, 246, 0.35) transparent;
     }
     .room-keywords-wrap::-webkit-scrollbar { height: 3px; width: 3px; }
-    .room-keywords-wrap::-webkit-scrollbar-thumb { background: rgba(212,181,157,0.5); border-radius: 10px; }
+    .room-keywords-wrap::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.5); border-radius: 10px; }
     .room-keyword-pill {
         padding: 0.25rem 0.65rem; border-radius: 9999px; font-size: 0.68rem; font-weight: 700;
-        background: #F3EFE8; color: #6A5243; border: 1px solid #EBE6DA;
+        background: var(--sidebar-active-bg); color: var(--primary); border: 1px solid var(--border);
         cursor: pointer; transition: all 0.2s; white-space: nowrap; user-select: none;
     }
-    .room-keyword-pill:hover { background: #EBE6DA; border-color: #D4B59D; }
-    .room-keyword-pill.active { background: #6A5243; color: white; border-color: #6A5243; }
+    .room-keyword-pill:hover { background: var(--border); border-color: var(--secondary); }
+    .room-keyword-pill.active { background: var(--primary); color: white; border-color: var(--primary); }
 
     /* ── Scrollable Room Grid ── */
     .room-grid-scroll {
         max-height: 420px; overflow-y: auto; overflow-x: hidden;
         padding-right: 0.25rem;
-        scrollbar-width: thin; scrollbar-color: rgba(212,181,157,0.4) transparent;
+        scrollbar-width: thin; scrollbar-color: rgba(59,130,246,0.4) transparent;
     }
     .room-grid-scroll::-webkit-scrollbar { width: 5px; }
     .room-grid-scroll::-webkit-scrollbar-track { background: transparent; }
-    .room-grid-scroll::-webkit-scrollbar-thumb { background: rgba(212,181,157,0.5); border-radius: 10px; }
-    .room-grid-scroll::-webkit-scrollbar-thumb:hover { background: rgba(212,181,157,0.8); }
+    .room-grid-scroll::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.5); border-radius: 10px; }
+    .room-grid-scroll::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246,0.8); }
 
     /* No Result */
     .room-no-result {
-        text-align: center; padding: 2rem 1rem; color: #A79A8B;
+        text-align: center; padding: 2rem 1rem; color: var(--text-muted);
     }
     .room-no-result i { font-size: 1.5rem; margin-bottom: 0.5rem; opacity: 0.4; }
     .room-no-result p { font-size: 0.85rem; font-weight: 600; }
@@ -137,24 +137,24 @@
         position: relative;
         display: flex;
         align-items: center;
-        background: #F9F8F6;
+        background: var(--sidebar-bg);
         border-radius: 0.875rem;
-        border: 1.5px solid #EBE6DA;
+        border: 1.5px solid var(--border);
         transition: all 0.25s;
     }
     .dept-input-wrap:focus-within {
         background: white;
-        border-color: #D4B59D;
-        box-shadow: 0 0 0 3px rgba(212,181,157,0.18);
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
     }
     .dept-input-wrap.has-value {
-        border-color: #6A5243;
+        border-color: var(--primary);
         background: white;
     }
     .dept-icon {
         position: absolute;
         left: 0.9rem;
-        color: #A79A8B;
+        color: var(--text-muted);
         font-size: 0.85rem;
         pointer-events: none;
         z-index: 1;
@@ -166,20 +166,20 @@
         background: transparent;
         font-size: 0.9rem;
         font-weight: 600;
-        color: #2D241E;
+        color: var(--text-main);
         font-family: inherit;
         outline: none;
         cursor: pointer;
     }
-    .dept-search-input::placeholder { color: #C9BCB0; font-weight: 500; }
+    .dept-search-input::placeholder { color: var(--text-muted); font-weight: 500; }
     .dept-clear-btn {
         position: absolute;
         right: 0.6rem;
         width: 1.6rem; height: 1.6rem;
         border-radius: 50%;
         border: none;
-        background: #EBE6DA;
-        color: #A79A8B;
+        background: var(--border);
+        color: var(--text-muted);
         cursor: pointer;
         display: none;
         align-items: center;
@@ -187,7 +187,7 @@
         font-size: 0.65rem;
         transition: all 0.2s;
     }
-    .dept-clear-btn:hover { background: #D4B59D; color: white; }
+    .dept-clear-btn:hover { background: var(--secondary); color: white; }
     .dept-clear-btn.visible { display: flex; }
 
     .dept-dropdown-list {
@@ -195,25 +195,25 @@
         top: calc(100% + 6px);
         left: 0; right: 0;
         background: white;
-        border: 1.5px solid #D4B59D;
+        border: 1.5px solid var(--border);
         border-radius: 0.875rem;
-        box-shadow: 0 12px 32px rgba(106,82,67,0.12);
+        box-shadow: 0 12px 32px rgba(37,99,235,0.08);
         max-height: 240px;
         overflow-y: auto;
         z-index: 200;
         display: none;
         scrollbar-width: thin;
-        scrollbar-color: rgba(212,181,157,0.4) transparent;
+        scrollbar-color: rgba(59,130,246,0.35) transparent;
     }
     .dept-dropdown-list.open { display: block; }
     .dept-dropdown-list::-webkit-scrollbar { width: 5px; }
-    .dept-dropdown-list::-webkit-scrollbar-thumb { background: rgba(212,181,157,0.5); border-radius: 10px; }
+    .dept-dropdown-list::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.5); border-radius: 10px; }
 
     .dept-option {
         padding: 0.65rem 1rem;
         font-size: 0.88rem;
         font-weight: 600;
-        color: #4A3A2F;
+        color: var(--text-main);
         cursor: pointer;
         transition: background 0.15s;
         display: flex;
@@ -222,14 +222,14 @@
     }
     .dept-option:first-child { border-radius: 0.7rem 0.7rem 0 0; }
     .dept-option:last-child { border-radius: 0 0 0.7rem 0.7rem; }
-    .dept-option:hover { background: #F3EFE8; color: #6A5243; }
-    .dept-option.selected { background: rgba(106,82,67,0.06); color: #6A5243; }
-    .dept-option .dept-match { color: #6A5243; font-weight: 800; }
+    .dept-option:hover { background: var(--sidebar-bg); color: var(--primary); }
+    .dept-option.selected { background: var(--primary-soft); color: var(--primary); }
+    .dept-option .dept-match { color: var(--primary); font-weight: 800; }
     .dept-no-result {
         padding: 1rem;
         text-align: center;
         font-size: 0.82rem;
-        color: #A79A8B;
+        color: var(--text-muted);
         font-weight: 600;
     }
 </style>
@@ -241,41 +241,41 @@
 
 <div id="bookingLoading" class="loading-overlay">
     <div class="w-24 h-24 rounded-full bg-white shadow-2xl flex items-center justify-center mb-6 relative">
-        <div class="absolute inset-0 rounded-full border-4 border-[#D4B59D]/20"></div>
-        <div class="absolute inset-0 rounded-full border-4 border-[#6A5243] border-t-transparent animate-spin"></div>
-        <i class="fas fa-paper-plane text-2xl text-[#6A5243]"></i>
+        <div class="absolute inset-0 rounded-full border-4 border-blue-400/20"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+        <i class="fas fa-paper-plane text-2xl text-primary"></i>
     </div>
-    <h3 class="text-2xl font-black text-[#6A5243] mb-2">กำลังส่งข้อมูล...</h3>
-    <p class="text-[#A79A8B] font-bold">กรุณารอสักครู่ ระบบกำลังประมวลผลคำขอของคุณ</p>
+    <h3 class="text-2xl font-black text-primary mb-2">กำลังส่งข้อมูล...</h3>
+    <p class="text-text-muted font-bold">กรุณารอสักครู่ ระบบกำลังประมวลผลคำขอของคุณ</p>
 </div>
 
 <div class="max-w-[1000px] mx-auto py-6 px-4 md:px-8">
     <!-- Header Section -->
     <div class="text-center mb-6">
-        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[#6A5243]/5 text-[#6A5243] text-[0.75rem] font-bold uppercase tracking-[0.15em] mb-4 border border-[#6A5243]/10">
-            <i class="fas fa-bolt text-[#D4B59D]"></i> Instant Booking System
+        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-blue-600/5 text-primary text-[0.75rem] font-bold uppercase tracking-[0.15em] mb-4 border border-blue-600/10">
+            <i class="fas fa-bolt text-[var(--secondary)]"></i> Instant Booking System
         </div>
-        <h2 class="text-2xl md:text-3xl font-black text-[#6A5243] mb-3 tracking-tight leading-relaxed py-1">แบบฟอร์มการจอง</h2>
-        <p style="text-align: center !important; display: block !important; width: 100% !important; margin: 0 auto !important;" class="text-[0.95rem] text-[#A79A8B] font-bold leading-relaxed opacity-90 px-4">กรุณาเลือกรายละเอียดตามขั้นตอนด้านล่าง เพื่อความรวดเร็วในการพิจารณาอนุมัติ</p>
+        <h2 class="text-2xl md:text-3xl font-black text-primary mb-3 tracking-tight leading-relaxed py-1">แบบฟอร์มการจอง</h2>
+        <p style="text-align: center !important; display: block !important; width: 100% !important; margin: 0 auto !important;" class="text-[0.95rem] text-text-muted font-bold leading-relaxed opacity-90 px-4">กรุณาเลือกรายละเอียดตามขั้นตอนด้านล่าง เพื่อความรวดเร็วในการพิจารณาอนุมัติ</p>
     </div>
 
     <!-- Progress Indicator (2 steps) -->
     <div class="progress-bar-premium mb-10">
         <div class="progress-step-premium active" id="pstep-1">
             <i class="fas fa-calendar-check"></i>
-            <span class="progress-label-premium">1. เลือกห้อง & วันเวลา</span>
+            <span class="progress-label-premium">1. กรอกข้อมูลการจอง</span>
         </div>
         <div class="progress-step-premium" id="pstep-2">
-            <i class="fas fa-user-pen"></i>
-            <span class="progress-label-premium">2. สรุปการจอง</span>
+            <i class="fas fa-check-double"></i>
+            <span class="progress-label-premium">2. ตรวจสอบ & ยืนยัน</span>
         </div>
     </div>
 
     <!-- Main Form Card -->
-    <div class="bg-white rounded-[1.5rem] shadow-[0_10px_40px_rgba(106,82,67,0.07)] border border-[#EBE6DA]" style="padding: 1.5rem !important;">
+    <div class="bg-white rounded-[1.5rem] shadow-[0_10px_40px_rgba(15,23,42,0.06)] border border-slate-200" style="padding: 1.5rem !important;">
         <form id="bookingForm" enctype="multipart/form-data">
 
-            <!-- ═══ STEP 1: Room + Title + Date/Time + Participants + Equipment ═══ -->
+            <!-- ═══ STEP 1: Room + Title + Date/Time + Participants + Equipment + Department + Contact + Notes + File ═══ -->
             <div class="step-container active" id="step-1">
                 <div style="display:flex; flex-direction:column; gap:1.25rem;">
 
@@ -316,17 +316,17 @@
                         <div>
                             <label class="label-premium"><i class="fas fa-calendar-alt"></i> วันที่จัดประชุม <span class="text-red-500">*</span></label>
                             <input type="date" id="meeting_date" class="premium-input font-bold" required>
-                            <p class="text-[0.68rem] text-[#A79A8B] mt-1.5 italic">* เฉพาะวันจันทร์ - ศุกร์ ยกเว้นวันหยุดนักขัตฤกษ์</p>
+                            <p class="text-[0.68rem] text-text-muted mt-1.5 italic">* เฉพาะวันจันทร์ - ศุกร์ ยกเว้นวันหยุดนักขัตฤกษ์</p>
                         </div>
-                        <div class="bg-[#F9F8F6] rounded-xl p-4">
+                        <div class="bg-slate-50 rounded-xl p-4">
                             <label class="label-premium"><i class="fas fa-clock"></i> ช่วงเวลาที่ต้องการ</label>
                             <div class="grid grid-cols-2 gap-3 mb-3">
                                 <div>
-                                    <span class="text-[0.62rem] font-bold text-[#A79A8B] uppercase tracking-widest block mb-1">เริ่มเวลา</span>
+                                    <span class="text-[0.62rem] font-bold text-text-muted uppercase tracking-widest block mb-1">เริ่มเวลา</span>
                                     <input type="time" id="start_time" value="08:30" class="premium-input text-center font-bold">
                                 </div>
                                 <div>
-                                    <span class="text-[0.62rem] font-bold text-[#A79A8B] uppercase tracking-widest block mb-1">สิ้นสุดเวลา</span>
+                                    <span class="text-[0.62rem] font-bold text-text-muted uppercase tracking-widest block mb-1">สิ้นสุดเวลา</span>
                                     <input type="time" id="end_time" value="16:30" class="premium-input text-center font-bold">
                                 </div>
                             </div>
@@ -342,9 +342,9 @@
                     <div>
                         <label class="label-premium"><i class="fas fa-users"></i> จำนวนผู้เข้าประชุม <span class="text-red-500">*</span></label>
                         <div class="flex items-center gap-3" style="max-width:220px;">
-                            <button type="button" onclick="adjustValue(-5)" class="w-10 h-10 rounded-xl bg-[#F9F8F6] flex items-center justify-center text-[#6A5243] hover:bg-[#EBE6DA] transition-all flex-shrink-0"><i class="fas fa-minus text-sm"></i></button>
+                            <button type="button" onclick="adjustValue(-5)" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-primary hover:bg-slate-200 transition-all flex-shrink-0"><i class="fas fa-minus text-sm"></i></button>
                             <input type="number" id="participants_count" value="10" class="premium-input text-center font-black text-lg" required>
-                            <button type="button" onclick="adjustValue(5)" class="w-10 h-10 rounded-xl bg-[#F9F8F6] flex items-center justify-center text-[#6A5243] hover:bg-[#EBE6DA] transition-all flex-shrink-0"><i class="fas fa-plus text-sm"></i></button>
+                            <button type="button" onclick="adjustValue(5)" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-primary hover:bg-slate-200 transition-all flex-shrink-0"><i class="fas fa-plus text-sm"></i></button>
                         </div>
                     </div>
 
@@ -391,93 +391,109 @@
                             <div class="dept-dropdown-list" id="deptDropdownList" role="listbox"></div>
                         </div>
                         <input type="hidden" id="department_name" required>
-                        <p class="text-[0.68rem] text-[#A79A8B] mt-1.5 italic">* หน่วยงานที่จะแสดงในใบจองห้องประชุม</p>
+                        <p class="text-[0.68rem] text-text-muted mt-1.5 italic">* หน่วยงานที่จะแสดงในใบจองห้องประชุม</p>
+                    </div>
+
+                    <!-- Contact details -->
+                    <div>
+                        <label class="label-premium"><i class="fas fa-phone"></i> เบอร์โทรศัพท์สำหรับติดต่อกลับ <span class="text-red-500">*</span></label>
+                        <input type="text" id="phone" class="premium-input" placeholder="ตัวอย่าง: 081-234-5678" required>
+                    </div>
+
+                    <!-- Description/Notes -->
+                    <div>
+                        <label class="label-premium"><i class="fas fa-clipboard-list"></i> หมายเหตุ (ความต้องการพิเศษ)</label>
+                        <textarea id="description" rows="3" class="premium-input" style="resize:vertical;" placeholder="ระบุสิ่งที่ต้องการให้เจ้าหน้าที่เตรียม..."></textarea>
+                    </div>
+
+                    <!-- Attachment Upload -->
+                    <div>
+                        <label class="label-premium"><i class="fas fa-paperclip"></i> เอกสารแนบ (ประกาศ/กำหนดการ)</label>
+                        <label for="attachment" class="block w-full cursor-pointer">
+                            <div class="flex flex-col items-center justify-center w-full py-6 border-2 border-dashed border-blue-400/40 rounded-xl hover:bg-white hover:border-blue-400 transition-all text-center">
+                                <div class="w-10 h-10 mx-auto rounded-full bg-[var(--secondary)]/10 flex items-center justify-center mb-2">
+                                    <i class="fas fa-upload text-[var(--secondary)]"></i>
+                                </div>
+                                <p class="text-primary font-bold text-sm w-full text-center">คลิกเพื่ออัปโหลดไฟล์</p>
+                                <p class="text-[0.62rem] text-text-muted font-bold mt-1 uppercase tracking-widest w-full text-center">Max 10MB · PDF, JPG, PNG</p>
+                                <input id="attachment" type="file" class="hidden">
+                            </div>
+                        </label>
+                        <div id="file-status" class="hidden mt-2 px-3 py-2 bg-blue-600/5 rounded-xl flex items-center justify-between border border-blue-600/10">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <i class="fas fa-file-circle-check text-[var(--secondary)] flex-shrink-0"></i>
+                                <span id="file-name" class="text-sm font-bold text-primary truncate"></span>
+                            </div>
+                            <button type="button" onclick="clearFile()" class="text-red-400 hover:text-red-600 flex-shrink-0 ml-2"><i class="fas fa-times-circle"></i></button>
+                        </div>
                     </div>
 
                 </div>
             </div>
 
-            <!-- ═══ STEP 2: Contact + File + Summary ═══ -->
+            <!-- ═══ STEP 2: Verify & Confirm ═══ -->
             <div class="step-container" id="step-2">
-                <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
-
-                    <!-- Left: Contact & File -->
-                    <div class="lg:col-span-3" style="display:flex; flex-direction:column; gap:1rem;">
-                        <div>
-                            <label class="label-premium"><i class="fas fa-phone"></i> เบอร์โทรศัพท์สำหรับติดต่อกลับ <span class="text-red-500">*</span></label>
-                            <input type="text" id="phone" class="premium-input" placeholder="ตัวอย่าง: 081-234-5678" required>
+                <div class="w-full max-w-5xl mx-auto bg-slate-50/40 p-6 md:p-8 rounded-[2rem] border border-slate-200/80">
+                    <h3 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3 border-b border-slate-200 pb-4">
+                        <i class="fas fa-check-double text-blue-500"></i> ตรวจสอบข้อมูลการจองของคุณ
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-2">
+                            <div class="text-[0.72rem] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><i class="fas fa-building text-blue-500"></i> ห้องประชุมที่เลือก</div>
+                            <div class="text-[0.98rem] font-black text-slate-800" id="review-room">-</div>
                         </div>
-                        <div>
-                            <label class="label-premium"><i class="fas fa-clipboard-list"></i> หมายเหตุ (ความต้องการพิเศษ)</label>
-                            <textarea id="description" rows="3" class="premium-input" style="resize:vertical;" placeholder="ระบุสิ่งที่ต้องการให้เจ้าหน้าที่เตรียม..."></textarea>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-1">
+                            <div class="text-[0.72rem] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><i class="fas fa-quote-left text-blue-500"></i> หัวข้อการประชุม</div>
+                            <div class="text-[0.98rem] font-black text-slate-800" id="review-title">-</div>
                         </div>
-                        <div>
-                            <label class="label-premium"><i class="fas fa-paperclip"></i> เอกสารแนบ (ประกาศ/กำหนดการ)</label>
-                            <label for="attachment" class="block w-full cursor-pointer">
-                                <div class="flex flex-col items-center justify-center w-full py-6 border-2 border-dashed border-[#D4B59D]/40 rounded-xl hover:bg-[#FDFBF7] hover:border-[#D4B59D] transition-all text-center">
-                                    <div class="w-10 h-10 mx-auto rounded-full bg-[#D4B59D]/10 flex items-center justify-center mb-2">
-                                        <i class="fas fa-upload text-[#D4B59D]"></i>
-                                    </div>
-                                    <p class="text-[#6A5243] font-bold text-sm w-full text-center">คลิกเพื่ออัปโหลดไฟล์</p>
-                                    <p class="text-[0.62rem] text-[#A79A8B] font-bold mt-1 uppercase tracking-widest w-full text-center">Max 10MB · PDF, JPG, PNG</p>
-                                    <input id="attachment" type="file" class="hidden">
-                                </div>
-                            </label>
-                            <div id="file-status" class="hidden mt-2 px-3 py-2 bg-[#6A5243]/5 rounded-xl flex items-center justify-between border border-[#6A5243]/10">
-                                <div class="flex items-center gap-2 min-w-0">
-                                    <i class="fas fa-file-circle-check text-[#D4B59D] flex-shrink-0"></i>
-                                    <span id="file-name" class="text-sm font-bold text-[#6A5243] truncate"></span>
-                                </div>
-                                <button type="button" onclick="clearFile()" class="text-red-400 hover:text-red-600 flex-shrink-0 ml-2"><i class="fas fa-times-circle"></i></button>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-2">
+                            <div class="text-[0.72rem] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><i class="fas fa-calendar-alt text-blue-500"></i> วันและเวลา</div>
+                            <div class="text-[0.98rem] font-black text-slate-800" id="review-datetime">-</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-1">
+                            <div class="text-[0.72rem] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><i class="fas fa-users text-blue-500"></i> จำนวนผู้เข้าร่วม</div>
+                            <div class="text-[0.98rem] font-black text-slate-800" id="review-count">-</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-2">
+                            <div class="text-[0.72rem] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><i class="fas fa-sitemap text-blue-500"></i> หน่วยงาน/ฝ่ายที่สังกัด</div>
+                            <div class="text-[0.98rem] font-black text-slate-800" id="review-department">-</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-1">
+                            <div class="text-[0.72rem] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><i class="fas fa-phone text-blue-500"></i> เบอร์โทรศัพท์ติดต่อกลับ</div>
+                            <div class="text-[0.98rem] font-black text-slate-800" id="review-phone">-</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-3" id="review-equip-box" style="display:none;">
+                            <div class="text-[0.72rem] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><i class="fas fa-tools text-blue-500"></i> อุปกรณ์ที่ร้องขอ</div>
+                            <div class="text-[0.98rem] font-black text-slate-800" id="review-equip">-</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-3" id="review-desc-box" style="display:none;">
+                            <div class="text-[0.72rem] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><i class="fas fa-clipboard-list text-blue-500"></i> หมายเหตุ/ความต้องการพิเศษ</div>
+                            <div class="text-[0.98rem] font-bold text-slate-700 whitespace-pre-line" id="review-description">-</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-3" id="review-file-box" style="display:none;">
+                            <div class="text-[0.72rem] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><i class="fas fa-paperclip text-blue-500"></i> เอกสารแนบ</div>
+                            <div class="text-[0.98rem] font-bold text-emerald-600 flex items-center gap-2">
+                                <i class="fas fa-file-circle-check"></i> <span id="review-filename"></span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right: Summary Panel -->
-                    <div class="lg:col-span-2">
-                        <div class="summary-panel h-full" style="min-height:260px; display:flex; flex-direction:column; justify-content:space-between;">
-                            <div>
-                                <h3 style="font-size:0.9rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
-                                    <i class="fas fa-check-double" style="color:#D4B59D;"></i> สรุปรายละเอียดการจอง
-                                </h3>
-                                <div class="summary-row">
-                                    <div class="summary-label">ห้องประชุมที่เลือก</div>
-                                    <div class="summary-value" id="summary-room">โปรดเลือกห้อง...</div>
-                                </div>
-                                <div class="summary-row">
-                                    <div class="summary-label">หัวข้อการประชุม</div>
-                                    <div class="summary-value" id="summary-title">-</div>
-                                </div>
-                                <div class="summary-row">
-                                    <div class="summary-label">วันและเวลา</div>
-                                    <div class="summary-value" id="summary-datetime">โปรดระบุ...</div>
-                                </div>
-                                <div class="summary-row">
-                                    <div class="summary-label">จำนวนผู้เข้าร่วม</div>
-                                    <div class="summary-value" id="summary-count">10 คน</div>
-                                </div>
-                                <div class="summary-row" id="summary-equip-row" style="display:none;">
-                                    <div class="summary-label">อุปกรณ์</div>
-                                    <div class="summary-value" id="summary-equip">-</div>
-                                </div>
-                            </div>
-                            <div style="margin-top:0.85rem; padding:0.65rem 0.85rem; background:rgba(212,181,157,0.15); border-radius:0.75rem; border:1px solid rgba(212,181,157,0.3); font-size:0.68rem; color:#D4B59D; line-height:1.5;">
-                                <i class="fas fa-info-circle"></i> ข้อมูลจะถูกส่งให้ผู้ดูแลระบบตรวจสอบ ติดตามสถานะได้ที่ "ผลการอนุมัติ"
-                            </div>
-                        </div>
+                    <div class="p-5 bg-blue-50/60 rounded-2xl border border-blue-100/80 text-xs text-blue-800 font-bold leading-relaxed flex items-start gap-3">
+                        <i class="fas fa-info-circle text-blue-500 mt-0.5 text-base"></i>
+                        <span>กรุณาตรวจสอบข้อมูลการขอใช้งานห้องประชุมให้ครบถ้วนถูกต้อง เมื่อคลิกยืนยันระบบจะจัดส่งคำขอจองไปยังเจ้าหน้าที่ผู้ดูแลระบบเพื่อดำเนินการในขั้นตอนถัดไป</span>
                     </div>
-
                 </div>
             </div>
 
             <!-- Wizard Controls -->
             <div class="flex flex-wrap justify-between items-center gap-4 mt-8 pt-6 border-t border-[#F0EDE6]">
-                <button type="button" id="prevBtn" onclick="moveStep(-1)" class="px-6 py-3 rounded-xl border-2 border-[#EBE6DA] bg-white text-[#A79A8B] text-sm font-bold hover:border-[#D4B59D] hover:text-[#6A5243] hover:bg-[#FDFBF7] transition-all flex items-center gap-2" style="opacity:0; pointer-events:none;">
+                <button type="button" id="prevBtn" onclick="moveStep(-1)" class="px-6 py-3 rounded-xl border-2 border-slate-200 bg-white text-text-muted text-sm font-bold hover:border-blue-400 hover:text-primary hover:bg-white transition-all flex items-center gap-2" style="opacity:0; pointer-events:none;">
                     <i class="fas fa-arrow-left text-xs"></i> ย้อนกลับ
                 </button>
                 
                 <div class="flex gap-3">
-                    <button type="button" id="nextBtn" onclick="moveStep(1)" class="px-8 py-3 rounded-xl bg-[#6A5243] text-white text-sm font-bold shadow-sm hover:bg-[#523E32] hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2 min-w-[120px]">
+                    <button type="button" id="nextBtn" onclick="moveStep(1)" class="px-8 py-3 rounded-xl bg-blue-600 text-white text-sm font-bold shadow-sm hover:bg-blue-800 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2 min-w-[120px]">
                         ถัดไป <i class="fas fa-chevron-right text-[0.7rem] opacity-80"></i>
                     </button>
                     <button type="submit" id="submitBtn" class="hidden px-8 py-3 rounded-xl bg-[#10b981] text-white text-sm font-bold shadow-sm hover:bg-[#059669] hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2 min-w-[150px]">
@@ -496,29 +512,29 @@
 <?php if($is_admin): ?>
 <div id="imageManageModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[1000] hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-[1.25rem] w-full max-w-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-        <div class="px-8 py-8 border-b border-[#EBE6DA] flex items-start justify-between gap-6 bg-[#FDFBF7]">
+        <div class="px-8 py-8 border-b border-slate-200 flex items-start justify-between gap-6 bg-white">
             <div class="flex items-start gap-5">
-                <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-[#EBE6DA] flex items-center justify-center flex-shrink-0 text-[#D4B59D]">
+                <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center flex-shrink-0 text-[var(--secondary)]">
                     <i class="fas fa-images text-2xl"></i>
                 </div>
                 <div class="pt-1">
-                    <h3 class="text-2xl font-black text-[#6A5243] leading-tight mb-3">จัดการรูปภาพห้อง</h3>
-                    <p id="imgModalRoomName" class="text-[0.95rem] font-bold text-[#A79A8B] leading-relaxed max-w-[700px]"></p>
+                    <h3 class="text-2xl font-black text-primary leading-tight mb-3">จัดการรูปภาพห้อง</h3>
+                    <p id="imgModalRoomName" class="text-[0.95rem] font-bold text-text-muted leading-relaxed max-w-[700px]"></p>
                 </div>
             </div>
-            <button type="button" onclick="closeImageManageModal()" class="w-10 h-10 rounded-full bg-white border border-[#EBE6DA] text-[#A79A8B] hover:text-red-500 hover:border-red-200 transition-all flex items-center justify-center flex-shrink-0 shadow-sm active:scale-95">
+            <button type="button" onclick="closeImageManageModal()" class="w-10 h-10 rounded-full bg-white border border-slate-200 text-text-muted hover:text-red-500 hover:border-red-200 transition-all flex items-center justify-center flex-shrink-0 shadow-sm active:scale-95">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto flex-grow bg-[#F9F8F6]">
+        <div class="p-6 overflow-y-auto flex-grow bg-slate-50">
             <!-- Current Images -->
             <div id="currentImagesGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
                 <!-- Images will be rendered here -->
             </div>
             
             <!-- Upload New -->
-            <div class="bg-white p-6 rounded-2xl border-2 border-dashed border-[#D4B59D]/40 text-center">
-                <h4 class="font-bold text-[#6A5243] mb-4">อัปโหลดรูปภาพใหม่</h4>
+            <div class="bg-white p-6 rounded-2xl border-2 border-dashed border-blue-400/40 text-center">
+                <h4 class="font-bold text-primary mb-4">อัปโหลดรูปภาพใหม่</h4>
                 <input type="file" id="newRoomImage" accept="image/*" class="hidden" onchange="uploadRoomImage()">
                 <label for="newRoomImage" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white font-bold rounded-xl cursor-pointer hover:bg-emerald-600 transition-all shadow-md hover:-translate-y-0.5 active:scale-95">
                     <i class="fas fa-upload"></i> เลือกรูปภาพ (Max 5MB)
@@ -552,10 +568,11 @@
                 document.getElementById('file-status').classList.remove('hidden');
                 document.getElementById('file-status').classList.add('flex');
             }
+            updateSummary();
         });
 
         // Summary Real-time Update
-        ['meeting_date', 'start_time', 'end_time', 'participants_count'].forEach(id => {
+        ['meeting_date', 'start_time', 'end_time', 'participants_count', 'title', 'phone', 'description'].forEach(id => {
             document.getElementById(id).addEventListener('change', updateSummary);
             document.getElementById(id).addEventListener('input', updateSummary);
         });
@@ -661,6 +678,14 @@
 
         // ── Build room cards ──
         data.rooms.forEach(room => {
+            let firstImg = '';
+            try {
+                const imgs = JSON.parse(room.images || '[]');
+                if (imgs && imgs.length > 0) {
+                    firstImg = imgs[0];
+                }
+            } catch (e) {}
+
             const card = document.createElement('div');
             card.className = 'room-card-premium group';
             card.dataset.roomName = room.name.toLowerCase();
@@ -674,15 +699,17 @@
             };
             card.innerHTML = `
                 <div class="flex items-start gap-6">
-                    <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-[#F9F8F6] group-hover:bg-white border border-[#EBE6DA] flex items-center justify-center text-[#D4B59D] transition-all">
-                        ${room.room_number ? `<span class="text-xl font-black">${room.room_number}</span>` : `<i class="fas fa-building text-2xl"></i>`}
+                    <div onclick="event.stopPropagation(); viewRoomImages('${encodeURIComponent(room.images || '[]')}')" 
+                         class="w-14 h-14 flex-shrink-0 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200 flex items-center justify-center text-blue-500 transition-all overflow-hidden shadow-inner cursor-zoom-in"
+                         title="คลิกเพื่อดูรูปภาพขยาย">
+                        ${firstImg ? `<img src="${firstImg}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="${room.name}">` : `<i class="fas fa-building text-2xl"></i>`}
                     </div>
                     <div class="flex-grow pt-1">
-                        <h4 class="font-black text-[#6A5243] text-[1.05rem] leading-snug mb-2 line-clamp-2">${room.name}</h4>
-                        <div class="text-[0.75rem] text-[#A79A8B] font-bold">ความจุ: ${room.capacity} ท่าน</div>
+                        <h4 class="font-black text-slate-800 text-[1.05rem] leading-snug mb-2 line-clamp-2">${room.name}</h4>
+                        <div class="text-[0.75rem] text-slate-500 font-bold">ความจุ: ${room.capacity} ท่าน</div>
                         <div class="mt-3 flex flex-wrap gap-2">
-                            <button type="button" onclick="event.stopPropagation(); viewRoomImages('${encodeURIComponent(room.images || '[]')}')" class="text-[0.65rem] font-bold px-3 py-1.5 bg-[#F9F8F6] text-[#6A5243] rounded-lg border border-[#EBE6DA] hover:bg-[#D4B59D]/20 transition-colors shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fas fa-search-plus text-[#D4B59D]"></i> ดูรูปภาพ</button>
-                            ${isAdmin ? `<button type="button" onclick="event.stopPropagation(); openImageManageModal(${room.id}, '${room.name.replace(/'/g, "\\'")}', '${encodeURIComponent(room.images || '[]')}')" class="text-[0.65rem] font-bold px-3 py-1.5 bg-[#F9F8F6] text-[#6A5243] rounded-lg border border-[#EBE6DA] hover:bg-[#D4B59D]/20 transition-colors shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fas fa-cog text-[#A79A8B]"></i> จัดการรูป</button>` : ''}
+                            <button type="button" onclick="event.stopPropagation(); viewRoomImages('${encodeURIComponent(room.images || '[]')}')" class="text-[0.65rem] font-bold px-3 py-1.5 bg-slate-50 text-slate-700 rounded-lg border border-slate-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-colors shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fas fa-search-plus text-blue-500"></i> ดูรูปภาพ</button>
+                            ${isAdmin ? `<button type="button" onclick="event.stopPropagation(); openImageManageModal(${room.id}, '${room.name.replace(/'/g, "\\'")}', '${encodeURIComponent(room.images || '[]')}')" class="text-[0.65rem] font-bold px-3 py-1.5 bg-slate-50 text-slate-700 rounded-lg border border-slate-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-colors shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fas fa-cog text-slate-500"></i> จัดการรูป</button>` : ''}
                         </div>
                     </div>
                 </div>
@@ -794,8 +821,8 @@
             const grid = document.getElementById('currentImagesGrid');
             if (!images || images.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-full py-12 flex flex-col items-center justify-center text-[#A79A8B] bg-white rounded-3xl border-2 border-dashed border-[#EBE6DA]/60">
-                        <div class="w-16 h-16 rounded-full bg-[#FDFBF7] flex items-center justify-center mb-4 text-[#D4B59D] opacity-60">
+                    <div class="col-span-full py-12 flex flex-col items-center justify-center text-text-muted bg-white rounded-3xl border-2 border-dashed border-slate-200/60">
+                        <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-4 text-[var(--secondary)] opacity-60">
                             <i class="fas fa-image text-3xl"></i>
                         </div>
                         <p class="font-bold">ยังไม่มีรูปภาพประกอบสำหรับห้องนี้</p>
@@ -806,7 +833,7 @@
             }
             
             grid.innerHTML = images.map(img => `
-                <div class="relative group rounded-xl overflow-hidden border border-[#EBE6DA] bg-white shadow-sm aspect-video">
+                <div class="relative group rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm aspect-video">
                     <img src="${img}" class="w-full h-full object-cover">
                     <button type="button" onclick="deleteRoomImage('${img}')" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-red-600"><i class="fas fa-trash-alt text-xs"></i></button>
                 </div>
@@ -899,6 +926,7 @@
     function clearFile() {
         document.getElementById('attachment').value = '';
         document.getElementById('file-status').classList.add('hidden');
+        updateSummary();
     }
 
     // --- Equipment toggle ---
@@ -953,22 +981,67 @@
         const end = document.getElementById('end_time').value;
         const count = document.getElementById('participants_count').value;
         const title = document.getElementById('title').value.trim();
+        const dept = document.getElementById('deptSearchInput').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const desc = document.getElementById('description').value.trim();
         
+        // Find selected room name
+        const activeRoomCard = document.querySelector('.room-card-premium.active h4');
+        const roomName = activeRoomCard ? activeRoomCard.textContent : '';
+
+        // Update Review Step Elements
+        if (document.getElementById('review-room')) {
+            document.getElementById('review-room').textContent = roomName || 'ยังไม่ได้เลือกห้อง';
+        }
+        if (document.getElementById('review-title')) {
+            document.getElementById('review-title').textContent = title || '-';
+        }
+        if (document.getElementById('review-count')) {
+            document.getElementById('review-count').textContent = `${count} คน`;
+        }
+        if (document.getElementById('review-department')) {
+            document.getElementById('review-department').textContent = dept || '-';
+        }
+        if (document.getElementById('review-phone')) {
+            document.getElementById('review-phone').textContent = phone || '-';
+        }
+
         if (date) {
             const d = new Date(date + 'T00:00:00');
             const formattedDate = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric', calendar: 'buddhist' });
-            document.getElementById('summary-datetime').textContent = `${formattedDate} (${start} - ${end})`;
+            if (document.getElementById('review-datetime')) {
+                document.getElementById('review-datetime').textContent = `${formattedDate} (${start} - ${end})`;
+            }
+        } else {
+            if (document.getElementById('review-datetime')) {
+                document.getElementById('review-datetime').textContent = '-';
+            }
         }
-        document.getElementById('summary-count').textContent = `${count} คน`;
-        if (title) document.getElementById('summary-title').textContent = title;
         
         const equipVal = document.getElementById('equipments_hidden').value;
-        const equipRow = document.getElementById('summary-equip-row');
+        const reviewEquipBox = document.getElementById('review-equip-box');
         if (equipVal) {
-            document.getElementById('summary-equip').textContent = equipVal;
-            equipRow.style.display = 'block';
+            if (document.getElementById('review-equip')) document.getElementById('review-equip').textContent = equipVal;
+            if (reviewEquipBox) reviewEquipBox.style.display = 'block';
         } else {
-            equipRow.style.display = 'none';
+            if (reviewEquipBox) reviewEquipBox.style.display = 'none';
+        }
+
+        const reviewDescBox = document.getElementById('review-desc-box');
+        if (desc) {
+            if (document.getElementById('review-description')) document.getElementById('review-description').textContent = desc;
+            if (reviewDescBox) reviewDescBox.style.display = 'block';
+        } else {
+            if (reviewDescBox) reviewDescBox.style.display = 'none';
+        }
+
+        const fileInput = document.getElementById('attachment');
+        const reviewFileBox = document.getElementById('review-file-box');
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+            if (document.getElementById('review-filename')) document.getElementById('review-filename').textContent = fileInput.files[0].name;
+            if (reviewFileBox) reviewFileBox.style.display = 'block';
+        } else {
+            if (reviewFileBox) reviewFileBox.style.display = 'none';
         }
     }
 
@@ -984,24 +1057,27 @@
     function validateActiveStep() {
         if (activeStep === 1) {
             if (!document.getElementById('room_id').value) {
-                Swal.fire({ icon: 'warning', title: 'กรุณาเลือกห้องประชุม', confirmButtonColor: '#6A5243' }); return false;
+                Swal.fire({ icon: 'warning', title: 'กรุณาเลือกห้องประชุม', confirmButtonColor: '#2563EB' }); return false;
             }
             if (!document.getElementById('title').value.trim()) {
-                Swal.fire({ icon: 'warning', title: 'กรุณาระบุหัวข้อกิจกรรม', confirmButtonColor: '#6A5243' }); return false;
+                Swal.fire({ icon: 'warning', title: 'กรุณาระบุหัวข้อกิจกรรม', confirmButtonColor: '#2563EB' }); return false;
             }
             if (!document.getElementById('meeting_date').value) {
-                Swal.fire({ icon: 'warning', title: 'กรุณาระบุวันที่จัดประชุม', confirmButtonColor: '#6A5243' }); return false;
+                Swal.fire({ icon: 'warning', title: 'กรุณาระบุวันที่จัดประชุม', confirmButtonColor: '#2563EB' }); return false;
             }
             if (!document.getElementById('department_name').value.trim()) {
-                Swal.fire({ icon: 'warning', title: 'กรุณาระบุหน่วยงาน/ฝ่ายที่สังกัด', confirmButtonColor: '#6A5243' }); return false;
+                Swal.fire({ icon: 'warning', title: 'กรุณาระบุหน่วยงาน/ฝ่ายที่สังกัด', confirmButtonColor: '#2563EB' }); return false;
+            }
+            if (!document.getElementById('phone').value.trim()) {
+                Swal.fire({ icon: 'warning', title: 'กรุณาระบุเบอร์โทรศัพท์สำหรับติดต่อกลับ', confirmButtonColor: '#2563EB' }); return false;
             }
         }
         return true;
     }
 
     function refreshWizardProgress() {
-        const labels = ['1. เลือกห้อง & วันเวลา', '2. สรุปการจอง'];
-        const icons = ['fa-calendar-check', 'fa-user-pen'];
+        const labels = ['1. กรอกข้อมูลการจอง', '2. ตรวจสอบ & ยืนยัน'];
+        const icons = ['fa-calendar-check', 'fa-check-double'];
         for (let i = 1; i <= 2; i++) {
             const dot = document.getElementById(`pstep-${i}`);
             if (!dot) continue;
@@ -1072,7 +1148,7 @@
             } else {
                 list.innerHTML = matches.map(d => `
                     <div class="dept-option${hiddenInput.value === d ? ' selected' : ''}" role="option" data-value="${d}">
-                        <i class="fas fa-building" style="color:#D4B59D;font-size:0.75rem;flex-shrink:0;"></i>
+                        <i class="fas fa-building" style="color:var(--secondary);font-size:0.75rem;flex-shrink:0;"></i>
                         <span>${highlight(d, q)}</span>
                     </div>
                 `).join('');
@@ -1092,6 +1168,7 @@
             clearBtn.classList.add('visible');
             wrap.classList.add('has-value');
             list.classList.remove('open');
+            updateSummary();
         }
 
         function openList() {
@@ -1155,6 +1232,7 @@
             wrap.classList.remove('has-value');
             input.focus();
             openList();
+            updateSummary();
         });
 
         // Close when clicking outside

@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-6 w-full animate-fade">
+﻿<div class="flex flex-col gap-6 w-full animate-fade">
     <!-- Header Section (Borderless) -->
     <div class="flex flex-wrap items-center justify-between gap-10">
         <div class="flex-grow">
@@ -7,25 +7,25 @@
         </div>
         <div class="flex flex-wrap items-center gap-3">
             <!-- Search & Filter Bar -->
-            <div class="flex items-center gap-4 bg-white px-3 py-1.5 rounded-[1rem] border border-[#D4B59D]/30 shadow-sm focus-within:border-[#D4B59D] transition-all">
+            <div class="flex items-center gap-4 bg-white px-3 py-1.5 rounded-[1rem] border border-blue-400/30 shadow-sm focus-within:border-blue-400 transition-all">
                 <!-- Integrated Search Field -->
                 <div class="relative flex items-center">
-                    <i class="fas fa-search absolute left-4 text-[#D4B59D] text-sm pointer-events-none"></i>
+                    <i class="fas fa-search absolute left-4 text-[var(--secondary)] text-sm pointer-events-none"></i>
                     <input type="text" id="userSearchInput" onkeyup="filterUsers()" placeholder="ค้นหาชื่อ, รหัส, ตำแหน่ง, แผนก..." 
-                        class="bg-[#F9F8F6] border border-[#D4B59D]/20 py-2 rounded-full focus:outline-none focus:border-[#D4B59D] text-sm text-[#6A5243] font-bold placeholder:text-[#A79A8B]/60 w-[260px] transition-all"
+                        class="bg-slate-50 border border-blue-400/20 py-2 rounded-full focus:outline-none focus:border-blue-400 text-sm text-primary font-bold placeholder:text-text-muted/60 w-[260px] transition-all"
                         style="padding-left: 45px !important; padding-right: 15px !important;">
                 </div>
                 
-                <div class="w-[1px] h-5 bg-[#D4B59D]/20"></div>
+                <div class="w-[1px] h-5 bg-[var(--secondary)]/20"></div>
 
                 <!-- Filter Dropdown -->
                 <div class="relative flex items-center">
-                    <i class="fas fa-user-shield absolute left-2 text-[#D4B59D] text-xs opacity-70 pointer-events-none"></i>
-                    <select id="userRoleFilter" onchange="filterUsers()" class="bg-white border-none focus:outline-none text-sm text-[#6A5243] font-black cursor-pointer rounded-lg"
+                    <i class="fas fa-user-shield absolute left-2 text-[var(--secondary)] text-xs opacity-70 pointer-events-none"></i>
+                    <select id="userRoleFilter" onchange="filterUsers()" class="bg-white border-none focus:outline-none text-sm text-primary font-black cursor-pointer rounded-lg"
                         style="padding-left: 32px !important; padding-right: 40px !important;">
-                        <option value="all" class="bg-white text-[#6A5243]">สิทธิ์ทั้งหมด</option>
-                        <option value="ADMIN" class="bg-white text-[#6A5243]">ADMIN</option>
-                        <option value="USER" class="bg-white text-[#6A5243]">USER</option>
+                        <option value="all" class="bg-white text-primary">สิทธิ์ทั้งหมด</option>
+                        <option value="ADMIN" class="bg-white text-primary">ADMIN</option>
+                        <option value="USER" class="bg-white text-primary">USER</option>
                     </select>
                 </div>
             </div>
@@ -101,13 +101,18 @@ function filterUsers() {
         if (!noDataRow) {
             noDataRow = document.createElement('tr');
             noDataRow.id = 'noUserRow';
-            noDataRow.innerHTML = `<td colspan="6" class="p-8 text-center text-[#A79A8B] font-bold">ไม่พบข้อมูลรายชื่อที่ตรงตามเงื่อนไข</td>`;
+            noDataRow.innerHTML = `<td colspan="6" class="p-8 text-center text-text-muted font-bold">ไม่พบข้อมูลรายชื่อที่ตรงตามเงื่อนไข</td>`;
             tableBody.appendChild(noDataRow);
         } else {
             noDataRow.style.display = '';
         }
     } else if (noDataRow) {
         noDataRow.style.display = 'none';
+    }
+    
+    // Refresh paginator if it exists
+    if (window.userPaginator) {
+        window.userPaginator.refresh();
     }
 }
 
@@ -135,19 +140,70 @@ async function loadUsers() {
                     </td>
                     <td class="p-3 text-sm">${user.position_name || '-'}</td>
                     <td class="p-3 text-sm">${user.dept_name || '-'}</td>
-                    <td class="p-3">
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${user.role === 'admin' ? 'bg-primary/10 text-primary' : 'bg-secondary/10 text-secondary'}">
-                            ${user.role.toUpperCase()}
-                        </span>
+                    <td class="p-3" onclick="event.stopPropagation();">
+                        <select onchange="changeUserRole(${user.id}, this.value)" 
+                                class="px-3 py-1.5 rounded-xl text-xs font-black border cursor-pointer transition-all shadow-sm focus:outline-none ${user.role === 'admin' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-slate-100 text-slate-600 border-slate-200'}">
+                            <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>ADMIN</option>
+                            <option value="user" ${user.role === 'user' ? 'selected' : ''}>USER</option>
+                        </select>
                     </td>
                 </tr>
             `).join('');
+            
+            // Initialize paginator
+            if (!window.userPaginator) {
+                window.userPaginator = new MeetQueuePaginator({
+                    container: '#userTableBody',
+                    itemSelector: 'tr',
+                    pageSize: 10
+                });
+            } else {
+                window.userPaginator.refresh();
+            }
         } else {
             alert('โหลดข้อมูลล้มเหลว: ' + result.message);
         }
     } catch (error) {
         console.error('Error:', error);
         alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+    }
+}
+
+async function changeUserRole(userId, newRole) {
+    try {
+        const res = await fetch('api/users.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, role: newRole })
+        });
+        const result = await res.json();
+        if (result.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'สำเร็จ!',
+                text: result.message,
+                showConfirmButton: false,
+                timer: 1500,
+                confirmButtonColor: '#2563EB'
+            });
+            loadUsers();
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'ไม่สำเร็จ',
+                text: result.message,
+                confirmButtonColor: '#2563EB'
+            });
+            loadUsers();
+        }
+    } catch (e) {
+        Swal.fire({
+            icon: 'error',
+            title: 'ผิดพลาด',
+            text: 'เกิดข้อผิดพลาดในการเชื่อมต่อ',
+            confirmButtonColor: '#2563EB'
+        });
+        loadUsers();
     }
 }
 

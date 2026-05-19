@@ -7,44 +7,44 @@ if (!$bookingId) {
 }
 ?>
 
-<div class="max-w-[720px] mx-auto py-10 px-4 md:px-8">
+<div class="max-w-[720px] mx-auto py-10 px-4 md:px-8 animate-fade">
     <!-- Result Header & Timeline Tracker -->
     <div class="text-center mb-8">
-        <div id="statusIconContainer" class="w-20 h-20 rounded-full bg-[#EBE6DA] text-[#A79A8B] flex items-center justify-center text-3xl mx-auto mb-5 shadow-md transition-all duration-500">
+        <div id="statusIconContainer" class="w-20 h-20 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-3xl mx-auto mb-5 shadow-md transition-all duration-500">
             <i class="fas fa-circle-notch fa-spin"></i>
         </div>
-        <h2 id="resultTitle" class="text-2xl font-extrabold text-[#6A5243] mb-2">กำลังโหลดข้อมูล...</h2>
-        <p id="resultSubtitle" class="text-sm text-[#A79A8B] font-medium mb-7">กรุณารอสักครู่</p>
+        <h2 id="resultTitle" class="text-2xl font-black text-slate-800 mb-2">กำลังโหลดข้อมูล...</h2>
+        <p id="resultSubtitle" class="text-sm text-slate-500 font-bold mb-7">กรุณารอสักครู่</p>
 
         <!-- Status Timeline Tracker -->
         <div id="timelineContainer" class="hidden w-full flex justify-center mt-2 mb-2">
             <div class="w-full max-w-md relative">
                 <div class="flex items-center justify-between relative">
-                    <div class="absolute left-[10%] right-[10%] top-[20px] h-[3px] bg-[#EBE6DA] z-0 rounded-full"></div>
-                    <div id="timelineProgress" class="absolute left-[10%] top-[20px] h-[3px] bg-[#6A5243] z-0 rounded-full transition-all duration-1000 w-0"></div>
+                    <div class="absolute left-[10%] right-[10%] top-[20px] h-[3px] bg-slate-200 z-0 rounded-full"></div>
+                    <div id="timelineProgress" class="absolute left-[10%] top-[20px] h-[3px] bg-blue-600 z-0 rounded-full transition-all duration-1000 w-0"></div>
                     <div class="relative z-10 flex flex-col items-center w-1/4">
-                        <div id="step1-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#A79A8B] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500">
+                        <div id="step1-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-slate-400 border-[3px] border-slate-50 shadow-sm transition-colors duration-500">
                             <i class="fas fa-paper-plane text-xs"></i>
                         </div>
-                        <span class="mt-1.5 text-[0.6rem] font-bold text-[#A79A8B] leading-tight text-center" id="step1-text">ยังไม่อนุมัติ</span>
+                        <span class="mt-1.5 text-[0.68rem] font-bold text-slate-400 leading-tight text-center" id="step1-text">ยังไม่อนุมัติ</span>
                     </div>
                     <div class="relative z-10 flex flex-col items-center w-1/4">
-                        <div id="step2-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#EBE6DA] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500">
+                        <div id="step2-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-slate-200 border-[3px] border-slate-50 shadow-sm transition-colors duration-500">
                             <i class="fas fa-check-double text-xs"></i>
                         </div>
-                        <span class="mt-1.5 text-[0.6rem] font-bold text-[#A79A8B] leading-tight text-center" id="step2-text">อนุมัติแล้ว</span>
+                        <span class="mt-1.5 text-[0.68rem] font-bold text-slate-400 leading-tight text-center" id="step2-text">อนุมัติแล้ว</span>
                     </div>
                     <div class="relative z-10 flex flex-col items-center w-1/4">
-                        <div id="step3-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#EBE6DA] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500">
+                        <div id="step3-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-slate-200 border-[3px] border-slate-50 shadow-sm transition-colors duration-500">
                             <i class="fas fa-door-closed text-xs"></i>
                         </div>
-                        <span class="mt-1.5 text-[0.6rem] font-bold text-[#A79A8B] leading-tight text-center" id="step3-text">เสร็จสิ้น<br>การประชุม</span>
+                        <span class="mt-1.5 text-[0.68rem] font-bold text-slate-400 leading-tight text-center" id="step3-text">เสร็จสิ้น<br>การประชุม</span>
                     </div>
                     <div class="relative z-10 flex flex-col items-center w-1/4">
-                        <div id="step4-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#EBE6DA] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500">
+                        <div id="step4-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-slate-200 border-[3px] border-slate-50 shadow-sm transition-colors duration-500">
                             <i class="fas fa-star text-xs"></i>
                         </div>
-                        <span class="mt-1.5 text-[0.6rem] font-bold text-[#A79A8B] leading-tight text-center" id="step4-text">ประเมินแล้ว</span>
+                        <span class="mt-1.5 text-[0.68rem] font-bold text-slate-400 leading-tight text-center" id="step4-text">ประเมินแล้ว</span>
                     </div>
                 </div>
             </div>
@@ -52,104 +52,104 @@ if (!$bookingId) {
     </div>
 
     <!-- Ticket / Receipt Card -->
-    <div id="ticketCard" class="bg-white rounded-2xl shadow-[0_8px_30px_rgba(106,82,67,0.08)] border border-[#EBE6DA] overflow-hidden opacity-0 translate-y-6 transition-all duration-700">
-        <div class="h-1.5 w-full bg-gradient-to-r from-[#D4B59D] to-[#6A5243]"></div>
+    <div id="ticketCard" class="bg-white rounded-[2rem] shadow-[0_10px_40px_rgba(15,23,42,0.06)] border border-slate-200 overflow-hidden opacity-0 translate-y-6 transition-all duration-700">
+        <div class="h-1.5 w-full bg-gradient-to-r from-blue-500 to-blue-700"></div>
 
         <!-- Card Body -->
-        <div style="padding: 2rem 2.25rem;">
+        <div class="p-8 md:p-10">
 
             <!-- Reference ID & Status -->
-            <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:1.5rem; margin-bottom:1.75rem; border-bottom:2px dashed #EBE6DA; flex-wrap:wrap; gap:0.75rem;">
+            <div class="flex justify-between items-center pb-6 mb-7 border-b-2 border-dashed border-slate-200 flex-wrap gap-3">
                 <div>
-                    <div style="font-size:0.6rem; font-weight:700; color:#A79A8B; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:0.4rem;">รหัสอ้างอิงการจอง</div>
-                    <div style="font-size:1.25rem; font-weight:800; color:#6A5243; font-family:monospace; letter-spacing:0.05em;">#<span id="displayId">...</span></div>
+                    <div class="text-[0.72rem] font-extrabold text-slate-400 letter-spacing:0.15em text-transform:uppercase mb-1 flex items-center gap-1.5"><i class="fas fa-hashtag text-blue-500"></i> รหัสอ้างอิงการจอง</div>
+                    <div class="text-xl font-black text-slate-800 font-mono tracking-wider">#<span id="displayId">...</span></div>
                 </div>
-                <span id="displayStatus" style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.4rem 1rem; border-radius:9999px; font-weight:700; font-size:0.7rem; text-transform:uppercase;">...</span>
+                <span id="displayStatus" class="inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-[0.75rem] text-transform:uppercase shadow-sm">...</span>
             </div>
 
             <!-- Topic -->
-            <div style="margin-bottom:1.75rem;">
-                <div style="font-size:0.6rem; font-weight:700; color:#A79A8B; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:0.5rem;">หัวข้อ/เรื่องการประชุม</div>
-                <div id="displayTitle" style="font-size:1rem; font-weight:700; color:#6A5243; line-height:1.5;">...</div>
+            <div class="mb-7">
+                <div class="text-[0.72rem] font-extrabold text-slate-400 tracking-wider text-transform:uppercase mb-2 flex items-center gap-1.5"><i class="fas fa-quote-left text-blue-500"></i> หัวข้อ/เรื่องการประชุม</div>
+                <div id="displayTitle" class="text-[1.1rem] font-black text-slate-800 line-clamp-2 leading-relaxed">...</div>
             </div>
 
             <!-- Date & Room -->
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem;">
-                <div style="background:#F9F8F6; border:1px solid #EBE6DA; border-radius:0.875rem; padding:1.1rem 1.25rem;">
-                    <div style="display:flex; align-items:flex-start; gap:0.875rem;">
-                        <div style="width:2.5rem; height:2.5rem; background:white; border-radius:0.625rem; display:flex; align-items:center; justify-content:center; color:#D4B59D; flex-shrink:0; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
-                            <i class="fas fa-calendar-day" style="font-size:0.9rem;"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-7">
+                <div class="bg-slate-50/60 border border-slate-200/80 rounded-[1.25rem] p-5 shadow-sm hover:shadow transition-shadow">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-blue-500 flex-shrink-0 shadow-sm">
+                            <i class="fas fa-calendar-alt text-[1.1rem]"></i>
                         </div>
                         <div>
-                            <div style="font-size:0.58rem; font-weight:700; color:#A79A8B; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:0.5rem;">วันและเวลาที่จอง</div>
-                            <div id="displayDate" style="font-weight:700; font-size:0.875rem; color:#6A5243;">...</div>
-                            <div id="displayTime" style="font-size:0.8rem; font-weight:500; color:#A79A8B; margin-top:0.3rem;">...</div>
+                            <div class="text-[0.7rem] font-extrabold text-slate-400 tracking-wider text-transform:uppercase mb-1.5">วันและเวลาที่จอง</div>
+                            <div id="displayDate" class="font-black text-[0.92rem] text-slate-800 leading-snug">...</div>
+                            <div id="displayTime" class="text-[0.8rem] font-bold text-slate-500 mt-1">...</div>
                         </div>
                     </div>
                 </div>
-                <div style="background:#F9F8F6; border:1px solid #EBE6DA; border-radius:0.875rem; padding:1.1rem 1.25rem;">
-                    <div style="display:flex; align-items:flex-start; gap:0.875rem;">
-                        <div style="width:2.5rem; height:2.5rem; background:white; border-radius:0.625rem; display:flex; align-items:center; justify-content:center; color:#D4B59D; flex-shrink:0; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
-                            <i class="fas fa-door-open" style="font-size:0.9rem;"></i>
+                <div class="bg-slate-50/60 border border-slate-200/80 rounded-[1.25rem] p-5 shadow-sm hover:shadow transition-shadow">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-blue-500 flex-shrink-0 shadow-sm">
+                            <i class="fas fa-door-open text-[1.1rem]"></i>
                         </div>
                         <div>
-                            <div style="font-size:0.58rem; font-weight:700; color:#A79A8B; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:0.5rem;">ห้องประชุม</div>
-                            <div id="displayRoom" style="font-weight:700; font-size:0.875rem; color:#6A5243; line-height:1.4;">...</div>
+                            <div class="text-[0.7rem] font-extrabold text-slate-400 tracking-wider text-transform:uppercase mb-1.5">ห้องประชุม</div>
+                            <div id="displayRoom" class="font-black text-[0.92rem] text-slate-800 leading-snug">...</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Divider -->
-            <hr style="border:none; border-top:1px solid #EBE6DA; margin-bottom:1.75rem;">
+            <hr class="border-slate-100 mb-7">
 
             <!-- Extra Info -->
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:1.25rem; margin-bottom:1.75rem;">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-7">
                 <div>
-                    <div style="font-size:0.58rem; font-weight:700; color:#A79A8B; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem;">ผู้จอง</div>
-                    <div id="displayUser" style="font-weight:700; font-size:0.875rem; color:#6A5243; line-height:1.4;">...</div>
+                    <div class="text-[0.7rem] font-extrabold text-slate-400 tracking-wider text-transform:uppercase mb-1.5 flex items-center gap-1.5"><i class="fas fa-user text-blue-500"></i> ผู้จอง</div>
+                    <div id="displayUser" class="font-black text-[0.92rem] text-slate-800 leading-snug">...</div>
                 </div>
                 <div>
-                    <div style="font-size:0.58rem; font-weight:700; color:#A79A8B; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem;">หน่วยงาน</div>
-                    <div id="displayDept" style="font-weight:700; font-size:0.875rem; color:#6A5243; line-height:1.4;">...</div>
+                    <div class="text-[0.7rem] font-extrabold text-slate-400 tracking-wider text-transform:uppercase mb-1.5 flex items-center gap-1.5"><i class="fas fa-sitemap text-blue-500"></i> หน่วยงาน</div>
+                    <div id="displayDept" class="font-black text-[0.92rem] text-slate-800 leading-snug">...</div>
                 </div>
                 <div>
-                    <div style="font-size:0.58rem; font-weight:700; color:#A79A8B; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem;">จำนวนผู้เข้าใช้</div>
-                    <div id="displayCount" style="font-weight:700; font-size:0.875rem; color:#6A5243;">...</div>
+                    <div class="text-[0.7rem] font-extrabold text-slate-400 tracking-wider text-transform:uppercase mb-1.5 flex items-center gap-1.5"><i class="fas fa-users text-blue-500"></i> จำนวนผู้เข้าใช้</div>
+                    <div id="displayCount" class="font-black text-[0.92rem] text-slate-800 leading-snug">...</div>
                 </div>
                 <div>
-                    <div style="font-size:0.58rem; font-weight:700; color:#A79A8B; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem;">เบอร์ติดต่อ</div>
-                    <div id="displayPhone" style="font-weight:700; font-size:0.875rem; color:#6A5243;">...</div>
+                    <div class="text-[0.7rem] font-extrabold text-slate-400 tracking-wider text-transform:uppercase mb-1.5 flex items-center gap-1.5"><i class="fas fa-phone text-blue-500"></i> เบอร์ติดต่อ</div>
+                    <div id="displayPhone" class="font-black text-[0.92rem] text-slate-800 leading-snug">...</div>
                 </div>
             </div>
 
             <!-- Description (Optional) -->
-            <div id="descContainer" style="display:none; margin-bottom:1.25rem;">
-                <div style="font-size:0.58rem; font-weight:700; color:#A79A8B; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem;">หมายเหตุเพิ่มเติม</div>
-                <div id="displayDesc" style="padding:0.875rem 1.1rem; background:#FDFBF7; border-radius:0.75rem; font-size:0.875rem; color:#6A5243; border:1px solid #EBE6DA; line-height:1.6;"></div>
+            <div id="descContainer" class="hidden mb-5">
+                <div class="text-[0.7rem] font-extrabold text-slate-400 tracking-wider text-transform:uppercase mb-2 flex items-center gap-1.5"><i class="fas fa-clipboard-list text-blue-500"></i> หมายเหตุเพิ่มเติม</div>
+                <div id="displayDesc" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-[0.88rem] text-slate-700 font-bold whitespace-pre-line leading-relaxed shadow-inner"></div>
             </div>
 
             <!-- Equipment (Optional) -->
-            <div id="equipContainer" style="display:none;">
-                <div style="font-size:0.58rem; font-weight:700; color:#A79A8B; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem;">อุปกรณ์ที่ต้องการ</div>
-                <div id="displayEquip" style="padding:0.875rem 1.1rem; background:#FDFBF7; border-radius:0.75rem; font-size:0.875rem; color:#6A5243; border:1px solid #EBE6DA; line-height:1.6;"></div>
+            <div id="equipContainer" class="hidden">
+                <div class="text-[0.7rem] font-extrabold text-slate-400 tracking-wider text-transform:uppercase mb-2 flex items-center gap-1.5"><i class="fas fa-tools text-blue-500"></i> อุปกรณ์ที่ต้องการ</div>
+                <div id="displayEquip" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-[0.88rem] text-slate-700 font-bold whitespace-pre-line leading-relaxed shadow-inner"></div>
             </div>
 
         </div>
 
         <!-- Footer -->
-        <div style="background:var(--card, #F9F8F6); padding:1.1rem 2.25rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; border-top:1px solid var(--border, #EBE6DA); flex-wrap:wrap;">
-            <p style="font-size:0.65rem; font-weight:600; color:var(--text-muted, #A79A8B); display:flex; align-items:center; gap:0.5rem; margin:0;">
-                <i class="fas fa-info-circle" style="color:var(--secondary, #D4B59D);"></i> โปรดเก็บรหัสอ้างอิงไว้เพื่อใช้สำหรับติดตามสถานะการจอง
+        <div class="bg-slate-50/80 p-6 md:p-8 flex items-center justify-between gap-4 border-t border-slate-200/80 flex-wrap">
+            <p class="text-[0.72rem] font-extrabold text-slate-500 flex items-center gap-2 margin:0">
+                <i class="fas fa-info-circle text-blue-500"></i> โปรดเก็บรหัสอ้างอิงไว้เพื่อใช้สำหรับติดตามสถานะการจอง
             </p>
-            <div style="display:flex; gap:0.625rem; margin-left:auto; flex-wrap:wrap; justify-content:flex-end;">
-                <button onclick="window.print()" style="padding:0.5rem 1.1rem; border-radius:0.625rem; background:var(--card, white); border:1px solid var(--border, #EBE6DA); color:var(--primary, #6A5243); font-weight:700; font-size:0.75rem; display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
-                    <i class="fas fa-print"></i> พิมพ์เอกสาร
+            <div class="flex gap-3 ml-auto flex-wrap justify-end">
+                <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-blue-600 hover:text-blue-700 hover:border-blue-300 font-black text-[0.78rem] flex items-center gap-2 cursor-pointer shadow-sm transition-all hover:-translate-y-0.5">
+                    <i class="fas fa-print text-blue-500"></i> พิมพ์เอกสาร
                 </button>
-                <a href="dashboard.php" style="padding:0.5rem 1.1rem; border-radius:0.625rem; background:var(--card, white); border:1px solid var(--primary, #6A5243); color:var(--primary, #6A5243); font-weight:700; font-size:0.75rem; display:flex; align-items:center; gap:0.4rem; text-decoration:none;">
-                    <i class="fas fa-home"></i> กลับหน้าหลัก
+                <a href="dashboard.php" class="px-4 py-2.5 rounded-xl bg-white border border-blue-500 text-blue-600 hover:bg-blue-50 font-black text-[0.78rem] flex items-center gap-2 text-decoration:none shadow-sm transition-all hover:-translate-y-0.5">
+                    <i class="fas fa-home text-blue-500"></i> กลับหน้าหลัก
                 </a>
-                <a href="dashboard.php?view=approve_list" style="padding:0.5rem 1.1rem; border-radius:0.625rem; background:var(--primary, #6A5243); color:white; font-weight:700; font-size:0.75rem; display:flex; align-items:center; gap:0.4rem; text-decoration:none;">
+                <a href="dashboard.php?view=approve_list" class="px-4 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 font-black text-[0.78rem] flex items-center gap-2 text-decoration:none shadow-md shadow-blue-500/20 transition-all hover:-translate-y-0.5">
                     <i class="fas fa-list"></i> ดูรายการทั้งหมด
                 </a>
             </div>
@@ -178,11 +178,11 @@ function renderBookingResult(booking) {
     const subtitle = document.getElementById('resultSubtitle');
     const statusBadge = document.getElementById('displayStatus');
 
-    let badgeStyle = 'background:#F3F0E9; color:#A79A8B;';
+    let badgeStyle = 'background:#f1f5f9; color:#64748b; border:1px solid #cbd5e1;';
     let statusText = 'ไม่ทราบสถานะ';
     let iconHtml = '<i class="fas fa-question"></i>';
-    let iconBg = 'bg-[#F9F8F6]';
-    let iconColor = 'text-[#A79A8B]';
+    let iconBg = 'bg-slate-50';
+    let iconColor = 'text-slate-500';
 
     switch (booking.status) {
         case 'pending':
@@ -229,7 +229,7 @@ function renderBookingResult(booking) {
 
     iconContainer.className = `w-20 h-20 rounded-full flex items-center justify-center text-3xl mx-auto mb-5 shadow-md transition-all duration-500 ${iconBg} ${iconColor}`;
     iconContainer.innerHTML = iconHtml;
-    statusBadge.setAttribute('style', statusBadge.getAttribute('style') + badgeStyle);
+    statusBadge.setAttribute('style', badgeStyle);
     statusBadge.innerHTML = statusText;
 
     document.getElementById('displayId').textContent = String(booking.id).padStart(6, '0');
@@ -243,11 +243,11 @@ function renderBookingResult(booking) {
     document.getElementById('displayPhone').textContent = booking.phone;
 
     if (booking.description) {
-        document.getElementById('descContainer').style.display = 'block';
+        document.getElementById('descContainer').classList.remove('hidden');
         document.getElementById('displayDesc').textContent = booking.description;
     }
     if (booking.equipments) {
-        document.getElementById('equipContainer').style.display = 'block';
+        document.getElementById('equipContainer').classList.remove('hidden');
         document.getElementById('displayEquip').textContent = booking.equipments;
     }
 
@@ -259,27 +259,27 @@ function renderBookingResult(booking) {
         const isCompleted = (booking.status === 'completed') || (booking.status === 'approved' && endTime < now);
 
         checkEvaluationStatus(booking.id).then(isEvaluated => {
-            document.getElementById('step1-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#6A5243] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500';
-            document.getElementById('step1-text').className = 'mt-1.5 text-[0.6rem] font-bold text-[#6A5243] leading-tight text-center';
+            document.getElementById('step1-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-blue-600 border-[3px] border-blue-50 shadow-sm transition-colors duration-500';
+            document.getElementById('step1-text').className = 'mt-1.5 text-[0.68rem] font-bold text-blue-600 leading-tight text-center';
             if (booking.status === 'approved' || isCompleted || isEvaluated) {
                 progressPercent = 33;
                 setTimeout(() => {
-                    document.getElementById('step2-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#6A5243] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500';
-                    document.getElementById('step2-text').className = 'mt-1.5 text-[0.6rem] font-bold text-[#6A5243] leading-tight text-center';
+                    document.getElementById('step2-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-blue-600 border-[3px] border-blue-50 shadow-sm transition-colors duration-500';
+                    document.getElementById('step2-text').className = 'mt-1.5 text-[0.68rem] font-bold text-blue-600 leading-tight text-center';
                 }, 300);
             }
             if (isCompleted || isEvaluated) {
                 progressPercent = 66;
                 setTimeout(() => {
-                    document.getElementById('step3-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#6A5243] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500';
-                    document.getElementById('step3-text').className = 'mt-1.5 text-[0.6rem] font-bold text-[#6A5243] leading-tight text-center';
+                    document.getElementById('step3-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-blue-600 border-[3px] border-blue-50 shadow-sm transition-colors duration-500';
+                    document.getElementById('step3-text').className = 'mt-1.5 text-[0.68rem] font-bold text-blue-600 leading-tight text-center';
                 }, 600);
             }
             if (isEvaluated) {
                 progressPercent = 100;
                 setTimeout(() => {
-                    document.getElementById('step4-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-[#6A5243] border-[3px] border-[#F3F0E6] shadow-sm transition-colors duration-500';
-                    document.getElementById('step4-text').className = 'mt-1.5 text-[0.6rem] font-bold text-[#6A5243] leading-tight text-center';
+                    document.getElementById('step4-icon').className = 'w-10 h-10 rounded-full flex items-center justify-center text-white bg-blue-600 border-[3px] border-blue-50 shadow-sm transition-colors duration-500';
+                    document.getElementById('step4-text').className = 'mt-1.5 text-[0.68rem] font-bold text-blue-600 leading-tight text-center';
                 }, 900);
             }
             setTimeout(() => {

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $current_view = $_GET['view'] ?? '';
 $user_role = $_SESSION['user_data']['role'] ?? 'user';
 $is_admin_view = ($current_view === 'approve_list' || $current_view === 'requests') && ($user_role === 'admin');
@@ -46,7 +46,7 @@ if ($is_admin_view) {
     display: none;
     border-top: 1px solid var(--border);
     padding: 1rem;
-    background: var(--sidebar-bg, #fdfbf7);
+    background: var(--sidebar-bg, var(--white));
     gap: 0.75rem;
     flex-wrap: wrap;
 }
@@ -128,8 +128,8 @@ if ($is_admin_view) {
     align-items: center;
     gap: 0.35rem;
     padding: 0.25rem 0.6rem;
-    background: rgba(106,82,67,0.08);
-    border: 1px solid rgba(106,82,67,0.18);
+    background: rgba(37,99,235,0.08);
+    border: 1px solid rgba(37,99,235,0.18);
     border-radius: 99px;
     font-size: 0.72rem;
     font-weight: 700;
@@ -448,6 +448,19 @@ function renderTable() {
             </div>`}
         </div>
     `).join('');
+
+    // Re-initialize paginators
+    if (!window.approveDesktopPaginator) {
+        window.approveDesktopPaginator = new MeetQueuePaginator({ container: '#approveTableBody', itemSelector: 'tr', pageSize: 10 });
+    } else {
+        window.approveDesktopPaginator.refresh();
+    }
+    
+    if (!window.approveMobilePaginator) {
+        window.approveMobilePaginator = new MeetQueuePaginator({ container: '#mobileCardList', itemSelector: '.card', pageSize: 10 });
+    } else {
+        window.approveMobilePaginator.refresh();
+    }
 }
 
 function toggleAdvancedFilter() {

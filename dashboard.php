@@ -113,6 +113,7 @@ $view = $_GET['view'] ?? (($user['role'] ?? 'user') === 'admin' ? 'approve_list'
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
+    <script src="js/plugins/paginator.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

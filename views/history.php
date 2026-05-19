@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once 'api/config.php';
 use App\Repository\BookingRepository;
 
@@ -51,23 +51,23 @@ function formatThaiDate($datetime, $months) {
     .history-card:hover { transform: translateY(-5px); }
     .image-actions { opacity: 0; transition: opacity 0.3s ease; }
     .history-card:hover .image-actions { opacity: 1; }
-    .viewer-toolbar > ul > li { background-color: rgba(106, 82, 67, 0.5) !important; }
+    .viewer-toolbar > ul > li { background-color: rgba(15, 23, 42, 0.5) !important; }
 </style>
 
 <div class="flex flex-col gap-6 w-full animate-fade">
     <div class="flex flex-wrap justify-between items-center gap-4">
-        <h2 class="text-2xl font-bold text-[#6A5243] flex items-center gap-2">
-            <i class="fas fa-history text-[#D4B59D]"></i> ประวัติการประชุม & แบบประเมิน
+        <h2 class="text-2xl font-bold text-primary flex items-center gap-2">
+            <i class="fas fa-history text-[var(--secondary)]"></i> ประวัติการประชุม & แบบประเมิน
         </h2>
         <div class="relative w-full sm:w-64">
             <input type="text" id="searchHistory" onkeyup="filterHistory()" placeholder="ค้นหาการประชุม..." 
-                   class="w-full pr-4 py-2.5 rounded-xl border border-[#D4B59D]/30 focus:outline-none focus:border-[#D4B59D] bg-white text-[#6A5243] shadow-sm transition-all" style="padding-left: 2.75rem;">
-            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-[#A79A8B]"></i>
+                   class="w-full pr-4 py-2.5 rounded-xl border border-blue-400/30 focus:outline-none focus:border-blue-400 bg-white text-primary shadow-sm transition-all" style="padding-left: 2.75rem;">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"></i>
         </div>
     </div>
 
     <?php if (count($past_bookings) > 0): ?>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div id="historyGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <?php foreach($past_bookings as $booking): 
                 $room_id = $booking['room_id'] ?? 1;
                 $images = [];
@@ -83,15 +83,15 @@ function formatThaiDate($datetime, $months) {
                 $display_image = $has_custom_images ? $images[0]['path'] : 'assets/images/' . (($room_id % 2 == 0) ? 'room2.png' : 'room1.png');
                 $can_manage = ($user['role'] === 'admin' || $booking['user_id'] == $_SESSION['user_id']);
             ?>
-            <div class="history-card bg-white rounded-3xl overflow-hidden shadow-sm border border-[#EBE6DA]/60 hover:shadow-xl transition-all flex flex-col group"
+            <div class="history-card bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200/60 hover:shadow-xl transition-all flex flex-col group"
                  data-search="<?= htmlspecialchars(strtolower($booking['title'] . ' ' . ($booking['room_name'] ?? 'ภายนอกสถานที่') . ' ' . formatThaiDate($booking['start_time'], $thai_months))) ?>">
                 
-                <div class="relative h-56 overflow-hidden bg-[#F3F0E6]">
+                <div class="relative h-56 overflow-hidden bg-slate-50">
                     <img src="<?= $display_image ?>" alt="บรรยากาศห้องประชุม" 
                          class="w-full h-full object-cover cursor-zoom-in group-hover:scale-105 transition-transform duration-700"
                          onclick="openGallery(<?= $booking['id'] ?>)">
                     
-                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold text-[#6A5243] shadow-sm border border-[#D4B59D]/20 z-10">
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold text-primary shadow-sm border border-blue-400/20 z-10">
                         <i class="fas fa-check-circle text-green-500 mr-1"></i> เสร็จสิ้น
                     </div>
 
@@ -101,11 +101,11 @@ function formatThaiDate($datetime, $months) {
 
                     <?php if ($can_manage): ?>
                     <div class="image-actions absolute top-4 right-4 flex flex-col gap-2 z-10">
-                        <button onclick="triggerUpload(<?= $booking['id'] ?>)" class="w-9 h-9 rounded-full bg-white/90 backdrop-blur-md text-[#6A5243] shadow-lg flex items-center justify-center hover:bg-[#6A5243] hover:text-white transition-all border border-white/50" title="เพิ่มรูปภาพ">
+                        <button onclick="triggerUpload(<?= $booking['id'] ?>)" class="w-9 h-9 rounded-full bg-white/90 backdrop-blur-md text-primary shadow-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all border border-white/50" title="เพิ่มรูปภาพ">
                             <i class="fas fa-plus text-sm"></i>
                         </button>
                         <?php if ($has_custom_images): ?>
-                        <button onclick="manageImages(<?= $booking['id'] ?>, <?= htmlspecialchars(json_encode($images)) ?>)" class="w-9 h-9 rounded-full bg-[#D4B59D]/90 backdrop-blur-md text-white shadow-lg flex items-center justify-center hover:bg-[#6A5243] transition-all border border-white/50" title="จัดการรูปภาพ">
+                        <button onclick="manageImages(<?= $booking['id'] ?>, <?= htmlspecialchars(json_encode($images)) ?>)" class="w-9 h-9 rounded-full bg-[var(--secondary)]/90 backdrop-blur-md text-white shadow-lg flex items-center justify-center hover:bg-blue-600 transition-all border border-white/50" title="จัดการรูปภาพ">
                             <i class="fas fa-tasks text-sm"></i>
                         </button>
                         <?php endif; ?>
@@ -128,26 +128,26 @@ function formatThaiDate($datetime, $months) {
                 
                 <div class="p-6 flex flex-col flex-grow">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="text-[11px] font-bold text-[#A79A8B] tracking-wider uppercase flex items-center gap-1.5 px-2.5 py-1 bg-[#FDFBF7] rounded-md border border-[#EBE6DA]/50">
-                            <i class="far fa-calendar-alt text-[#D4B59D]"></i>
+                        <div class="text-[11px] font-bold text-text-muted tracking-wider uppercase flex items-center gap-1.5 px-2.5 py-1 bg-white rounded-md border border-slate-200/50">
+                            <i class="far fa-calendar-alt text-[var(--secondary)]"></i>
                             <?= formatThaiDate($booking['start_time'], $thai_months) ?>
                         </div>
-                        <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#6A5243]">
-                            <i class="fas fa-users text-[#D4B59D]"></i> <?= $booking['participants_count'] ?> คน
+                        <div class="flex items-center gap-1.5 text-[11px] font-bold text-primary">
+                            <i class="fas fa-users text-[var(--secondary)]"></i> <?= $booking['participants_count'] ?> คน
                         </div>
                     </div>
                     
-                    <h3 class="text-xl font-black text-[#6A5243] mb-3 line-clamp-2 leading-tight" title="<?= htmlspecialchars($booking['title']) ?>">
+                    <h3 class="text-xl font-black text-primary mb-3 line-clamp-2 leading-tight" title="<?= htmlspecialchars($booking['title']) ?>">
                         <?= htmlspecialchars($booking['title']) ?>
                     </h3>
                     
-                    <div class="flex items-start gap-2.5 mb-6 text-sm text-[#6A5243]/80">
-                        <i class="fas fa-map-marker-alt mt-1 text-[#D4B59D]"></i>
+                    <div class="flex items-start gap-2.5 mb-6 text-sm text-primary/80">
+                        <i class="fas fa-map-marker-alt mt-1 text-[var(--secondary)]"></i>
                         <span class="font-medium"><?= $booking['room_name'] ?? 'ภายนอกสถานที่' ?></span>
                     </div>
 
-                    <div class="mt-auto pt-5 border-t border-[#EBE6DA]/50">
-                        <button class="w-full px-4 py-3 rounded-2xl <?= ($user_reviews[$booking['id']] ?? null) ? 'bg-[#D4B59D] text-white' : 'bg-[#F3F0E6] text-[#6A5243]' ?> text-sm font-black hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2" 
+                    <div class="mt-auto pt-5 border-t border-slate-200/50">
+                        <button class="w-full px-4 py-3 rounded-2xl <?= ($user_reviews[$booking['id']] ?? null) ? 'bg-[var(--secondary)] text-white' : 'bg-slate-50 text-primary' ?> text-sm font-black hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2" 
                                 onclick='reviewMeeting(<?= $booking['id'] ?>, <?= json_encode($user_reviews[$booking['id']] ?? null) ?>)'>
                             <i class="fas fa-star"></i> 
                             <?= ($user_reviews[$booking['id']] ?? null) ? 'ดู/แก้ไขการประเมิน' : 'ทำแบบประเมินความพึงพอใจ' ?>
@@ -158,10 +158,10 @@ function formatThaiDate($datetime, $months) {
             <?php endforeach; ?>
         </div>
     <?php else: ?>
-        <div class="bg-white rounded-3xl p-16 text-center border border-[#EBE6DA]/50 shadow-sm">
-            <div class="w-24 h-24 bg-[#F3F0E6] rounded-full flex items-center justify-center mx-auto mb-6 text-[#D4B59D]"><i class="fas fa-box-open text-4xl"></i></div>
-            <h3 class="text-2xl font-black text-[#6A5243] mb-3">ยังไม่มีประวัติการประชุม</h3>
-            <p class="text-[#A79A8B] max-w-sm mx-auto font-medium">เมื่อการประชุมเสร็จสิ้นแล้ว ข้อมูลและประวัติของคุณจะแสดงที่นี่</p>
+        <div class="bg-white rounded-3xl p-16 text-center border border-slate-200/50 shadow-sm">
+            <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-[var(--secondary)]"><i class="fas fa-box-open text-4xl"></i></div>
+            <h3 class="text-2xl font-black text-primary mb-3">ยังไม่มีประวัติการประชุม</h3>
+            <p class="text-text-muted max-w-sm mx-auto font-medium">เมื่อการประชุมเสร็จสิ้นแล้ว ข้อมูลและประวัติของคุณจะแสดงที่นี่</p>
         </div>
     <?php endif; ?>
 </div>
@@ -191,9 +191,9 @@ async function handleImageUpload(input) {
         const res = await fetch('api/meeting_images.php', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.success) {
-            Swal.fire({ icon: 'success', title: 'สำเร็จ', text: `อัปโหลดเรียบร้อยแล้ว ${input.files.length} รูป`, confirmButtonColor: '#6A5243' }).then(() => window.location.reload());
+            Swal.fire({ icon: 'success', title: 'สำเร็จ', text: `อัปโหลดเรียบร้อยแล้ว ${input.files.length} รูป`, confirmButtonColor: '#2563EB' }).then(() => window.location.reload());
         } else throw new Error(data.message);
-    } catch (err) { Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message, confirmButtonColor: '#6A5243' }); }
+    } catch (err) { Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message, confirmButtonColor: '#2563EB' }); }
     finally { MeetQueue.utils.loading(false); input.value = ''; }
 }
 
@@ -263,7 +263,7 @@ function reviewMeeting(id, existingReview) {
         title: 'แบบประเมินหลังการประชุม',
         html: `
             <div class="text-left mb-4">
-                <label class="block text-sm font-black text-[#6A5243] mb-3">ระดับความพึงพอใจ</label>
+                <label class="block text-sm font-black text-primary mb-3">ระดับความพึงพอใจ</label>
                 <div class="flex gap-3 text-3xl text-gray-200 cursor-pointer justify-center my-6" id="star-rating">
                     <i class="fas fa-star hover:text-yellow-400 transition-colors" onclick="setRating(1)"></i>
                     <i class="fas fa-star hover:text-yellow-400 transition-colors" onclick="setRating(2)"></i>
@@ -272,13 +272,13 @@ function reviewMeeting(id, existingReview) {
                     <i class="fas fa-star hover:text-yellow-400 transition-colors" onclick="setRating(5)"></i>
                 </div>
                 <input type="hidden" id="rating-value" value="${defaultRating}">
-                <label class="block text-sm font-black text-[#6A5243] mb-3 mt-6">ข้อเสนอแนะเพิ่มเติม</label>
-                <textarea id="review-comment" class="w-full border border-[#D4B59D]/30 rounded-2xl p-4 focus:outline-none focus:border-[#D4B59D] bg-white text-[#6A5243] text-sm shadow-inner" rows="4" placeholder="บอกเราหน่อยว่าควรปรับปรุงอะไรบ้าง...">${defaultComment}</textarea>
+                <label class="block text-sm font-black text-primary mb-3 mt-6">ข้อเสนอแนะเพิ่มเติม</label>
+                <textarea id="review-comment" class="w-full border border-blue-400/30 rounded-2xl p-4 focus:outline-none focus:border-blue-400 bg-white text-primary text-sm shadow-inner" rows="4" placeholder="บอกเราหน่อยว่าควรปรับปรุงอะไรบ้าง...">${defaultComment}</textarea>
             </div>
         `,
         didOpen: () => { if (defaultRating > 0) setRating(defaultRating); },
         showCancelButton: true, confirmButtonText: 'บันทึกความพึงพอใจ', cancelButtonText: 'ไว้ทีหลัง',
-        confirmButtonColor: '#6A5243', cancelButtonColor: '#A79A8B',
+        confirmButtonColor: '#2563EB', cancelButtonColor: '#94a3b8',
         customClass: { popup: 'rounded-3xl', confirmButton: 'rounded-xl px-6 py-2.5 font-bold', cancelButton: 'rounded-xl px-6 py-2.5 font-bold' },
         preConfirm: () => {
             const rating = document.getElementById('rating-value').value;
@@ -293,9 +293,9 @@ function reviewMeeting(id, existingReview) {
                 const res = await fetch('api/reviews.php', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(result.value) });
                 const data = await res.json();
                 if (data.success) {
-                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', text: 'ขอบคุณที่สละเวลาประเมินความพึงพอใจให้กับเรา', confirmButtonColor: '#6A5243', customClass: { popup: 'rounded-3xl' } }).then(() => window.location.reload());
+                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', text: 'ขอบคุณที่สละเวลาประเมินความพึงพอใจให้กับเรา', confirmButtonColor: '#2563EB', customClass: { popup: 'rounded-3xl' } }).then(() => window.location.reload());
                 } else throw new Error(data.message || 'เกิดข้อผิดพลาด');
-            } catch (err) { Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message, confirmButtonColor: '#6A5243' }); }
+            } catch (err) { Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message, confirmButtonColor: '#2563EB' }); }
             finally { MeetQueue.utils.loading(false); }
         }
     });
@@ -310,12 +310,33 @@ window.setRating = function(rating) {
     }
 };
 
+let historyPaginator;
+
+document.addEventListener('DOMContentLoaded', () => {
+    historyPaginator = new MeetQueuePaginator({
+        container: '#historyGrid',
+        itemSelector: '.history-card',
+        pageSize: 6,
+        activeSearchClass: 'matches-search' // We will toggle this class in filterHistory
+    });
+});
+
 function filterHistory() {
     let input = document.getElementById('searchHistory').value.toLowerCase();
     let cards = document.querySelectorAll('.history-card');
     cards.forEach(card => {
-        let searchText = card.getAttribute('data-search');
-        card.style.display = searchText.includes(input) ? 'flex' : 'none';
+        let searchText = card.getAttribute('data-search') || '';
+        if (searchText.includes(input)) {
+            card.classList.add('matches-search');
+            card.style.display = 'flex';
+        } else {
+            card.classList.remove('matches-search');
+            card.style.display = 'none';
+        }
     });
+    
+    if (historyPaginator) {
+        historyPaginator.refresh();
+    }
 }
 </script>

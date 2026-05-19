@@ -1,4 +1,4 @@
-<div class="hero-banner" style="background-image: url('assets/images/poster1.png'); background-position: center; max-width: 900px; margin: 0 auto 2rem;">
+﻿<div class="hero-banner" style="background-image: url('assets/images/poster1.png'); background-position: center; max-width: 900px; margin: 0 auto 2rem;">
     <div class="hero-content">
         <h2 style="text-shadow: 0 2px 4px rgba(0,0,0,0.5);">บันทึกประชุมภายนอก</h2>
         <p style="opacity: 0.9; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">บันทึกข้อมูลการประชุมนอกสถานที่ของบุคลากร</p>
@@ -119,7 +119,7 @@
                     icon: 'success',
                     title: 'บันทึกข้อมูลสำเร็จ!',
                     text: 'บันทึกการประชุมภายนอกเรียบร้อยแล้ว',
-                    confirmButtonColor: '#6A5243',
+                    confirmButtonColor: '#2563EB',
                     confirmButtonText: 'ตกลง',
                     background: '#fff',
                     customClass: { popup: 'rounded-[3rem]', confirmButton: 'rounded-2xl px-10 py-4 font-black' }

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once 'api/config.php';
 use App\Repository\RoomRepository;
 
@@ -13,28 +13,28 @@ $rooms = $repo->getAll();
 <div class="flex flex-col gap-6 w-full animate-fade">
     <div class="flex flex-wrap justify-between items-center gap-4">
         <div>
-            <h2 class="text-2xl font-bold text-[#6A5243] flex items-center gap-2">
-                <i class="fas fa-door-open text-[#D4B59D]"></i> ระบบจัดการห้องประชุม
+            <h2 class="text-2xl font-bold text-primary flex items-center gap-2">
+                <i class="fas fa-door-open text-[var(--secondary)]"></i> ระบบจัดการห้องประชุม
             </h2>
-            <p class="text-[#A79A8B] text-sm mt-1">จัดการข้อมูล เพิ่ม แก้ไข และลบห้องประชุมในระบบ</p>
+            <p class="text-text-muted text-sm mt-1">จัดการข้อมูล เพิ่ม แก้ไข และลบห้องประชุมในระบบ</p>
         </div>
         <div class="flex flex-wrap items-center gap-3 ml-auto">
             <!-- Search & Filter Bar -->
-            <div class="flex items-center gap-4 bg-white px-3 py-1.5 rounded-[1rem] border border-[#D4B59D]/30 shadow-sm focus-within:border-[#D4B59D] transition-all">
+            <div class="flex items-center gap-4 bg-white px-3 py-1.5 rounded-[1rem] border border-blue-400/30 shadow-sm focus-within:border-blue-400 transition-all">
                 <!-- Integrated Search Field -->
                 <div class="relative flex items-center">
-                    <i class="fas fa-search absolute left-4 text-[#D4B59D] text-sm pointer-events-none"></i>
+                    <i class="fas fa-search absolute left-4 text-[var(--secondary)] text-sm pointer-events-none"></i>
                     <input type="text" id="roomSearchInput" onkeyup="filterRooms()" placeholder="ค้นหาชื่อห้อง หรือ สถานที่..." 
-                        class="bg-[#F9F8F6] border border-[#D4B59D]/20 py-2 rounded-full focus:outline-none focus:border-[#D4B59D] text-sm text-[#6A5243] font-bold placeholder:text-[#A79A8B]/60 w-[240px] transition-all"
+                        class="bg-slate-50 border border-blue-400/20 py-2 rounded-full focus:outline-none focus:border-blue-400 text-sm text-primary font-bold placeholder:text-text-muted/60 w-[240px] transition-all"
                         style="padding-left: 45px !important; padding-right: 15px !important;">
                 </div>
                 
-                <div class="w-[1px] h-5 bg-[#D4B59D]/20"></div>
+                <div class="w-[1px] h-5 bg-[var(--secondary)]/20"></div>
 
                 <!-- Filter Dropdown -->
                 <div class="relative flex items-center">
-                    <i class="fas fa-filter absolute left-2 text-[#D4B59D] text-xs opacity-70 pointer-events-none"></i>
-                    <select id="roomStatusFilter" onchange="filterRooms()" class="bg-transparent border-none focus:outline-none text-sm text-[#6A5243] font-black cursor-pointer"
+                    <i class="fas fa-filter absolute left-2 text-[var(--secondary)] text-xs opacity-70 pointer-events-none"></i>
+                    <select id="roomStatusFilter" onchange="filterRooms()" class="bg-transparent border-none focus:outline-none text-sm text-primary font-black cursor-pointer"
                         style="padding-left: 32px !important; padding-right: 50px !important;">
                         <option value="all">สถานะทั้งหมด</option>
                         <option value="available">พร้อมใช้งาน</option>
@@ -43,37 +43,37 @@ $rooms = $repo->getAll();
                 </div>
             </div>
 
-            <button onclick="openRoomModal()" class="min-w-[180px] h-[45px] px-8 bg-[#6A5243] text-white rounded-[2rem] text-sm font-black flex items-center justify-center gap-2 hover:bg-[#523E32] hover:shadow-lg transition-all shadow-md">
+            <button onclick="openRoomModal()" class="min-w-[180px] h-[45px] px-8 bg-blue-600 text-white rounded-[2rem] text-sm font-black flex items-center justify-center gap-2 hover:bg-blue-800 hover:shadow-lg transition-all shadow-md">
                 <i class="fas fa-plus"></i> เพิ่มห้องประชุมใหม่
             </button>
         </div>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-[#EBE6DA] overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-[#F9F8F6] border-b border-[#EBE6DA]">
-                        <th class="p-4 text-[#A79A8B] font-bold text-sm w-16">#</th>
-                        <th class="p-4 text-[#A79A8B] font-bold text-sm">ชื่อห้องประชุม</th>
-                        <th class="p-4 text-[#A79A8B] font-bold text-sm">สถานที่ตั้ง</th>
-                        <th class="p-4 text-[#A79A8B] font-bold text-sm">ความจุ (คน)</th>
-                        <th class="p-4 text-[#A79A8B] font-bold text-sm">สถานะ</th>
-                        <th class="p-4 text-[#A79A8B] font-bold text-sm">จัดการ</th>
+                    <tr class="bg-slate-50 border-b border-slate-200">
+                        <th class="p-4 text-text-muted font-bold text-sm w-16">#</th>
+                        <th class="p-4 text-text-muted font-bold text-sm">ชื่อห้องประชุม</th>
+                        <th class="p-4 text-text-muted font-bold text-sm">สถานที่ตั้ง</th>
+                        <th class="p-4 text-text-muted font-bold text-sm">ความจุ (คน)</th>
+                        <th class="p-4 text-text-muted font-bold text-sm">สถานะ</th>
+                        <th class="p-4 text-text-muted font-bold text-sm">จัดการ</th>
                     </tr>
                 </thead>
-                <tbody id="roomsTableBody" class="divide-y divide-[#EBE6DA]">
+                <tbody id="roomsTableBody" class="divide-y divide-[var(--border)]">
                     <?php if(count($rooms) > 0): ?>
                         <?php foreach($rooms as $index => $room): ?>
-                        <tr class="border-b border-[#EBE6DA] hover:bg-[#FDFBF7] transition-colors group">
-                            <td class="p-4 text-[#A79A8B]"><?= $index + 1 ?></td>
-                            <td class="p-4 font-bold text-[#6A5243]">
+                        <tr class="border-b border-slate-200 hover:bg-white transition-colors group">
+                            <td class="p-4 text-text-muted"><?= $index + 1 ?></td>
+                            <td class="p-4 font-bold text-primary">
                                 <?= htmlspecialchars($room['name']) ?>
                             </td>
-                            <td class="p-4 text-[#6A5243]">
+                            <td class="p-4 text-primary">
                                 <?= htmlspecialchars($room['location'] ?: '-') ?>
                             </td>
-                            <td class="p-4 text-[#6A5243] font-bold">
+                            <td class="p-4 text-primary font-bold">
                                 <?= htmlspecialchars($room['capacity']) ?>
                             </td>
                             <td class="p-4">
@@ -91,7 +91,7 @@ $rooms = $repo->getAll();
                             </td>
                             <td class="p-4">
                                 <div class="flex justify-start gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button onclick="editRoom(<?= htmlspecialchars(json_encode($room), ENT_QUOTES, 'UTF-8') ?>)" class="w-8 h-8 rounded-lg bg-[#F3F0E6] text-[#D4B59D] hover:bg-[#D4B59D] hover:text-white flex items-center justify-center transition-colors" title="แก้ไข">
+                                    <button onclick="editRoom(<?= htmlspecialchars(json_encode($room), ENT_QUOTES, 'UTF-8') ?>)" class="w-8 h-8 rounded-lg bg-slate-50 text-[var(--secondary)] hover:bg-[var(--secondary)] hover:text-white flex items-center justify-center transition-colors" title="แก้ไข">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <button onclick="deleteRoom(<?= $room['id'] ?>, '<?= htmlspecialchars($room['name'], ENT_QUOTES, 'UTF-8') ?>')" class="w-8 h-8 rounded-lg bg-red-50 text-red-400 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors" title="ลบ">
@@ -103,7 +103,7 @@ $rooms = $repo->getAll();
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6" class="p-8 text-center text-[#A79A8B]">ไม่พบข้อมูลห้องประชุม</td>
+                            <td colspan="6" class="p-8 text-center text-text-muted">ไม่พบข้อมูลห้องประชุม</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -122,21 +122,21 @@ function openRoomModal(room = null) {
         html: `
             <div class="text-left mt-4" style="padding: 10px 5px;">
                 <div style="margin-bottom: 28px;">
-                    <label class="text-sm font-black text-[#6A5243] ml-1" style="display: block; margin-bottom: 8px;">ชื่อห้องประชุม <span class="text-red-500">*</span></label>
-                    <input type="text" id="room-name" class="w-full px-5 py-3.5 rounded-2xl border border-[#D4B59D]/30 focus:outline-none focus:border-[#D4B59D] bg-[#F9F8F6] text-[#6A5243] font-bold" placeholder="เช่น ห้องประชุมเอื้องผึ้ง" value="${isEdit ? escapeHtml(room.name) : ''}">
+                    <label class="text-sm font-black text-primary ml-1" style="display: block; margin-bottom: 8px;">ชื่อห้องประชุม <span class="text-red-500">*</span></label>
+                    <input type="text" id="room-name" class="w-full px-5 py-3.5 rounded-2xl border border-blue-400/30 focus:outline-none focus:border-blue-400 bg-slate-50 text-primary font-bold" placeholder="เช่น ห้องประชุมเอื้องผึ้ง" value="${isEdit ? escapeHtml(room.name) : ''}">
                 </div>
                 <div style="margin-bottom: 28px;">
-                    <label class="text-sm font-black text-[#6A5243] ml-1" style="display: block; margin-bottom: 8px;">สถานที่ตั้ง</label>
-                    <input type="text" id="room-location" class="w-full px-5 py-3.5 rounded-2xl border border-[#D4B59D]/30 focus:outline-none focus:border-[#D4B59D] bg-[#F9F8F6] text-[#6A5243] font-bold" placeholder="เช่น อาคาร 1 ชั้น 2" value="${isEdit ? escapeHtml(room.location || '') : ''}">
+                    <label class="text-sm font-black text-primary ml-1" style="display: block; margin-bottom: 8px;">สถานที่ตั้ง</label>
+                    <input type="text" id="room-location" class="w-full px-5 py-3.5 rounded-2xl border border-blue-400/30 focus:outline-none focus:border-blue-400 bg-slate-50 text-primary font-bold" placeholder="เช่น อาคาร 1 ชั้น 2" value="${isEdit ? escapeHtml(room.location || '') : ''}">
                 </div>
                 <div class="grid grid-cols-2 gap-8" style="margin-bottom: 10px;">
                     <div>
-                        <label class="text-sm font-black text-[#6A5243] ml-1" style="display: block; margin-bottom: 8px;">ความจุ (คน) <span class="text-red-500">*</span></label>
-                        <input type="number" id="room-capacity" class="w-full px-5 py-3.5 rounded-2xl border border-[#D4B59D]/30 focus:outline-none focus:border-[#D4B59D] bg-[#F9F8F6] text-[#6A5243] font-bold text-center" value="${isEdit ? room.capacity : '10'}">
+                        <label class="text-sm font-black text-primary ml-1" style="display: block; margin-bottom: 8px;">ความจุ (คน) <span class="text-red-500">*</span></label>
+                        <input type="number" id="room-capacity" class="w-full px-5 py-3.5 rounded-2xl border border-blue-400/30 focus:outline-none focus:border-blue-400 bg-slate-50 text-primary font-bold text-center" value="${isEdit ? room.capacity : '10'}">
                     </div>
                     <div>
-                        <label class="text-sm font-black text-[#6A5243] ml-1" style="display: block; margin-bottom: 8px;">สถานะ</label>
-                        <select id="room-status" class="w-full px-5 py-3.5 rounded-2xl border border-[#D4B59D]/30 focus:outline-none focus:border-[#D4B59D] bg-[#F9F8F6] text-[#6A5243] font-bold">
+                        <label class="text-sm font-black text-primary ml-1" style="display: block; margin-bottom: 8px;">สถานะ</label>
+                        <select id="room-status" class="w-full px-5 py-3.5 rounded-2xl border border-blue-400/30 focus:outline-none focus:border-blue-400 bg-slate-50 text-primary font-bold">
                             <option value="available" ${isEdit && room.status === 'available' ? 'selected' : ''}>พร้อมใช้งาน</option>
                             <option value="maintenance" ${isEdit && room.status === 'maintenance' ? 'selected' : ''}>ปิดปรับปรุง</option>
                         </select>
@@ -147,8 +147,8 @@ function openRoomModal(room = null) {
         showCancelButton: true,
         confirmButtonText: 'บันทึก',
         cancelButtonText: 'ยกเลิก',
-        confirmButtonColor: '#6A5243',
-        cancelButtonColor: '#A79A8B',
+        confirmButtonColor: '#2563EB',
+        cancelButtonColor: '#94a3b8',
         preConfirm: () => {
             const name = document.getElementById('room-name').value.trim();
             const location = document.getElementById('room-location').value.trim();
@@ -180,7 +180,7 @@ function deleteRoom(id, name) {
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#A79A8B',
+        cancelButtonColor: '#94a3b8',
         confirmButtonText: 'ใช่, ลบเลย',
         cancelButtonText: 'ยกเลิก'
     }).then((result) => {
@@ -206,7 +206,7 @@ async function saveRoom(data, method) {
                 icon: 'success',
                 title: 'สำเร็จ',
                 text: 'ดำเนินการเสร็จสิ้น',
-                confirmButtonColor: '#6A5243'
+                confirmButtonColor: '#2563EB'
             }).then(() => {
                 window.location.reload();
             });
@@ -219,7 +219,7 @@ async function saveRoom(data, method) {
             icon: 'error',
             title: 'ข้อผิดพลาด',
             text: err.message,
-            confirmButtonColor: '#6A5243'
+            confirmButtonColor: '#2563EB'
         });
     }
 }
@@ -263,7 +263,7 @@ function filterRooms() {
         if (!noDataRow) {
             noDataRow = document.createElement('tr');
             noDataRow.id = 'noDataRow';
-            noDataRow.innerHTML = `<td colspan="6" class="p-8 text-center text-[#A79A8B]">ไม่พบข้อมูลที่ตรงตามเงื่อนไข</td>`;
+            noDataRow.innerHTML = `<td colspan="6" class="p-8 text-center text-text-muted">ไม่พบข้อมูลที่ตรงตามเงื่อนไข</td>`;
             tableBody.appendChild(noDataRow);
         } else {
             noDataRow.style.display = '';
@@ -271,7 +271,22 @@ function filterRooms() {
     } else if (noDataRow) {
         noDataRow.style.display = 'none';
     }
+    
+    // Refresh paginator
+    if (window.roomPaginator) {
+        window.roomPaginator.refresh();
+    }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('roomsTableBody')) {
+        window.roomPaginator = new MeetQueuePaginator({
+            container: '#roomsTableBody',
+            itemSelector: 'tr:not(#noDataRow)',
+            pageSize: 10
+        });
+    }
+});
 
 function escapeHtml(unsafe) {
     if (!unsafe) return '';

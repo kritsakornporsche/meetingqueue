@@ -45,19 +45,19 @@ try {
         @theme {
             --font-sans: 'Outfit', 'Sarabun', sans-serif;
             
-            /* Earth Tone Palette */
-            --color-primary: #6A5243;
-            --color-primary-hover: #523E32;
-            --color-secondary: #D4B59D;
-            --color-accent: #E6D6BD;
+            /* Professional Blue Palette */
+            --color-primary: #2563EB;
+            --color-primary-hover: #1D4ED8;
+            --color-secondary: #3B82F6;
+            --color-accent: #EFF6FF;
             
-            --color-background: #EBE6DA;
-            --color-surface: #F3F0E6;
-            --color-surface-muted: #E6D6BD;
+            --color-background: #F1F5F9;
+            --color-surface: #FFFFFF;
+            --color-surface-muted: #E2E8F0;
             
-            --color-text-main: #6A5243;
-            --color-text-muted: #A79A8B;
-            --color-border: #D4B59D;
+            --color-text-main: #0F172A;
+            --color-text-muted: #64748B;
+            --color-border: #E2E8F0;
         }
 
         body {
@@ -142,7 +142,7 @@ try {
                     icon: 'warning',
                     title: 'แจ้งเตือน',
                     text: 'กรุณาเลือกชื่อผู้ใช้งาน',
-                    confirmButtonColor: '#6A5243'
+                    confirmButtonColor: '#2563EB'
                 });
                 return;
             }
@@ -169,7 +169,7 @@ try {
                         icon: 'error',
                         title: 'เข้าสู่ระบบไม่สำเร็จ',
                         text: result.message || 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง',
-                        confirmButtonColor: '#6A5243'
+                        confirmButtonColor: '#2563EB'
                     });
                 }
             } catch (error) {
@@ -178,7 +178,7 @@ try {
                     icon: 'error',
                     title: 'ข้อผิดพลาด',
                     text: 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
-                    confirmButtonColor: '#6A5243'
+                    confirmButtonColor: '#2563EB'
                 });
             } finally {
                 btn.innerHTML = originalText;

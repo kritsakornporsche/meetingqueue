@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $user = $_SESSION['user_data'];
 $photo_url = !empty($user['photo']) ? $user['photo'] : "https://192.168.9.7/auth_files/photo/" . $user['emp_code'] . ".jpg";
 $fallback_avatar = 'https://ui-avatars.com/api/?name=' . urlencode($user['first_name']) . '&background=6A5243&color=fff&size=80';
@@ -153,7 +153,7 @@ $titles = [
         <?php endif; ?>
 
         <!-- Account Section -->
-        <div class="popup-menu-section border-t border-[#D4B59D]/10 pt-4 mt-2">
+        <div class="popup-menu-section border-t border-[var(--secondary)]/10 pt-4 mt-2">
             <nav class="popup-nav">
                 <a href="dashboard.php?view=profile" class="popup-nav-link <?php echo ($_GET['view'] ?? '') == 'profile' ? 'active' : ''; ?>">
                     <i class="fas fa-user-circle"></i><span>ข้อมูลส่วนตัว (Profile)</span>

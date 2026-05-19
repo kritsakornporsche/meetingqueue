@@ -90,6 +90,17 @@ $page_subtitle = 'รายการที่ถูกลบชั่วคร�
                 </tr>
             `).join('');
             stats.innerText = `มีรายการในถังขยะทั้งหมด ${data.bookings.length} รายการ`;
+            
+            // Initialize or refresh paginator
+            if (!window.trashPaginator) {
+                window.trashPaginator = new MeetQueuePaginator({
+                    container: '#trashTableBody',
+                    itemSelector: 'tr',
+                    pageSize: 10
+                });
+            } else {
+                window.trashPaginator.refresh();
+            }
         } else {
             tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-20 text-center flex flex-col items-center gap-4">
                 <i class="fas fa-trash-restore text-4xl text-accent"></i>
@@ -98,6 +109,7 @@ $page_subtitle = 'รายการที่ถูกลบชั่วคร�
             stats.innerText = `มีรายการในถังขยะทั้งหมด 0 รายการ`;
         }
     }
+
 
     async function restoreBooking(id) {
         const result = await Swal.fire({
