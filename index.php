@@ -73,10 +73,10 @@ try {
         
         <div class="flex items-center justify-center gap-3 mb-8">
             <div class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
-                <i class="fas fa-seedling text-2xl"></i>
+                <i class="fas fa-calendar-check text-2xl"></i>
             </div>
             <div class="flex flex-col leading-tight">
-                <span class="text-2xl font-bold text-primary tracking-tight">Smart Office</span>
+                <span class="text-2xl font-bold text-primary tracking-tight">ระบบจองห้องประชุม</span>
                 <span class="text-sm font-medium text-secondary">โรงพยาบาลพาน</span>
             </div>
         </div>
