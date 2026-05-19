@@ -143,9 +143,6 @@ if (!$bookingId) {
                 <i class="fas fa-info-circle text-blue-500"></i> โปรดเก็บรหัสอ้างอิงไว้เพื่อใช้สำหรับติดตามสถานะการจอง
             </p>
             <div class="flex gap-3 ml-auto flex-wrap justify-end">
-                <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-blue-600 hover:text-blue-700 hover:border-blue-300 font-black text-[0.78rem] flex items-center gap-2 cursor-pointer shadow-sm transition-all hover:-translate-y-0.5">
-                    <i class="fas fa-print text-blue-500"></i> พิมพ์เอกสาร
-                </button>
                 <a href="dashboard.php" class="px-4 py-2.5 rounded-xl bg-white border border-blue-500 text-blue-600 hover:bg-blue-50 font-black text-[0.78rem] flex items-center gap-2 text-decoration:none shadow-sm transition-all hover:-translate-y-0.5">
                     <i class="fas fa-home text-blue-500"></i> กลับหน้าหลัก
                 </a>
