@@ -361,10 +361,13 @@ function renderTable() {
         return true;
     });
 
-    // Sort logic: "รายการคำขอ" (Pending requests or requests view, or pending status) sorts by earliest first (id ASC / มาก่อนอยู่บน)
-    // All other lists sort by latest meeting date first (start_time DESC / วันที่ล่าสุดเสมอ)
-    const isRequestList = (currentView === 'approve_list') || (currentView === 'requests') || (f.status === 'pending');
-    if (isRequestList) {
+    // Sort logic: 
+    // - "สถานะการประชุมของฉัน" (My booking status / results view) sorts by latest transaction first (id DESC / ทำรายการล่าสุดอยู่บน)
+    // - "รายการคำขอ" (Pending requests or requests view, or pending status) sorts by earliest first (id ASC / มาก่อนอยู่บน)
+    // - All other lists sort by latest meeting date first (start_time DESC / วันที่ล่าสุดเสมอ)
+    if (currentView === 'results') {
+        filtered.sort((a, b) => b.id - a.id);
+    } else if ((currentView === 'approve_list') || (currentView === 'requests') || (f.status === 'pending')) {
         filtered.sort((a, b) => a.id - b.id);
     } else {
         filtered.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
