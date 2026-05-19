@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'api/config.php';
 use App\Repository\RoomRepository;
 use App\Repository\BookingRepository;
@@ -348,6 +348,10 @@ document.getElementById('roomSearchInput').addEventListener('input', function() 
 });
 
 // ── Usage Stats Popup ─────────────────────────────────────────────────────
+function closeUsageStats() {
+    document.getElementById('usageStatsModal').style.display = 'none';
+}
+
 async function openUsageStats() {
     document.getElementById('usageStatsModal').style.display = 'block';
     const el = document.getElementById('usageStatsContent');
