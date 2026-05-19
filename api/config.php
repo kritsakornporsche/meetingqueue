@@ -15,7 +15,7 @@ if ($fp) {
 if ($local_online) {
     define('DB_HOST', '192.168.9.234'); // Hospital IP
     define('DB_USER', 'meetingqueue');   // Remote DB user
-    define('DB_PASS', 'Meeting@11190');   // Remote DB password
+    define('DB_PASS', 'phan11190');      // Remote DB password
 } else {
     define('DB_HOST', 'localhost');      // Local Development fallback
     define('DB_USER', 'root');           // Default XAMPP user
