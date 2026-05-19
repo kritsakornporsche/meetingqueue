@@ -54,8 +54,19 @@ class BookingRepository {
         }
 
         if (!empty($filters['room_id']) && $filters['room_id'] !== 'all') {
-            $sql .= " AND b.room_id = :room_id";
-            $params[':room_id'] = $filters['room_id'];
+            if (strpos($filters['room_id'], ',') !== false) {
+                $ids = array_map('intval', explode(',', $filters['room_id']));
+                $placeholders = [];
+                foreach ($ids as $idx => $id) {
+                    $key = ":room_id_" . $idx;
+                    $placeholders[] = $key;
+                    $params[$key] = $id;
+                }
+                $sql .= " AND b.room_id IN (" . implode(',', $placeholders) . ")";
+            } else {
+                $sql .= " AND b.room_id = :room_id";
+                $params[':room_id'] = $filters['room_id'];
+            }
         }
 
         if (!empty($filters['start']) && !empty($filters['end'])) {

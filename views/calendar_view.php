@@ -19,56 +19,46 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
 <style>
     /* Robust Layout CSS to prevent Tailwind CDN caching issues */
     .dash-grid {
-        display: grid;
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
         gap: var(--space-md);
-        min-height: calc(100dvh - 80px);
         max-width: 100%;
         box-sizing: border-box;
     }
     .dash-grid > div {
         min-width: 0;
     }
-    @media (min-width: 1280px) {
-        .dash-grid { grid-template-columns: 320px minmax(0, 1fr); gap: var(--space-lg); }
-    }
     
-    /* Responsive room panel scroll */
+    /* Responsive room panel horizontal scroll */
     .room-panel {
-        /* max-height adapts to available viewport: subtract header (~60px) + summary section (~220px) + padding */
-        max-height: clamp(320px, calc(100dvh - 340px), 780px);
-        overflow-y: auto;
-        overflow-x: hidden;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
         scrollbar-width: thin;
         scrollbar-color: rgba(59,130,246,0.4) transparent;
-        padding-right: 0.25rem;
+        padding-bottom: 0.5rem;
     }
-    .room-panel::-webkit-scrollbar { width: 4px; }
+    .room-panel::-webkit-scrollbar { height: 6px; }
     .room-panel::-webkit-scrollbar-track { background: transparent; }
     .room-panel::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.5); border-radius: 10px; }
     .room-panel::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246,0.8); }
 
-    /* Mobile-first Room Cards Layout */
+    /* Horizontal Room Cards Layout */
     .room-card-wrapper {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+        display: flex;
+        flex-direction: row;
         gap: 0.75rem;
-        width: 100%;
+        width: max-content;
         box-sizing: border-box;
     }
     
-    @media (min-width: 1280px) {
-        .room-card-wrapper {
-            display: flex;
-            flex-direction: column;
-        }
-    }
     .room-card {
         background: white;
         border-radius: 1rem;
         padding: 1rem;
         border: 1px solid rgba(59, 130, 246, 0.2);
-        width: 100%;
+        width: 280px;
+        flex-shrink: 0;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
@@ -917,24 +907,86 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
 
 <script>
     let calendarInstance = null;
+    let selectedRoomFilters = [];
     let currentRoomFilter = 'all';
     let currentStatusFilter = 'all';
 
+    function reloadCalendarDayCounts() {
+        if (!calendarInstance) return;
+        if (calendarInstance.view.type !== 'dayGridMonth') return;
+        
+        let startStr = calendarInstance.view.activeStart.toISOString().slice(0, 10);
+        let endStr = calendarInstance.view.activeEnd.toISOString().slice(0, 10);
+        
+        let daycountsUrl = 'api/calendar_daycounts.php?start=' + startStr + '&end=' + endStr;
+        if (currentRoomFilter !== 'all') {
+            daycountsUrl += '&room_id=' + currentRoomFilter;
+        }
+        
+        // Reset placeholders/badges first
+        document.querySelectorAll('.day-total-placeholder').forEach(span => {
+            span.textContent = '';
+            span.classList.remove('has-data');
+        });
+        document.querySelectorAll('.day-counts').forEach(wrap => {
+            wrap.style.display = 'none';
+            let bottom = wrap.querySelector('.day-counts-bottom');
+            if (bottom) bottom.innerHTML = '';
+        });
+        
+        fetch(daycountsUrl)
+            .then(r => r.json())
+            .then(counts => {
+                // Fill total badge placeholders
+                document.querySelectorAll('.day-total-placeholder').forEach(function(span) {
+                    var d = span.dataset.date;
+                    var c = counts[d] || null;
+                    if (c && c.total > 0) {
+                        span.textContent = c.total;
+                        span.classList.add('has-data');
+                    }
+                });
+
+                // Fill status badge rows
+                document.querySelectorAll('.day-counts').forEach(function(wrap) {
+                    var d = wrap.dataset.date;
+                    var c = counts[d] || null;
+                    if (!c || c.total === 0) {
+                        wrap.style.display = 'none';
+                        return;
+                    }
+                    var bottom = wrap.querySelector('.day-counts-bottom');
+                    if (bottom) {
+                        let approvedHtml = c.approved > 0 ? '<span class="day-badge day-badge-approved">' + c.approved + '</span>' : '';
+                        let pendingHtml = c.pending > 0 ? '<span class="day-badge day-badge-pending">' + c.pending + '</span>' : '';
+                        let rejectedHtml = c.rejected > 0 ? '<span class="day-badge day-badge-rejected">' + c.rejected + '</span>' : '';
+                        bottom.innerHTML = approvedHtml + pendingHtml + rejectedHtml;
+                        wrap.style.display = '';
+                    }
+                });
+            })
+            .catch(function(){});
+    }
+
     function filterCalendarByRoom(roomId, element) {
-        if (currentRoomFilter === roomId) {
-            // Toggle off (show all)
-            currentRoomFilter = 'all';
+        roomId = parseInt(roomId);
+        const index = selectedRoomFilters.indexOf(roomId);
+        if (index > -1) {
+            // Already selected: toggle off
+            selectedRoomFilters.splice(index, 1);
             element.classList.remove('active');
         } else {
-            // Toggle on
-            currentRoomFilter = roomId;
-            document.querySelectorAll('.room-card').forEach(c => c.classList.remove('active'));
+            // Not selected: toggle on
+            selectedRoomFilters.push(roomId);
             element.classList.add('active');
         }
+        
+        currentRoomFilter = selectedRoomFilters.length > 0 ? selectedRoomFilters.join(',') : 'all';
         
         if (calendarInstance) {
             calendarInstance.refetchEvents();
             calendarInstance.refetchResources();
+            reloadCalendarDayCounts();
         }
     }
 
@@ -1046,14 +1098,15 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                         if (data.success) {
                             let list = data.rooms;
                             if (currentRoomFilter !== 'all') {
-                                list = list.filter(r => r.id == currentRoomFilter);
+                                let filterIds = currentRoomFilter.split(',').map(Number);
+                                list = list.filter(r => filterIds.includes(Number(r.id)));
                             }
                             const resources = list.map(room => ({
                                 id: room.id,
                                 title: room.name,
                                 capacity: room.capacity
                             }));
-                            if (currentRoomFilter === 'all' || currentRoomFilter === 'external') {
+                            if (currentRoomFilter === 'all' || currentRoomFilter.split(',').includes('external')) {
                                 resources.push({ id: 'external', title: 'ภายนอกสถานที่' });
                             }
                             successCallback(resources);
@@ -1124,44 +1177,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                     if (text !== newText) titleEl.innerText = newText;
                 }
 
-                if (info.view.type !== 'dayGridMonth') return;
-
-                var startStr = info.startStr.slice(0, 10);
-                var endStr   = info.endStr.slice(0, 10);
-
-                fetch('api/calendar_daycounts.php?start=' + startStr + '&end=' + endStr)
-                    .then(r => r.json())
-                    .then(counts => {
-                        // Fill total badge placeholders
-                        document.querySelectorAll('.day-total-placeholder').forEach(function(span) {
-                            var d = span.dataset.date;
-                            var c = counts[d] || null;
-                            if (c && c.total > 0) {
-                                span.textContent = c.total;
-                                span.classList.add('has-data');  /* make visible */
-                            }
-                            /* else: stay hidden (visibility:hidden default) */
-                        });
-
-                        // Fill status badge rows — only if there are bookings
-                        document.querySelectorAll('.day-counts').forEach(function(wrap) {
-                            var d = wrap.dataset.date;
-                            var c = counts[d] || null;
-                            if (!c || c.total === 0) {
-                                wrap.style.display = 'none';  /* no bookings: hide entirely */
-                                return;
-                            }
-                            var bottom = wrap.querySelector('.day-counts-bottom');
-                            if (bottom) {
-                                let approvedHtml = c.approved > 0 ? '<span class="day-badge day-badge-approved">' + c.approved + '</span>' : '';
-                                let pendingHtml = c.pending > 0 ? '<span class="day-badge day-badge-pending">' + c.pending + '</span>' : '';
-                                let rejectedHtml = c.rejected > 0 ? '<span class="day-badge day-badge-rejected">' + c.rejected + '</span>' : '';
-                                bottom.innerHTML = approvedHtml + pendingHtml + rejectedHtml;
-                                wrap.style.display = '';  /* show */
-                            }
-                        });
-                    })
-                    .catch(function(){});
+                reloadCalendarDayCounts();
             },
             events: function(fetchInfo, successCallback, failureCallback) {
                 let url = 'api/calendar_events.php?start=' + fetchInfo.startStr.slice(0, 10) + '&end=' + fetchInfo.endStr.slice(0, 10);
