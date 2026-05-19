@@ -129,6 +129,59 @@ if ($is_admin_view) {
     line-height: 1;
 }
 .filter-chip button:hover { opacity: 1; }
+
+/* Status Shortcut Buttons Style */
+.status-shortcut-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    border-radius: 0.65rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--card, white);
+    color: var(--text-main);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    user-select: none;
+}
+.status-shortcut-btn:hover {
+    background: var(--sidebar-bg, #fffdf2);
+    border-color: var(--secondary);
+    transform: translateY(-1px);
+}
+.status-shortcut-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+.status-shortcut-btn.active[data-status="pending"] {
+    background: #EAE4D3;
+    color: #6E4B3A;
+    border-color: #D2CAB7;
+    box-shadow: 0 4px 12px rgba(110, 75, 58, 0.15);
+}
+.status-shortcut-btn.active[data-status="approved"] {
+    background: #E6F4EA;
+    color: #1E8E3E;
+    border-color: rgba(30, 142, 62, 0.2);
+    box-shadow: 0 4px 12px rgba(30, 142, 62, 0.15);
+}
+.status-shortcut-btn.active[data-status="rejected"] {
+    background: #FCE8E6;
+    color: #D93025;
+    border-color: rgba(217, 48, 37, 0.2);
+    box-shadow: 0 4px 12px rgba(217, 48, 37, 0.15);
+}
+.status-shortcut-btn.active[data-status="cancelled"] {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(71, 85, 105, 0.15);
+}
 </style>
 
 <div class="flex flex-col gap-6 w-full animate-fade">
@@ -162,7 +215,15 @@ if ($is_admin_view) {
                     <i class="fas fa-search" style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;"></i>
                     <input type="text" id="searchInput" placeholder="ค้นหาหัวข้อ, ผู้จอง, ห้องประชุม..." style="padding-left:2.5rem;padding-top:0.55rem;padding-bottom:0.55rem;font-size:0.9rem;" autocomplete="off">
                 </div>
-                <select id="statusFilter" class="select-filter" style="min-width:150px;padding-top:0.55rem;padding-bottom:0.55rem;font-size:0.9rem;">
+                <!-- Status Filter Shortcuts -->
+                <div class="flex items-center gap-2 flex-wrap" id="statusFilterShortcuts" style="flex-shrink:0;">
+                    <button type="button" class="status-shortcut-btn active" data-status="">ทั้งหมด</button>
+                    <button type="button" class="status-shortcut-btn" data-status="pending">รออนุมัติ</button>
+                    <button type="button" class="status-shortcut-btn" data-status="approved">อนุมัติแล้ว</button>
+                    <button type="button" class="status-shortcut-btn" data-status="rejected">ไม่อนุมัติ</button>
+                    <button type="button" class="status-shortcut-btn" data-status="cancelled">ยกเลิก</button>
+                </div>
+                <select id="statusFilter" style="display: none;">
                     <option value="">สถานะทั้งหมด</option>
                     <option value="approved">อนุมัติ</option>
                     <option value="pending">รออนุมัติ</option>
@@ -260,6 +321,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadApproveList();
     loadRoomOptions();
+
+    // Shortcut button click listeners
+    document.querySelectorAll('.status-shortcut-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const status = this.getAttribute('data-status');
+            const selectEl = document.getElementById('statusFilter');
+            if (selectEl) {
+                selectEl.value = status;
+                selectEl.dispatchEvent(new Event('change'));
+            }
+        });
+    });
 
     ['searchInput','statusFilter','filterTitle','filterBooker','filterRoom','filterDept','filterDateFrom','filterDateTo']
         .forEach(id => {
@@ -471,6 +544,12 @@ function updateFilterUI() {
     const advancedKeys = ['title','booker','room','dept','dateFrom','dateTo'];
     const labels = { title:'หัวข้อ', booker:'ผู้จอง', room:'ห้อง', dept:'ฝ่าย/งาน', dateFrom:'จาก', dateTo:'ถึง' };
     const roomSel = document.getElementById('filterRoom');
+
+    // Sync shortcut buttons active state
+    const statusVal = f.status || '';
+    document.querySelectorAll('.status-shortcut-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-status') === statusVal);
+    });
 
     let count = 0;
     const chips = [];
