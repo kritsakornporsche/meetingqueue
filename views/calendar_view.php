@@ -225,16 +225,26 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         border: 1px solid rgba(59,130,246,0.2);
         box-shadow: 0 2px 8px rgba(15,23,42,0.04);
     }
-    .monthly-chart-wrap canvas { max-height: 110px; }
 </style>
 
 <!-- Monthly Summary -->
 <div class="monthly-summary">
-    <div class="monthly-summary-header">
+    <div class="monthly-summary-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
         <div class="monthly-summary-title">
             <i class="fas fa-chart-bar"></i> สรุปการจองประจำเดือน
         </div>
-        <span class="monthly-summary-sub" id="summaryMonthLabel">กำลังโหลด...</span>
+        <!-- Modern Month Selector -->
+        <div class="month-selector-wrap" style="display: flex; align-items: center; gap: 0.5rem; background: var(--sidebar-bg, #f8f9fa); padding: 0.25rem 0.5rem; border-radius: 0.75rem; border: 1px solid var(--border);">
+            <button id="prevMonthBtn" class="month-nav-btn" style="border: none; background: transparent; cursor: pointer; color: var(--primary); padding: 0.25rem 0.4rem; display: flex; align-items: center; font-size: 0.8rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(-2px)'" onmouseout="this.style.transform=''"><i class="fas fa-chevron-left"></i></button>
+            
+            <div class="month-picker-container" style="position: relative; display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                <i class="far fa-calendar-alt" style="color: var(--secondary); font-size: 0.85rem;"></i>
+                <span class="monthly-summary-sub" id="summaryMonthLabel" style="font-weight: 700; font-size: 0.85rem; color: var(--primary); margin: 0; padding: 0;">กำลังโหลด...</span>
+                <input type="month" id="summaryMonthPicker" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+            </div>
+            
+            <button id="nextMonthBtn" class="month-nav-btn" style="border: none; background: transparent; cursor: pointer; color: var(--primary); padding: 0.25rem 0.4rem; display: flex; align-items: center; font-size: 0.8rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(2px)'" onmouseout="this.style.transform=''"><i class="fas fa-chevron-right"></i></button>
+        </div>
     </div>
     <div class="stat-cards">
         <a href="<?= $base_link ?>" class="stat-card stat-card-total" style="text-decoration: none; cursor: pointer;">
@@ -266,87 +276,178 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
             </div>
         </a>
     </div>
-    <div class="monthly-chart-wrap">
-        <canvas id="monthlyBarChart"></canvas>
+    <div class="monthly-chart-wrap" style="min-height: 180px;">
+        <div id="monthlyBarChart"></div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 (function() {
-    const now = new Date();
-    const y = now.getFullYear(), mo = now.getMonth();
-    const m = String(mo + 1).padStart(2, '0');
-    const lastDay = new Date(y, mo + 1, 0).getDate();
-    const start = y + '-' + m + '-01';
-    const end   = y + '-' + m + '-' + String(lastDay).padStart(2, '0');
-    const thaiMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-    document.getElementById('summaryMonthLabel').textContent = thaiMonths[mo] + ' ' + (y + 543);
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+    let chartInstance = null;
 
-    fetch('api/calendar_daycounts.php?start=' + start + '&end=' + end)
-        .then(r => r.json())
-        .then(counts => {
-            let total=0,approved=0,pending=0,rejected=0;
-            const labels=[],totals=[],approveds=[],pendings=[],rejecteds=[];
-            for (let d = 1; d <= lastDay; d++) {
-                const key = y+'-'+m+'-'+String(d).padStart(2,'0');
-                const c = counts[key] || {total:0,approved:0,pending:0,rejected:0};
-                labels.push(d); totals.push(c.total); approveds.push(c.approved);
-                pendings.push(c.pending); rejecteds.push(c.rejected);
-                total+=c.total; approved+=c.approved; pending+=c.pending; rejected+=c.rejected;
-            }
-            function animateCount(el, target) {
-                let cur=0; const step=Math.max(1,Math.ceil(target/20));
-                const id=setInterval(()=>{cur=Math.min(cur+step,target); el.textContent=cur; if(cur>=target)clearInterval(id);},40);
-            }
-            animateCount(document.getElementById('stat-total'),    total);
-            animateCount(document.getElementById('stat-approved'), approved);
-            animateCount(document.getElementById('stat-pending'),  pending);
-            animateCount(document.getElementById('stat-rejected'), rejected);
+    function updateSummaryView(y, mo) {
+        const m = String(mo + 1).padStart(2, '0');
+        const lastDay = new Date(y, mo + 1, 0).getDate();
+        const start = y + '-' + m + '-01';
+        const end   = y + '-' + m + '-' + String(lastDay).padStart(2, '0');
+        const thaiFullMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+        
+        document.getElementById('summaryMonthLabel').textContent = thaiFullMonths[mo] + ' ' + (y + 543);
+        document.getElementById('summaryMonthPicker').value = y + '-' + m;
 
-            const ctx = document.getElementById('monthlyBarChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [
-                        { label:'ทั้งหมด',   data:totals,    backgroundColor:'rgba(59,130,246,0.75)',  borderRadius:3, borderSkipped:false },
-                        { label:'อนุมัติ',   data:approveds, backgroundColor:'rgba(16,185,129,0.75)',  borderRadius:3, borderSkipped:false },
-                        { label:'รออนุมัติ', data:pendings,  backgroundColor:'rgba(245,158,11,0.75)',  borderRadius:3, borderSkipped:false },
-                        { label:'ปฏิเสธ',   data:rejecteds, backgroundColor:'rgba(239,68,68,0.75)',   borderRadius:3, borderSkipped:false },
-                    ]
-                },
-                options: {
-                    responsive:true, maintainAspectRatio:true,
-                    interaction:{ mode:'index', intersect:false },
-                    plugins:{
-                        legend:{
-                            position:'top', align:'end',
-                            labels:{ boxWidth:10, boxHeight:10, borderRadius:3, useBorderRadius:true,
-                                font:{size:10,family:"'Outfit','Sarabun',sans-serif"}, color:'var(--text-muted)', padding:8 }
+        fetch('api/calendar_daycounts.php?start=' + start + '&end=' + end)
+            .then(r => r.json())
+            .then(counts => {
+                let total=0,approved=0,pending=0,rejected=0;
+                const labels=[],totals=[],approveds=[],pendings=[],rejecteds=[];
+                for (let d = 1; d <= lastDay; d++) {
+                    const key = y+'-'+m+'-'+String(d).padStart(2,'0');
+                    const c = counts[key] || {total:0,approved:0,pending:0,rejected:0};
+                    labels.push(d); totals.push(c.total); approveds.push(c.approved);
+                    pendings.push(c.pending); rejecteds.push(c.rejected);
+                    total+=c.total; approved+=c.approved; pending+=c.pending; rejected+=c.rejected;
+                }
+                function animateCount(el, target) {
+                    let cur=0; const step=Math.max(1,Math.ceil(target/20));
+                    const id=setInterval(()=>{cur=Math.min(cur+step,target); el.textContent=cur; if(cur>=target)clearInterval(id);},40);
+                }
+                animateCount(document.getElementById('stat-total'),    total);
+                animateCount(document.getElementById('stat-approved'), approved);
+                animateCount(document.getElementById('stat-pending'),  pending);
+                animateCount(document.getElementById('stat-rejected'), rejected);
+
+                // Update base link of cards dynamically
+                const base_link = "?view=approve_list&from=" + start + "&to=" + end;
+                document.querySelector('.stat-card-total').setAttribute('href', base_link);
+                document.querySelector('.stat-card-approved').setAttribute('href', base_link + '&status=approved');
+                document.querySelector('.stat-card-pending').setAttribute('href', base_link + '&status=pending');
+                document.querySelector('.stat-card-rejected').setAttribute('href', base_link + '&status=rejected');
+
+                var options = {
+                    series: [
+                        { name: 'อนุมัติ', data: approveds },
+                        { name: 'รออนุมัติ', data: pendings },
+                        { name: 'ปฏิเสธ', data: rejecteds }
+                    ],
+                    chart: {
+                        type: 'bar',
+                        height: 160,
+                        stacked: true,
+                        toolbar: { show: false },
+                        fontFamily: "'Outfit','Sarabun',sans-serif"
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            borderRadius: 3,
+                            columnWidth: '55%',
+                            dataLabels: {
+                                total: {
+                                    enabled: true,
+                                    style: {
+                                        fontSize: '9px',
+                                        fontWeight: 900,
+                                        color: 'var(--primary)'
+                                    }
+                                }
+                            }
                         },
-                        tooltip:{
-                            backgroundColor:'rgba(253,251,247,0.97)', titleColor:'var(--primary)', bodyColor:'var(--primary)',
-                            borderColor:'rgba(59,130,246,0.3)', borderWidth:1, padding:8,
-                            titleFont:{size:11,weight:'bold',family:"'Outfit','Sarabun',sans-serif"},
-                            bodyFont:{size:10,family:"'Outfit','Sarabun',sans-serif"},
-                            callbacks:{ title: ctx=>'วันที่ '+ctx[0].label }
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        style: {
+                            fontSize: '8px',
+                            fontWeight: 'bold',
+                            colors: ['#fff']
+                        },
+                        formatter: function (val) {
+                            return val > 0 ? val : '';
                         }
                     },
-                    scales:{
-                        x:{ grid:{display:false}, border:{display:false},
-                            ticks:{font:{size:9,family:"'Outfit','Sarabun',sans-serif"},color:'var(--text-muted)',maxRotation:0,autoSkip:true,maxTicksLimit:16} },
-                        y:{ beginAtZero:true, grid:{color:'rgba(59,130,246,0.1)'}, border:{display:false},
-                            ticks:{font:{size:9,family:"'Outfit','Sarabun',sans-serif"},color:'var(--text-muted)',stepSize:1,maxTicksLimit:5} }
+                    colors: ['#10b981', '#f59e0b', '#ef4444'],
+                    xaxis: {
+                        categories: labels,
+                        labels: {
+                            style: {
+                                fontSize: '8px',
+                                colors: '#64748b'
+                            }
+                        },
+                        axisBorder: { show: false },
+                        axisTicks: { show: false }
+                    },
+                    yaxis: {
+                        labels: {
+                            style: {
+                                fontSize: '8px',
+                                colors: '#64748b'
+                            }
+                        }
+                    },
+                    grid: {
+                        borderColor: 'rgba(59,130,246,0.1)',
+                        strokeDashArray: 4,
+                        padding: { top: 0, right: 0, bottom: 0, left: 0 }
+                    },
+                    legend: {
+                        position: 'top',
+                        horizontalAlign: 'right',
+                        fontSize: '9px',
+                        markers: { radius: 3 }
+                    },
+                    tooltip: {
+                        theme: 'light',
+                        style: {
+                            fontSize: '10px'
+                        }
                     }
+                };
+
+                if (chartInstance) {
+                    chartInstance.destroy();
                 }
+                chartInstance = new ApexCharts(document.getElementById('monthlyBarChart'), options);
+                chartInstance.render();
+            })
+            .catch(()=>{
+                ['stat-total','stat-approved','stat-pending','stat-rejected'].forEach(id=>{
+                    document.getElementById(id).textContent='0';
+                });
             });
-        })
-        .catch(()=>{
-            ['stat-total','stat-approved','stat-pending','stat-rejected'].forEach(id=>{
-                document.getElementById(id).textContent='0';
-            });
-        });
+    }
+
+    document.getElementById('summaryMonthPicker').addEventListener('change', function(e) {
+        const val = e.target.value;
+        if (val) {
+            const parts = val.split('-');
+            currentYear = parseInt(parts[0]);
+            currentMonth = parseInt(parts[1]) - 1;
+            updateSummaryView(currentYear, currentMonth);
+        }
+    });
+
+    document.getElementById('prevMonthBtn').addEventListener('click', function() {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        updateSummaryView(currentYear, currentMonth);
+    });
+
+    document.getElementById('nextMonthBtn').addEventListener('click', function() {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        updateSummaryView(currentYear, currentMonth);
+    });
+
+    updateSummaryView(currentYear, currentMonth);
 })();
 </script>
 
