@@ -1064,6 +1064,16 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
             resourceAreaHeaderContent: 'ห้องประชุม',
             slotMinTime: '08:00:00',
             slotMaxTime: '18:00:00',
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            },
+            slotLabelFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            },
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
@@ -1287,8 +1297,8 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
             },
             eventClick: function(info) {
                 const props = info.event.extendedProps;
-                const start = info.event.start.toLocaleString('th-TH', { dateStyle: 'long', timeStyle: 'short', calendar: 'buddhist' });
-                const end = info.event.end ? info.event.end.toLocaleString('th-TH', { timeStyle: 'short', calendar: 'buddhist' }) : '';
+                const start = info.event.start.toLocaleString('th-TH', { dateStyle: 'long', timeStyle: 'short', calendar: 'buddhist', hour12: false });
+                const end = info.event.end ? info.event.end.toLocaleString('th-TH', { timeStyle: 'short', calendar: 'buddhist', hour12: false }) : '';
                 
                 document.getElementById('modalTitle').textContent = props.original_title || info.event.title;
                 document.getElementById('modalRoom').textContent = props.room;
