@@ -77,7 +77,7 @@ class BookingRepository {
         if (!empty($filters['upcoming'])) {
             $sql .= " GROUP BY b.id ORDER BY b.start_time ASC";
         } else {
-            $sql .= " GROUP BY b.id ORDER BY b.id DESC";
+            $sql .= " GROUP BY b.id ORDER BY b.start_time DESC";
         }
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);

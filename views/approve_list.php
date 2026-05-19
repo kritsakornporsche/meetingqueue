@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $current_view = $_GET['view'] ?? '';
 $user_role = $_SESSION['user_data']['role'] ?? 'user';
 $is_admin_view = ($current_view === 'approve_list' || $current_view === 'requests') && ($user_role === 'admin');
@@ -360,6 +360,15 @@ function renderTable() {
         if (f.dateTo && bDate > f.dateTo) return false;
         return true;
     });
+
+    // Sort logic: "รายการคำขอ" (Pending requests or requests view, or pending status) sorts by earliest first (id ASC / มาก่อนอยู่บน)
+    // All other lists sort by latest meeting date first (start_time DESC / วันที่ล่าสุดเสมอ)
+    const isRequestList = (currentView === 'approve_list') || (currentView === 'requests') || (f.status === 'pending');
+    if (isRequestList) {
+        filtered.sort((a, b) => a.id - b.id);
+    } else {
+        filtered.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
+    }
 
     const colspan = currentView === 'approve_list' ? 8 : 7;
 
