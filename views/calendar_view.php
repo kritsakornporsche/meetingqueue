@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'api/config.php';
 use App\Repository\BookingRepository;
 
@@ -1047,10 +1047,10 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                             }
                             var bottom = wrap.querySelector('.day-counts-bottom');
                             if (bottom) {
-                                bottom.innerHTML =
-                                    '<span class="day-badge day-badge-approved">' + c.approved + '</span>' +
-                                    '<span class="day-badge day-badge-pending">'  + c.pending  + '</span>' +
-                                    '<span class="day-badge day-badge-rejected">' + c.rejected + '</span>';
+                                let approvedHtml = c.approved > 0 ? '<span class="day-badge day-badge-approved">' + c.approved + '</span>' : '';
+                                let pendingHtml = c.pending > 0 ? '<span class="day-badge day-badge-pending">' + c.pending + '</span>' : '';
+                                let rejectedHtml = c.rejected > 0 ? '<span class="day-badge day-badge-rejected">' + c.rejected + '</span>' : '';
+                                bottom.innerHTML = approvedHtml + pendingHtml + rejectedHtml;
                                 wrap.style.display = '';  /* show */
                             }
                         });
