@@ -457,8 +457,8 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
     <div class="flex flex-col gap-4" style="padding-right: 0.5rem;">
         <div class="flex items-center justify-between mb-2">
             <div>
-                <h2 class="text-xl font-bold text-primary">ห้องประชุม</h2>
-                <p class="text-xs text-text-muted">ทั้งหมด <?= count($rooms) ?> ห้อง</p>
+                <h2 class="text-xl font-bold text-primary">ห้องประชุมวันนี้</h2>
+                <p class="text-xs text-text-muted">สถานะของวันนี้ทั้งหมด <?= count($rooms) ?> ห้อง</p>
             </div>
             <button onclick="document.getElementById('filterContainer').classList.toggle('hidden')" class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary shadow-sm hover:bg-slate-200 transition-colors border border-blue-400/30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400">
                 <i class="fas fa-sliders-h text-xs"></i>
