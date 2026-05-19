@@ -516,7 +516,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
     <div class="flex flex-col min-w-0 w-full">
         
         <!-- Top: Calendar Section -->
-        <div class="dash-card flex-grow relative overflow-hidden mb-6 w-full box-border">
+        <div class="dash-card flex-grow relative overflow-hidden mb-6 w-full box-border <?= (($_SESSION['user_data']['role'] ?? 'user') === 'admin') ? 'is-admin-view' : 'is-user-view' ?>">
             <!-- Decorative accent -->
             <div class="absolute top-0 right-0 w-64 h-64 bg-[var(--secondary)]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
             
@@ -679,9 +679,9 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         background-color: rgba(59, 130, 246, 0.15) !important;
     }
 
-    /* Hide event pills in month view — replaced by count badges */
-    .fc-dayGridMonth-view .fc-event,
-    .fc-dayGridMonth-view .fc-daygrid-more-link {
+    /* Hide event pills in month view for admin — replaced by count badges */
+    .is-admin-view .fc-dayGridMonth-view .fc-event,
+    .is-admin-view .fc-dayGridMonth-view .fc-daygrid-more-link {
         display: none !important;
     }
 
@@ -913,6 +913,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
 
     function reloadCalendarDayCounts() {
         if (!calendarInstance) return;
+        if (!isAdmin) return;
         if (calendarInstance.view.type !== 'dayGridMonth') return;
         
         let startStr = calendarInstance.view.activeStart.toISOString().slice(0, 10);
@@ -1142,10 +1143,12 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                 frame.style.minHeight = '80px';
 
                 // 1) Inject total badge placeholder into the top row (left side)
-                let totalSpan = document.createElement('span');
-                totalSpan.className = 'day-total-placeholder';
-                totalSpan.dataset.date = dateStr;
-                top.insertBefore(totalSpan, top.firstChild);
+                if (isAdmin) {
+                    let totalSpan = document.createElement('span');
+                    totalSpan.className = 'day-total-placeholder';
+                    totalSpan.dataset.date = dateStr;
+                    top.insertBefore(totalSpan, top.firstChild);
+                }
 
                 // 2) Holiday row (middle) — full width, centered
                 let holidayRow = document.createElement('div');
@@ -1157,12 +1160,14 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                 top.insertAdjacentElement('afterend', holidayRow);
 
                 // 3) Status badges container (bottom) — start empty, filled by datesSet
-                let countsDiv = document.createElement('div');
-                countsDiv.className = 'day-counts';
-                countsDiv.dataset.date = dateStr;
-                countsDiv.style.display = 'none';  /* hidden until counts arrive */
-                countsDiv.innerHTML = '<div class="day-counts-bottom"></div>';
-                frame.appendChild(countsDiv);
+                if (isAdmin) {
+                    let countsDiv = document.createElement('div');
+                    countsDiv.className = 'day-counts';
+                    countsDiv.dataset.date = dateStr;
+                    countsDiv.style.display = 'none';  /* hidden until counts arrive */
+                    countsDiv.innerHTML = '<div class="day-counts-bottom"></div>';
+                    frame.appendChild(countsDiv);
+                }
             },
             datesSet: function(info) {
                 // Update Buddhist year in toolbar title
