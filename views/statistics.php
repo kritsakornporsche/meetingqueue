@@ -276,9 +276,6 @@ if ($startDate !== $endDate) {
                     <button type="submit" class="filter-toggle-btn" style="background:#059669;">
                         <i class="fas fa-search"></i> ค้นหา
                     </button>
-                    <button type="button" onclick="window.print()" class="filter-toggle-btn" style="background:#2563EB;">
-                        <i class="fas fa-file-pdf"></i> ออกรายงาน PDF
-                    </button>
                     <button type="button" onclick="window.location.href='?view=statistics'" class="filter-toggle-btn" style="background:#4b5563;">
                         <i class="fas fa-history"></i> วันนี้
                     </button>
