@@ -1,4 +1,4 @@
-﻿<div class="flex flex-col gap-6 w-full animate-fade">
+<div class="flex flex-col gap-6 w-full animate-fade">
     <!-- Header Section (Borderless) -->
     <div class="flex flex-wrap items-center justify-between gap-10">
         <div class="flex-grow">
@@ -80,7 +80,10 @@ function filterUsers() {
         const fullName = row.cells[1].textContent.toLowerCase();
         const position = row.cells[2].textContent.toLowerCase();
         const department = row.cells[3].textContent.toLowerCase();
-        const role = row.cells[4].textContent.trim().toUpperCase();
+        
+        // Extract correct value from select dropdown inside cell
+        const roleSelect = row.cells[4].querySelector('select');
+        const role = roleSelect ? roleSelect.value.toUpperCase() : '';
 
         const matchesSearch = fullName.includes(searchText) || 
                              position.includes(searchText) || 
@@ -89,9 +92,10 @@ function filterUsers() {
         const matchesRole = roleFilter === 'all' || role === roleFilter;
 
         if (matchesSearch && matchesRole) {
-            row.style.display = '';
+            row.classList.add('user-row-visible');
             visibleCount++;
         } else {
+            row.classList.remove('user-row-visible');
             row.style.display = 'none';
         }
     }
@@ -129,7 +133,7 @@ async function loadUsers() {
             }
             
             tableBody.innerHTML = result.data.map(user => `
-                <tr class="border-b border-border hover:bg-primary/5 transition-colors" onclick="window.location.href='dashboard.php?view=profile&id=${user.id}'" style="cursor: pointer;">
+                <tr class="border-b border-border hover:bg-primary/5 transition-colors user-row-visible" onclick="window.location.href='dashboard.php?view=profile&id=${user.id}'" style="cursor: pointer;">
                     <td class="p-3">
                         <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name)}&background=4f46e5&color=fff" 
                              class="w-10 h-10 rounded-full shadow-sm" alt="avatar">
@@ -155,7 +159,8 @@ async function loadUsers() {
                 window.userPaginator = new MeetQueuePaginator({
                     container: '#userTableBody',
                     itemSelector: 'tr',
-                    pageSize: 10
+                    pageSize: 10,
+                    activeSearchClass: 'user-row-visible'
                 });
             } else {
                 window.userPaginator.refresh();
