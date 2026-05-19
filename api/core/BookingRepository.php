@@ -162,15 +162,29 @@ class BookingRepository {
         return $stmt->execute([':id' => $id]);
     }
 
-    public function getRoomUsageStats($date = null) {
+    public function getRoomUsageStats($startDate = null, $endDate = null, $booker = '', $roomId = '') {
         $sql = "SELECT r.name, COUNT(b.id) as total_bookings, SUM(TIMESTAMPDIFF(MINUTE, b.start_time, b.end_time)) / 60 as total_hours 
                 FROM rooms r 
                 LEFT JOIN bookings b ON r.id = b.room_id AND b.deleted_at IS NULL";
         
         $params = [];
-        if ($date) {
+        if ($startDate && $endDate) {
+            $sql .= " AND DATE(b.start_time) >= :start_date AND DATE(b.start_time) <= :end_date";
+            $params[':start_date'] = $startDate;
+            $params[':end_date'] = $endDate;
+        } elseif ($startDate) {
             $sql .= " AND DATE(b.start_time) = :date";
-            $params[':date'] = $date;
+            $params[':date'] = $startDate;
+        }
+
+        if (!empty($booker)) {
+            $sql .= " AND (b.title LIKE :booker OR EXISTS (SELECT 1 FROM users u WHERE b.user_id = u.id AND (u.first_name LIKE :booker OR u.last_name LIKE :booker OR u.emp_code LIKE :booker)))";
+            $params[':booker'] = '%' . $booker . '%';
+        }
+
+        if (!empty($roomId) && $roomId !== 'all') {
+            $sql .= " AND b.room_id = :room_id";
+            $params[':room_id'] = $roomId;
         }
 
         $sql .= " GROUP BY r.id, r.name";
@@ -179,18 +193,32 @@ class BookingRepository {
         return $stmt->fetchAll();
     }
 
-    public function getDepartmentStats($date = null) {
-        $sql = "SELECT department_name, COUNT(*) as total_bookings 
-                FROM bookings 
-                WHERE department_name IS NOT NULL AND deleted_at IS NULL";
+    public function getDepartmentStats($startDate = null, $endDate = null, $booker = '', $roomId = '') {
+        $sql = "SELECT b.department_name, COUNT(b.id) as total_bookings 
+                FROM bookings b
+                WHERE b.department_name IS NOT NULL AND b.deleted_at IS NULL";
         
         $params = [];
-        if ($date) {
-            $sql .= " AND DATE(start_time) = :date";
-            $params[':date'] = $date;
+        if ($startDate && $endDate) {
+            $sql .= " AND DATE(b.start_time) >= :start_date AND DATE(b.start_time) <= :end_date";
+            $params[':start_date'] = $startDate;
+            $params[':end_date'] = $endDate;
+        } elseif ($startDate) {
+            $sql .= " AND DATE(b.start_time) = :date";
+            $params[':date'] = $startDate;
         }
 
-        $sql .= " GROUP BY department_name ORDER BY total_bookings DESC";
+        if (!empty($booker)) {
+            $sql .= " AND (b.title LIKE :booker OR EXISTS (SELECT 1 FROM users u WHERE b.user_id = u.id AND (u.first_name LIKE :booker OR u.last_name LIKE :booker OR u.emp_code LIKE :booker)))";
+            $params[':booker'] = '%' . $booker . '%';
+        }
+
+        if (!empty($roomId) && $roomId !== 'all') {
+            $sql .= " AND b.room_id = :room_id";
+            $params[':room_id'] = $roomId;
+        }
+
+        $sql .= " GROUP BY b.department_name ORDER BY total_bookings DESC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
