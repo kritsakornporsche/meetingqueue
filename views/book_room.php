@@ -308,11 +308,11 @@
                             <div class="grid grid-cols-2 gap-3 mb-3">
                                 <div>
                                     <span class="text-[0.62rem] font-bold text-text-muted uppercase tracking-widest block mb-1">เริ่มเวลา</span>
-                                    <input type="time" id="start_time" value="08:30" class="premium-input text-center font-bold">
+                                    <input type="text" id="start_time" value="08:30" class="premium-input text-center font-bold" style="cursor: pointer;" readonly>
                                 </div>
                                 <div>
                                     <span class="text-[0.62rem] font-bold text-text-muted uppercase tracking-widest block mb-1">สิ้นสุดเวลา</span>
-                                    <input type="time" id="end_time" value="16:30" class="premium-input text-center font-bold">
+                                    <input type="text" id="end_time" value="16:30" class="premium-input text-center font-bold" style="cursor: pointer;" readonly>
                                 </div>
                             </div>
                             <div class="flex gap-2">
@@ -537,10 +537,32 @@
 <script>
     const isAdmin = <?= json_encode($is_admin) ?>;
     let activeStep = 1;
+    let startTimePicker, endTimePicker;
 
     document.addEventListener('DOMContentLoaded', () => {
         initRoomSelection();
         initDeptDropdown();
+        
+        // Initialize 24-hour Flatpickr time pickers
+        startTimePicker = flatpickr("#start_time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            onClose: function() {
+                updateSummary();
+            }
+        });
+
+        endTimePicker = flatpickr("#end_time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            onClose: function() {
+                updateSummary();
+            }
+        });
         
         // Set default date to today
         const today = new Date().toLocaleDateString('en-CA'); // Gets YYYY-MM-DD in local timezone safely
@@ -853,8 +875,18 @@
     }
 
     function setQuickTimePremium(s, e, btn) {
-        document.getElementById('start_time').value = s;
-        document.getElementById('end_time').value = e;
+        if (startTimePicker) {
+            startTimePicker.setDate(s);
+        } else {
+            document.getElementById('start_time').value = s;
+        }
+        
+        if (endTimePicker) {
+            endTimePicker.setDate(e);
+        } else {
+            document.getElementById('end_time').value = e;
+        }
+        
         document.querySelectorAll('.quick-btn-premium').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         updateSummary();

@@ -1,4 +1,4 @@
-﻿<div class="hero-banner" style="background-image: url('assets/images/poster1.png'); background-position: center; max-width: 900px; margin: 0 auto 2rem;">
+<div class="hero-banner" style="background-image: url('assets/images/poster1.png'); background-position: center; max-width: 900px; margin: 0 auto 2rem;">
     <div class="hero-content">
         <h2 style="text-shadow: 0 2px 4px rgba(0,0,0,0.5);">บันทึกประชุมภายนอก</h2>
         <p style="opacity: 0.9; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">บันทึกข้อมูลการประชุมนอกสถานที่ของบุคลากร</p>
@@ -40,11 +40,11 @@
                 </div>
                 <div class="form-group" style="flex: 1; margin-bottom: 0;">
                     <label>เริ่มเวลา</label>
-                    <input type="time" id="ext_start_time" value="00:00" required>
+                    <input type="text" id="ext_start_time" value="00:00" style="cursor: pointer;" readonly required>
                 </div>
                 <div class="form-group" style="flex: 1; margin-bottom: 0;">
                     <label>ถึงเวลา</label>
-                    <input type="time" id="ext_end_time" value="00:00" required>
+                    <input type="text" id="ext_end_time" value="00:00" style="cursor: pointer;" readonly required>
                 </div>
             </div>
 
@@ -81,6 +81,20 @@
     document.addEventListener('DOMContentLoaded', () => {
         const today = new Date().toLocaleDateString('en-CA');
         document.getElementById('ext_date').value = today;
+
+        flatpickr("#ext_start_time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        });
+
+        flatpickr("#ext_end_time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        });
     });
 
     document.getElementById('externalMeetingForm').addEventListener('submit', async (e) => {
