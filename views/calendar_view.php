@@ -918,6 +918,19 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         background-color: rgba(59, 130, 246, 0.15) !important;
     }
 
+    /* Make event pills visible but click-through in admin month view so clicks go to Gantt chart */
+    .is-admin-view .fc-dayGridMonth-view .fc-event,
+    .is-admin-view .fc-dayGridMonth-view .fc-daygrid-more-link {
+        pointer-events: none !important;
+    }
+
+    /* Ensure day events area doesn't block clicks in admin month view */
+    .is-admin-view .fc-dayGridMonth-view .fc-daygrid-day-events {
+        pointer-events: none;
+    }
+    .is-admin-view .fc-dayGridMonth-view .fc-daygrid-day-bg {
+        pointer-events: none;
+    }
 
     .fc-event {
         border: none !important;
