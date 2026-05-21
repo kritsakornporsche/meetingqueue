@@ -182,6 +182,10 @@ $chartData = json_encode(array_values($roomStats));
             font-weight: bold !important;
             text-align: center !important;
         }
+        .report-table tbody tr {
+            display: table-row !important;
+            visibility: visible !important;
+        }
         .report-title {
             color: black !important;
             font-size: 18pt !important;
