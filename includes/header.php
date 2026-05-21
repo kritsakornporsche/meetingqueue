@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $user = $_SESSION['user_data'];
 $photo_url = !empty($user['photo']) ? $user['photo'] : "https://192.168.9.7/auth_files/photo/" . $user['emp_code'] . ".jpg";
 $fallback_avatar = 'https://ui-avatars.com/api/?name=' . urlencode($user['first_name']) . '&background=6A5243&color=fff&size=80';
@@ -41,6 +41,7 @@ $titles = [
                 'statistics'       => ['หน้าหลัก' => 'calendar', 'สถิติการใช้งาน' => 'statistics'],
                 'users'            => ['หน้าหลัก' => 'calendar', 'ข้อมูลผู้ใช้งาน' => 'users'],
                 'admin_management' => ['หน้าหลัก' => 'calendar', 'จัดการการประชุม' => 'admin_management'],
+                'backup_restore'   => ['หน้าหลัก' => 'calendar', 'สำรอง/กู้คืนฐานข้อมูล' => 'backup_restore'],
                 'trash_management' => ['หน้าหลัก' => 'calendar', 'ถังขยะ' => 'trash_management'],
                 'booking_result'   => ['หน้าหลัก' => 'calendar', 'รายละเอียดการจอง' => null],
                 'profile'          => ['หน้าหลัก' => 'calendar', 'ข้อมูลส่วนตัว' => 'profile'],
@@ -132,6 +133,9 @@ $titles = [
                 </a>
                 <a href="dashboard.php?view=trash_management" class="popup-nav-link <?php echo ($_GET['view'] ?? '') == 'trash_management' ? 'active' : ''; ?>">
                     <i class="fas fa-trash-alt"></i><span>ถังขยะ</span>
+                </a>
+                <a href="dashboard.php?view=backup_restore" class="popup-nav-link <?php echo ($_GET['view'] ?? '') == 'backup_restore' ? 'active' : ''; ?>">
+                    <i class="fas fa-database"></i><span>สำรอง/กู้คืนฐานข้อมูล</span>
                 </a>
                 <a href="dashboard.php?view=requests" class="popup-nav-link <?php echo ($_GET['view'] ?? '') == 'requests' ? 'active' : ''; ?>">
                     <i class="fas fa-list-ul"></i><span>รายการขอใช้</span>

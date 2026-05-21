@@ -22,7 +22,10 @@ try {
             'user_id' => $_GET['user_id'] ?? null,
             'booking_id' => $_GET['booking_id'] ?? null,
             'status' => $_GET['status'] ?? null,
-            'only_trashed' => $_GET['only_trashed'] ?? null
+            'only_trashed' => $_GET['only_trashed'] ?? null,
+            'start' => $_GET['start'] ?? null,
+            'end' => $_GET['end'] ?? null,
+            'room_id' => $_GET['room_id'] ?? null
         ];
         
         $bookings = $repo->getAll($filters);

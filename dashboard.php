@@ -65,6 +65,9 @@ $view = $_GET['view'] ?? (($user['role'] ?? 'user') === 'admin' ? 'approve_list'
                     case 'room_status':
                         include 'views/room_status.php';
                         break;
+                    case 'backup_restore':
+                        include 'views/backup_restore.php';
+                        break;
                     case 'book':
                         include 'views/book_room.php';
                         break;
