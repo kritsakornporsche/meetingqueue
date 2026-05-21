@@ -159,6 +159,15 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
 </style>
 
 <style>
+    /* Make calendar days clearly clickable */
+    .fc-daygrid-day-frame {
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .fc-daygrid-day-frame:hover {
+        background-color: rgba(59, 130, 246, 0.05);
+    }
+    
     /* ── Monthly Summary Section ── */
     .monthly-summary { margin-bottom: 1.25rem; }
     .monthly-summary-header {
@@ -220,20 +229,28 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
 <!-- Monthly Summary -->
 <div class="monthly-summary">
     <div class="monthly-summary-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
-        <div class="monthly-summary-title">
+        <div class="monthly-summary-title" id="summaryTitleText">
             <i class="fas fa-chart-bar"></i> สรุปการจองประจำเดือน
         </div>
-        <!-- Modern Month Selector -->
-        <div class="month-selector-wrap" style="display: flex; align-items: center; gap: 0.5rem; background: var(--sidebar-bg, #f8f9fa); padding: 0.25rem 0.5rem; border-radius: 0.75rem; border: 1px solid var(--border);">
-            <button id="prevMonthBtn" class="month-nav-btn" style="border: none; background: transparent; cursor: pointer; color: var(--primary); padding: 0.25rem 0.4rem; display: flex; align-items: center; font-size: 0.8rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(-2px)'" onmouseout="this.style.transform=''"><i class="fas fa-chevron-left"></i></button>
-            
-            <div class="month-picker-container" style="position: relative; display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
-                <i class="far fa-calendar-alt" style="color: var(--secondary); font-size: 0.85rem;"></i>
-                <span class="monthly-summary-sub" id="summaryMonthLabel" style="font-weight: 700; font-size: 0.85rem; color: var(--primary); margin: 0; padding: 0;">กำลังโหลด...</span>
-                <input type="month" id="summaryMonthPicker" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+            <!-- Segmented Control for Mode selection -->
+            <div class="summary-mode-selector" style="display: flex; background: rgba(59,130,246,0.08); padding: 0.2rem; border-radius: 0.6rem; border: 1px solid rgba(59,130,246,0.15);">
+                <button type="button" class="mode-btn" data-mode="day" style="border: none; background: transparent; padding: 0.35rem 0.75rem; font-size: 0.78rem; font-weight: 700; border-radius: 0.45rem; cursor: pointer; color: var(--text-muted); transition: all 0.2s;">รายวัน</button>
+                <button type="button" class="mode-btn active" data-mode="month" style="border: none; background: var(--primary); padding: 0.35rem 0.75rem; font-size: 0.78rem; font-weight: 700; border-radius: 0.45rem; cursor: pointer; color: white; transition: all 0.2s;">รายเดือน</button>
+                <button type="button" class="mode-btn" data-mode="year" style="border: none; background: transparent; padding: 0.35rem 0.75rem; font-size: 0.78rem; font-weight: 700; border-radius: 0.45rem; cursor: pointer; color: var(--text-muted); transition: all 0.2s;">รายปี</button>
             </div>
-            
-            <button id="nextMonthBtn" class="month-nav-btn" style="border: none; background: transparent; cursor: pointer; color: var(--primary); padding: 0.25rem 0.4rem; display: flex; align-items: center; font-size: 0.8rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(2px)'" onmouseout="this.style.transform=''"><i class="fas fa-chevron-right"></i></button>
+            <!-- Modern Selector Wrapper -->
+            <div class="month-selector-wrap" style="display: flex; align-items: center; gap: 0.5rem; background: var(--sidebar-bg, #f8f9fa); padding: 0.25rem 0.5rem; border-radius: 0.75rem; border: 1px solid var(--border);">
+                <button id="prevMonthBtn" class="month-nav-btn" style="border: none; background: transparent; cursor: pointer; color: var(--primary); padding: 0.25rem 0.4rem; display: flex; align-items: center; font-size: 0.8rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(-2px)'" onmouseout="this.style.transform=''"><i class="fas fa-chevron-left"></i></button>
+                
+                <div class="month-picker-container" style="position: relative; display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                    <i class="far fa-calendar-alt" style="color: var(--secondary); font-size: 0.85rem;"></i>
+                    <span class="monthly-summary-sub" id="summaryMonthLabel" style="font-weight: 700; font-size: 0.85rem; color: var(--primary); margin: 0; padding: 0;">กำลังโหลด...</span>
+                    <input type="text" id="summaryMonthPicker" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+                </div>
+                
+                <button id="nextMonthBtn" class="month-nav-btn" style="border: none; background: transparent; cursor: pointer; color: var(--primary); padding: 0.25rem 0.4rem; display: flex; align-items: center; font-size: 0.8rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(2px)'" onmouseout="this.style.transform=''"><i class="fas fa-chevron-right"></i></button>
+            </div>
         </div>
     </div>
     <div class="stat-cards">
@@ -272,172 +289,362 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
 <script>
 (function() {
-    let currentYear = new Date().getFullYear();
-    let currentMonth = new Date().getMonth();
+    let currentDate = new Date();
+    let currentMode = 'month'; // 'day', 'month', 'year'
     let chartInstance = null;
+    let summaryDatePicker = null;
 
-    function updateSummaryView(y, mo) {
-        const m = String(mo + 1).padStart(2, '0');
-        const lastDay = new Date(y, mo + 1, 0).getDate();
-        const start = y + '-' + m + '-01';
-        const end   = y + '-' + m + '-' + String(lastDay).padStart(2, '0');
-        const thaiFullMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-        
-        document.getElementById('summaryMonthLabel').textContent = thaiFullMonths[mo] + ' ' + (y + 543);
-        document.getElementById('summaryMonthPicker').value = y + '-' + m;
+    function initSummaryDatePicker() {
+        if (summaryDatePicker) {
+            summaryDatePicker.destroy();
+        }
 
-        fetch('api/calendar_daycounts.php?start=' + start + '&end=' + end)
-            .then(r => r.json())
-            .then(counts => {
-                let total=0,approved=0,pending=0,rejected=0;
-                const labels=[],totals=[],approveds=[],pendings=[],rejecteds=[];
-                for (let d = 1; d <= lastDay; d++) {
-                    const key = y+'-'+m+'-'+String(d).padStart(2,'0');
-                    const c = counts[key] || {total:0,approved:0,pending:0,rejected:0};
-                    labels.push(d); totals.push(c.total); approveds.push(c.approved);
-                    pendings.push(c.pending); rejecteds.push(c.rejected);
-                    total+=c.total; approved+=c.approved; pending+=c.pending; rejected+=c.rejected;
+        summaryDatePicker = flatpickr("#summaryMonthPicker", {
+            locale: "th",
+            defaultDate: currentDate,
+            disableMobile: true,
+            formatDate: (date) => {
+                const yBE = date.getFullYear() + 543;
+                if (currentMode === 'day') {
+                    const thaiMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+                    return date.getDate() + ' ' + thaiMonths[date.getMonth()] + ' ' + yBE;
+                } else if (currentMode === 'month') {
+                    const thaiFullMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+                    return thaiFullMonths[date.getMonth()] + ' ' + yBE;
+                } else {
+                    return 'ปี ' + yBE;
                 }
-                function animateCount(el, target) {
-                    let cur=0; const step=Math.max(1,Math.ceil(target/20));
-                    const id=setInterval(()=>{cur=Math.min(cur+step,target); el.textContent=cur; if(cur>=target)clearInterval(id);},40);
+            },
+            onChange: (selectedDates) => {
+                if (selectedDates.length > 0) {
+                    currentDate = selectedDates[0];
+                    updateSummaryView();
                 }
-                animateCount(document.getElementById('stat-total'),    total);
-                animateCount(document.getElementById('stat-approved'), approved);
-                animateCount(document.getElementById('stat-pending'),  pending);
-                animateCount(document.getElementById('stat-rejected'), rejected);
-
-                // Update base link of cards dynamically
-                const base_link = "?view=approve_list&from=" + start + "&to=" + end;
-                document.querySelector('.stat-card-total').setAttribute('href', base_link);
-                document.querySelector('.stat-card-approved').setAttribute('href', base_link + '&status=approved');
-                document.querySelector('.stat-card-pending').setAttribute('href', base_link + '&status=pending');
-                document.querySelector('.stat-card-rejected').setAttribute('href', base_link + '&status=rejected');
-
-                var options = {
-                    series: [
-                        { name: 'อนุมัติ', data: approveds },
-                        { name: 'รออนุมัติ', data: pendings },
-                        { name: 'ปฏิเสธ', data: rejecteds }
-                    ],
-                    chart: {
-                        type: 'bar',
-                        height: 160,
-                        stacked: true,
-                        toolbar: { show: false },
-                        fontFamily: "'Outfit','Sarabun',sans-serif"
-                    },
-                    plotOptions: {
-                        bar: {
-                            horizontal: false,
-                            borderRadius: 3,
-                            columnWidth: '55%',
-                            dataLabels: {
-                                total: {
-                                    enabled: true,
-                                    style: {
-                                        fontSize: '9px',
-                                        fontWeight: 900,
-                                        color: 'var(--primary)'
-                                    }
-                                }
-                            }
-                        },
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        style: {
-                            fontSize: '8px',
-                            fontWeight: 'bold',
-                            colors: ['#fff']
-                        },
-                        formatter: function (val) {
-                            return val > 0 ? val : '';
+            },
+            onReady: function(selectedDates, dateStr, instance) {
+                const yearInput = instance.currentYearElement;
+                if (yearInput) {
+                    const nativeInputValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+                    Object.defineProperty(yearInput, 'value', {
+                        get: function() { return nativeInputValue.get.call(this); },
+                        set: function(val) {
+                            let newVal = parseInt(val, 10);
+                            if (newVal > 1900 && newVal < 2400) { newVal += 543; }
+                            nativeInputValue.set.call(this, newVal);
                         }
-                    },
-                    colors: ['#10b981', '#f59e0b', '#ef4444'],
-                    xaxis: {
-                        categories: labels,
-                        labels: {
-                            style: {
-                                fontSize: '8px',
-                                colors: '#64748b'
-                            }
-                        },
-                        axisBorder: { show: false },
-                        axisTicks: { show: false }
-                    },
-                    yaxis: {
-                        labels: {
-                            style: {
-                                fontSize: '8px',
-                                colors: '#64748b'
-                            }
-                        }
-                    },
-                    grid: {
-                        borderColor: 'rgba(59,130,246,0.1)',
-                        strokeDashArray: 4,
-                        padding: { top: 0, right: 0, bottom: 0, left: 0 }
-                    },
-                    legend: {
-                        position: 'top',
-                        horizontalAlign: 'right',
-                        fontSize: '9px',
-                        markers: { radius: 3 }
-                    },
-                    tooltip: {
-                        theme: 'light',
-                        style: {
-                            fontSize: '10px'
-                        }
-                    }
-                };
+                    });
+                    yearInput.value = instance.currentYear;
 
-                if (chartInstance) {
-                    chartInstance.destroy();
+                    const origChangeYear = instance.changeYear;
+                    instance.changeYear = function(year, jump, step) {
+                        if (year > 2400) { year -= 543; }
+                        origChangeYear.call(instance, year, jump, step);
+                    };
                 }
-                chartInstance = new ApexCharts(document.getElementById('monthlyBarChart'), options);
-                chartInstance.render();
-            })
-            .catch(()=>{
-                ['stat-total','stat-approved','stat-pending','stat-rejected'].forEach(id=>{
-                    document.getElementById(id).textContent='0';
-                });
-            });
+            }
+        });
     }
 
-    document.getElementById('summaryMonthPicker').addEventListener('change', function(e) {
-        const val = e.target.value;
-        if (val) {
-            const parts = val.split('-');
-            currentYear = parseInt(parts[0]);
-            currentMonth = parseInt(parts[1]) - 1;
-            updateSummaryView(currentYear, currentMonth);
-        }
-    });
+    function updateSummaryView() {
+        const y = currentDate.getFullYear();
+        const mo = currentDate.getMonth();
+        const d = currentDate.getDate();
 
-    document.getElementById('prevMonthBtn').addEventListener('click', function() {
-        currentMonth--;
-        if (currentMonth < 0) {
-            currentMonth = 11;
-            currentYear--;
+        let start = '', end = '';
+        const thaiFullMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+        
+        if (currentMode === 'day') {
+            const mStr = String(mo + 1).padStart(2, '0');
+            const dStr = String(d).padStart(2, '0');
+            start = `${y}-${mStr}-${dStr}`;
+            end   = `${y}-${mStr}-${dStr}`;
+            document.getElementById('summaryMonthLabel').textContent = d + ' ' + thaiFullMonths[mo] + ' ' + (y + 543);
+            document.getElementById('summaryTitleText').innerHTML = '<i class="fas fa-chart-bar"></i> สรุปการจองรายวัน';
+        } else if (currentMode === 'month') {
+            const mStr = String(mo + 1).padStart(2, '0');
+            const lastDay = new Date(y, mo + 1, 0).getDate();
+            start = `${y}-${mStr}-01`;
+            end   = `${y}-${mStr}-${String(lastDay).padStart(2, '0')}`;
+            document.getElementById('summaryMonthLabel').textContent = thaiFullMonths[mo] + ' ' + (y + 543);
+            document.getElementById('summaryTitleText').innerHTML = '<i class="fas fa-chart-bar"></i> สรุปการจองประจำเดือน';
+        } else { // 'year'
+            start = `${y}-01-01`;
+            end   = `${y}-12-31`;
+            document.getElementById('summaryMonthLabel').textContent = 'ปี ' + (y + 543);
+            document.getElementById('summaryTitleText').innerHTML = '<i class="fas fa-chart-bar"></i> สรุปการจองประจำปี';
         }
-        updateSummaryView(currentYear, currentMonth);
+
+        if (summaryDatePicker) {
+            summaryDatePicker.setDate(currentDate, false);
+        }
+
+        // Helper animate
+        function animateCount(el, target) {
+            let cur=0; const step=Math.max(1,Math.ceil(target/20));
+            const id=setInterval(()=>{cur=Math.min(cur+step,target); el.textContent=cur; if(cur>=target)clearInterval(id);},40);
+        }
+
+        // Fetch data based on mode
+        let fetchPromise;
+        if (currentMode === 'day') {
+            fetchPromise = fetch('api/bookings.php?start=' + start + ' 00:00:00&end=' + end + ' 23:59:59')
+                .then(r => r.json())
+                .then(data => {
+                    const bookings = data.bookings || [];
+                    let total=0, approved=0, pending=0, rejected=0;
+                    
+                    const hours = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+                    const approveds = Array(hours.length).fill(0);
+                    const pendings = Array(hours.length).fill(0);
+                    const rejecteds = Array(hours.length).fill(0);
+
+                    bookings.forEach(b => {
+                        if (b.status === 'cancelled') return;
+                        total++;
+                        
+                        const timePart = b.start_time.split(' ')[1];
+                        if (timePart) {
+                            const hr = parseInt(timePart.split(':')[0], 10);
+                            const bucketIdx = hr - 8;
+                            if (bucketIdx >= 0 && bucketIdx < hours.length) {
+                                if (b.status === 'approved' || b.status === 'completed') {
+                                    approveds[bucketIdx]++;
+                                    approved++;
+                                } else if (b.status === 'pending') {
+                                    pendings[bucketIdx]++;
+                                    pending++;
+                                } else if (b.status === 'rejected') {
+                                    rejecteds[bucketIdx]++;
+                                    rejected++;
+                                }
+                            }
+                        }
+                    });
+
+                    return {
+                        total, approved, pending, rejected,
+                        categories: hours,
+                        series: [
+                            { name: 'อนุมัติ', data: approveds },
+                            { name: 'รออนุมัติ', data: pendings },
+                            { name: 'ปฏิเสธ', data: rejecteds }
+                        ]
+                    };
+                });
+        } else if (currentMode === 'month') {
+            const lastDay = new Date(y, mo + 1, 0).getDate();
+            fetchPromise = fetch('api/calendar_daycounts.php?start=' + start + '&end=' + end)
+                .then(r => r.json())
+                .then(counts => {
+                    let total=0, approved=0, pending=0, rejected=0;
+                    const labels=[], approveds=[], pendings=[], rejecteds=[];
+                    
+                    for (let d = 1; d <= lastDay; d++) {
+                        const key = y+'-'+String(mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+                        const c = counts[key] || {total:0,approved:0,pending:0,rejected:0};
+                        labels.push(d);
+                        approveds.push(c.approved);
+                        pendings.push(c.pending);
+                        rejecteds.push(c.rejected);
+                        total+=c.total; approved+=c.approved; pending+=c.pending; rejected+=c.rejected;
+                    }
+
+                    return {
+                        total, approved, pending, rejected,
+                        categories: labels,
+                        series: [
+                            { name: 'อนุมัติ', data: approveds },
+                            { name: 'รออนุมัติ', data: pendings },
+                            { name: 'ปฏิเสธ', data: rejecteds }
+                        ]
+                    };
+                });
+        } else { // 'year'
+            fetchPromise = fetch('api/calendar_daycounts.php?start=' + start + '&end=' + end)
+                .then(r => r.json())
+                .then(counts => {
+                    let total=0, approved=0, pending=0, rejected=0;
+                    const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+                    const approveds = Array(12).fill(0);
+                    const pendings = Array(12).fill(0);
+                    const rejecteds = Array(12).fill(0);
+
+                    Object.keys(counts).forEach(key => {
+                        const parts = key.split('-');
+                        if (parts.length === 3) {
+                            const monthIdx = parseInt(parts[1], 10) - 1;
+                            if (monthIdx >= 0 && monthIdx < 12) {
+                                const c = counts[key];
+                                approveds[monthIdx] += c.approved;
+                                pendings[monthIdx] += c.pending;
+                                rejecteds[monthIdx] += c.rejected;
+                                total+=c.total; approved+=c.approved; pending+=c.pending; rejected+=c.rejected;
+                            }
+                        }
+                    });
+
+                    return {
+                        total, approved, pending, rejected,
+                        categories: months,
+                        series: [
+                            { name: 'อนุมัติ', data: approveds },
+                            { name: 'รออนุมัติ', data: pendings },
+                            { name: 'ปฏิเสธ', data: rejecteds }
+                        ]
+                    };
+                });
+        }
+
+        fetchPromise.then(res => {
+            animateCount(document.getElementById('stat-total'),    res.total);
+            animateCount(document.getElementById('stat-approved'), res.approved);
+            animateCount(document.getElementById('stat-pending'),  res.pending);
+            animateCount(document.getElementById('stat-rejected'), res.rejected);
+
+            // Update base link of cards dynamically
+            const base_link = "?view=approve_list&from=" + start + "&to=" + end;
+            document.querySelector('.stat-card-total').setAttribute('href', base_link);
+            document.querySelector('.stat-card-approved').setAttribute('href', base_link + '&status=approved');
+            document.querySelector('.stat-card-pending').setAttribute('href', base_link + '&status=pending');
+            document.querySelector('.stat-card-rejected').setAttribute('href', base_link + '&status=rejected');
+
+            var options = {
+                series: res.series,
+                chart: {
+                    type: 'bar',
+                    height: 160,
+                    stacked: true,
+                    toolbar: { show: false },
+                    fontFamily: "'Outfit','Sarabun',sans-serif"
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        borderRadius: 3,
+                        columnWidth: currentMode === 'day' ? '45%' : '55%',
+                        dataLabels: {
+                            total: {
+                                enabled: true,
+                                style: {
+                                    fontSize: '9px',
+                                    fontWeight: 900,
+                                    color: 'var(--primary)'
+                                }
+                            }
+                        }
+                    },
+                },
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        fontSize: '8px',
+                        fontWeight: 'bold',
+                        colors: ['#fff']
+                    },
+                    formatter: function (val) {
+                        return val > 0 ? val : '';
+                    }
+                },
+                colors: ['#10b981', '#f59e0b', '#ef4444'],
+                xaxis: {
+                    categories: res.categories,
+                    labels: {
+                        style: {
+                            fontSize: '8px',
+                            colors: '#64748b'
+                        }
+                    },
+                    axisBorder: { show: false },
+                    axisTicks: { show: false }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            fontSize: '8px',
+                            colors: '#64748b'
+                        }
+                    }
+                },
+                grid: {
+                    borderColor: 'rgba(59,130,246,0.1)',
+                    strokeDashArray: 4,
+                    padding: { top: 0, right: 0, bottom: 0, left: 0 }
+                },
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'right',
+                    fontSize: '9px',
+                    markers: { radius: 3 }
+                },
+                tooltip: {
+                    theme: 'light',
+                    style: {
+                        fontSize: '10px'
+                    }
+                }
+            };
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            chartInstance = new ApexCharts(document.getElementById('monthlyBarChart'), options);
+            chartInstance.render();
+        }).catch(err => {
+            console.error(err);
+            ['stat-total','stat-approved','stat-pending','stat-rejected'].forEach(id=>{
+                document.getElementById(id).textContent='0';
+            });
+        });
+    }
+
+    // Nav buttons
+    document.getElementById('prevMonthBtn').addEventListener('click', function() {
+        if (currentMode === 'day') {
+            currentDate.setDate(currentDate.getDate() - 1);
+        } else if (currentMode === 'month') {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+        } else {
+            currentDate.setFullYear(currentDate.getFullYear() - 1);
+        }
+        updateSummaryView();
     });
 
     document.getElementById('nextMonthBtn').addEventListener('click', function() {
-        currentMonth++;
-        if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear++;
+        if (currentMode === 'day') {
+            currentDate.setDate(currentDate.getDate() + 1);
+        } else if (currentMode === 'month') {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+        } else {
+            currentDate.setFullYear(currentDate.getFullYear() + 1);
         }
-        updateSummaryView(currentYear, currentMonth);
+        updateSummaryView();
     });
 
-    updateSummaryView(currentYear, currentMonth);
+    // Mode Selector Switcher
+    document.querySelectorAll('.summary-mode-selector .mode-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.summary-mode-selector .mode-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.color = 'var(--text-muted)';
+                b.style.background = 'transparent';
+            });
+            this.classList.add('active');
+            this.style.color = 'white';
+            this.style.background = 'var(--primary)';
+            
+            currentMode = this.getAttribute('data-mode');
+            initSummaryDatePicker();
+            updateSummaryView();
+        });
+    });
+
+    // Initial setups
+    initSummaryDatePicker();
+    updateSummaryView();
 })();
 </script>
 
@@ -471,6 +678,40 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
             </div>
         </div>
         
+        <!-- Check Room Availability Widget -->
+        <div class="dash-card shadow-sm border border-slate-200/50" style="padding: 1rem; border-radius: 1rem; background: var(--card-bg); margin-bottom: 0.5rem; transition: all 0.3s;">
+            <h3 class="font-bold text-primary" style="font-size: 0.85rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+                <i class="fas fa-search-location text-[var(--secondary)]"></i> ตรวจสอบวันว่างของห้อง
+            </h3>
+            <div class="flex flex-col gap-2">
+                <!-- Dropdown Select Room -->
+                <select id="availabilityRoomSelect" class="w-full text-xs font-bold text-primary p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer bg-white" style="transition: all 0.2s; font-family: inherit;">
+                    <option value="">-- เลือกห้องประชุม --</option>
+                    <?php foreach($rooms as $room): ?>
+                        <option value="<?= $room['id'] ?>"><?= htmlspecialchars($room['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+
+                <!-- Month Picker for Availability -->
+                <div class="relative mt-1" id="availabilityMonthPickerContainer" style="display: none;">
+                    <i class="far fa-calendar-alt text-slate-400" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; pointer-events: none;"></i>
+                    <input type="text" id="availabilityMonthPicker" class="w-full text-xs font-bold text-primary p-2.5 pl-8 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white" placeholder="เลือกเดือนประจำปี พ.ศ.">
+                </div>
+            </div>
+
+            <!-- Availability Results List -->
+            <div id="availabilityResults" class="mt-3" style="display: none;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">วันว่างในเดือนนี้:</div>
+                <div id="availabilityDaysGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-height: 200px; overflow-y: auto; padding: 2px;">
+                    <!-- Days will be rendered here dynamically -->
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.65rem; justify-content: center;">
+                    <div style="display: flex; align-items: center; gap: 0.25rem;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span> ว่าง</div>
+                    <div style="display: flex; align-items: center; gap: 0.25rem;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span> มีการจอง</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Room Cards -->
         <div class="room-panel">
         <div class="room-card-wrapper">
@@ -657,17 +898,15 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         background-color: rgba(239, 68, 68, 0.03) !important;
     }
     .fc-day-sat {
-        background-color: rgba(59, 130, 246, 0.03) !important;
+        background-color: rgba(239, 68, 68, 0.03) !important;
     }
     .fc-day-sun .fc-col-header-cell-cushion,
     .fc-day-sun .fc-daygrid-day-number,
     .fc-day-public-holiday .fc-col-header-cell-cushion,
-    .fc-day-public-holiday .fc-daygrid-day-number {
-        color: #ef4444 !important; /* Red for Sunday and Holidays */
-    }
+    .fc-day-public-holiday .fc-daygrid-day-number,
     .fc-day-sat .fc-col-header-cell-cushion,
     .fc-day-sat .fc-daygrid-day-number {
-        color: #3b82f6 !important; /* Blue for Saturday */
+        color: #ef4444 !important; /* Red for Sunday, Saturday, and Holidays */
     }
 
     /* Hover effect for day cells in Month view to indicate they are clickable */
@@ -679,11 +918,6 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         background-color: rgba(59, 130, 246, 0.15) !important;
     }
 
-    /* Hide event pills in month view for admin — replaced by count badges */
-    .is-admin-view .fc-dayGridMonth-view .fc-event,
-    .is-admin-view .fc-dayGridMonth-view .fc-daygrid-more-link {
-        display: none !important;
-    }
 
     .fc-event {
         border: none !important;
@@ -729,6 +963,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         color: #1D4ED8;
         line-height: 1;
         visibility: hidden;   /* hidden until counts arrive */
+        pointer-events: none; /* let clicks pass through to day cell */
     }
     .day-total-placeholder.has-data {
         visibility: visible;
@@ -746,6 +981,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         text-overflow: ellipsis;
         white-space: nowrap;
         flex-shrink: 0;
+        pointer-events: none; /* let clicks pass through to day cell */
     }
 
     /* Day-count badge layout */
@@ -753,6 +989,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         display: flex;
         flex-direction: column;
         margin-top: auto;   /* push to bottom of frame */
+        pointer-events: none; /* let clicks pass through to day cell */
     }
     .day-counts-bottom {
         display: flex;
@@ -771,6 +1008,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         flex: 1;
         height: 18px;
         font-size: 0.65rem;
+        pointer-events: none; /* let clicks pass through to day cell */
     }
     .day-badge-approved { background: #DCFCE7; color: #166534; }
     .day-badge-pending  { background: #FEF9C3; color: #854D0E; }
@@ -1080,10 +1318,16 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                 right: 'dayGridMonth,resourceTimelineDay'
             },
             navLinks: true,
-            navLinkDayClick: 'resourceTimelineDay',
+            navLinkDayClick: function(date, jsEvent) {
+                if (typeof calendarInstance !== 'undefined' && calendarInstance) {
+                    calendarInstance.changeView('resourceTimelineDay', date);
+                }
+            },
             dateClick: function(info) {
                 if (info.view.type === 'dayGridMonth') {
-                    calendarInstance.changeView('resourceTimelineDay', info.dateStr);
+                    if (typeof calendarInstance !== 'undefined' && calendarInstance) {
+                        calendarInstance.changeView('resourceTimelineDay', info.date);
+                    }
                 }
             },
             buttonText: {
@@ -1489,5 +1733,160 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
         const closeModal = () => document.getElementById('eventModal').classList.add('hidden');
         document.getElementById('closeModalBtn').addEventListener('click', closeModal);
         document.getElementById('modalBackdrop').addEventListener('click', closeModal);
+
+        // ── Room Availability Checker Script ──
+        (function() {
+            let availRoomId = '';
+            let availDate = new Date();
+            let availDatePicker = null;
+
+            const roomSelect = document.getElementById('availabilityRoomSelect');
+            const monthPickerCont = document.getElementById('availabilityMonthPickerContainer');
+            const resultsCont = document.getElementById('availabilityResults');
+            const daysGrid = document.getElementById('availabilityDaysGrid');
+
+            if (!roomSelect) return;
+
+            availDatePicker = flatpickr("#availabilityMonthPicker", {
+                locale: "th",
+                defaultDate: availDate,
+                disableMobile: true,
+                formatDate: (date) => {
+                    const thaiFullMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+                    return thaiFullMonths[date.getMonth()] + ' ' + (date.getFullYear() + 543);
+                },
+                onChange: (selectedDates) => {
+                    if (selectedDates.length > 0) {
+                        availDate = selectedDates[0];
+                        fetchRoomAvailability();
+                    }
+                },
+                onReady: function(selectedDates, dateStr, instance) {
+                    const yearInput = instance.currentYearElement;
+                    if (yearInput) {
+                        const nativeInputValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+                        Object.defineProperty(yearInput, 'value', {
+                            get: function() { return nativeInputValue.get.call(this); },
+                            set: function(val) {
+                                let newVal = parseInt(val, 10);
+                                if (newVal > 1900 && newVal < 2400) { newVal += 543; }
+                                nativeInputValue.set.call(this, newVal);
+                            }
+                        });
+                        yearInput.value = instance.currentYear;
+
+                        const origChangeYear = instance.changeYear;
+                        instance.changeYear = function(year, jump, step) {
+                            if (year > 2400) { year -= 543; }
+                            origChangeYear.call(instance, year, jump, step);
+                        };
+                    }
+                }
+            });
+
+            roomSelect.addEventListener('change', function() {
+                availRoomId = this.value;
+                if (availRoomId) {
+                    monthPickerCont.style.display = 'block';
+                    resultsCont.style.display = 'block';
+                    fetchRoomAvailability();
+                } else {
+                    monthPickerCont.style.display = 'none';
+                    resultsCont.style.display = 'none';
+                }
+            });
+
+            function fetchRoomAvailability() {
+                if (!availRoomId) return;
+
+                const y = availDate.getFullYear();
+                const mo = availDate.getMonth();
+                const mStr = String(mo + 1).padStart(2, '0');
+                const lastDay = new Date(y, mo + 1, 0).getDate();
+                
+                const start = `${y}-${mStr}-01`;
+                const end   = `${y}-${mStr}-${String(lastDay).padStart(2, '0')}`;
+
+                daysGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; font-size: 0.7rem; color: var(--text-muted); padding: 1rem;">กำลังตรวจสอบ...</div>';
+
+                fetch(`api/calendar_daycounts.php?start=${start}&end=${end}&room_id=${availRoomId}`)
+                    .then(r => r.json())
+                    .then(counts => {
+                        daysGrid.innerHTML = '';
+                        
+                        // Add header for days of week
+                        const dayLabels = ['อา','จ','อ','พ','พฤ','ศ','ส'];
+                        dayLabels.forEach(lbl => {
+                            const el = document.createElement('div');
+                            el.textContent = lbl;
+                            el.style.cssText = 'text-align: center; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); padding: 2px 0;';
+                            daysGrid.appendChild(el);
+                        });
+
+                        // Empty spaces before first day
+                        const firstDayIndex = new Date(y, mo, 1).getDay();
+                        for (let i = 0; i < firstDayIndex; i++) {
+                            const empty = document.createElement('div');
+                            daysGrid.appendChild(empty);
+                        }
+
+                        // Render day buttons
+                        for (let d = 1; d <= lastDay; d++) {
+                            const key = `${y}-${mStr}-${String(d).padStart(2, '0')}`;
+                            const c = counts[key] || { total: 0 };
+                            
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.textContent = d;
+                            
+                            let bg = '#e6f4ea';
+                            let color = '#1e8e3e';
+                            let title = `วันที่ ${d}: ว่าง (ไม่มีการจอง)`;
+                            
+                            if (c.total > 0) {
+                                bg = '#fce8e6';
+                                color = '#d93025';
+                                title = `วันที่ ${d}: มีการจองแล้ว ${c.total} รายการ`;
+                            }
+
+                            btn.style.cssText = `
+                                border: none;
+                                background: ${bg};
+                                color: ${color};
+                                font-size: 0.7rem;
+                                font-weight: 700;
+                                border-radius: 4px;
+                                padding: 6px 0;
+                                cursor: pointer;
+                                text-align: center;
+                                transition: all 0.15s;
+                            `;
+                            btn.title = title;
+
+                            btn.addEventListener('mouseover', () => {
+                                btn.style.filter = 'brightness(0.9)';
+                                btn.style.transform = 'scale(1.05)';
+                            });
+                            btn.addEventListener('mouseout', () => {
+                                btn.style.filter = 'none';
+                                btn.style.transform = 'none';
+                            });
+
+                            btn.addEventListener('click', () => {
+                                if (typeof calendarInstance !== 'undefined' && calendarInstance) {
+                                    calendarInstance.gotoDate(key);
+                                    MeetQueue.utils.notify('info', `วันที่ ${d}`, `ระบบนำท่านไปยังปฏิทินของวันที่ ${d} เรียบร้อยแล้ว`);
+                                }
+                            });
+
+                            daysGrid.appendChild(btn);
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        daysGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; font-size: 0.7rem; color: var(--danger); padding: 1rem;">เกิดข้อผิดพลาด</div>';
+                    });
+            }
+        })();
     });
 </script>
