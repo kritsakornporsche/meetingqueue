@@ -752,6 +752,59 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                 </div>
             </div>
             <div id="calendar" class="relative z-10"></div>
+            
+            <?php
+            // Replicate color mapping in PHP for legend
+            $sorted_rooms = \App\Core\Database::getInstance()->getConnection()->query("SELECT * FROM rooms ORDER BY capacity DESC")->fetchAll();
+            $rainbow_colors = [
+                '#a855f7', // ม่วง
+                '#6366f1', // คราม
+                '#3b82f6', // น้ำเงิน
+                '#10b981', // เขียว
+                '#eab308', // เหลือง
+                '#f97316', // แสด
+                '#ef4444', // แดง
+                '#ec4899', // ชมพู
+            ];
+            $room_colors_map = [];
+            foreach ($sorted_rooms as $index => $r) {
+                $room_colors_map[$r['id']] = $rainbow_colors[$index % count($rainbow_colors)];
+            }
+            $external_color = $rainbow_colors[count($sorted_rooms) % count($rainbow_colors)];
+            ?>
+            <div class="mt-5 pt-4 flex flex-col gap-3 text-xs font-semibold" style="border-top: 1px solid rgba(59, 130, 246, 0.15);">
+                <!-- Status Badges Legend -->
+                <div class="flex items-center gap-3 flex-wrap">
+                    <span class="text-text-muted" style="color: var(--text-muted);">คำอธิบายตัวเลข/สถานะบนปฏิทิน:</span>
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs" style="background-color: #E6F4EA; color: #1E8E3E;">
+                        <span class="w-2 h-2 rounded-full" style="background-color: #1E8E3E;"></span>
+                        อนุมัติแล้ว
+                    </div>
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs" style="background-color: #FEF7E0; color: #B06000;">
+                        <span class="w-2 h-2 rounded-full" style="background-color: #F29900;"></span>
+                        รออนุมัติ
+                    </div>
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs" style="background-color: #FCE8E6; color: #C5221F;">
+                        <span class="w-2 h-2 rounded-full" style="background-color: #D93025;"></span>
+                        ไม่อนุมัติ / ปฏิเสธ
+                    </div>
+                </div>
+                
+                <!-- Room Colors Legend -->
+                <div class="flex items-center gap-3 flex-wrap">
+                    <span class="text-text-muted" style="color: var(--text-muted);">สีแถบการจองห้องประชุม:</span>
+                    <?php foreach ($sorted_rooms as $r): ?>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: <?= $room_colors_map[$r['id']] ?>; display: inline-block;"></span>
+                            <span class="text-primary" style="color: var(--primary);"><?= htmlspecialchars($r['name']) ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: <?= $external_color ?>; display: inline-block;"></span>
+                        <span class="text-primary" style="color: var(--primary);">ภายนอกสถานที่</span>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- Check Room Availability Widget (Gantt Chart Navigation) -->
