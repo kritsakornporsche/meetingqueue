@@ -678,41 +678,8 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
             </div>
         </div>
         
-        <!-- Check Room Availability Widget -->
-        <div class="dash-card shadow-sm border border-slate-200/50" style="padding: 1rem; border-radius: 1rem; background: var(--card-bg); margin-bottom: 0.5rem; transition: all 0.3s;">
-            <h3 class="font-bold text-primary" style="font-size: 0.85rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
-                <i class="fas fa-search-location text-[var(--secondary)]"></i> ตรวจสอบวันว่างของห้อง
-            </h3>
-            <div class="flex flex-col gap-2">
-                <!-- Dropdown Select Room -->
-                <select id="availabilityRoomSelect" class="w-full text-xs font-bold text-primary p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer bg-white" style="transition: all 0.2s; font-family: inherit;">
-                    <option value="">-- เลือกห้องประชุม --</option>
-                    <?php foreach($rooms as $room): ?>
-                        <option value="<?= $room['id'] ?>"><?= htmlspecialchars($room['name']) ?></option>
-                    <?php endforeach; ?>
-                </select>
+        <!-- Check Room Availability Widget moved below calendar -->
 
-                <!-- Month Picker for Availability -->
-                <div class="relative mt-1" id="availabilityMonthPickerContainer" style="display: none;">
-                    <i class="far fa-calendar-alt text-slate-400" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; pointer-events: none;"></i>
-                    <input type="text" id="availabilityMonthPicker" class="w-full text-xs font-bold text-primary p-2.5 pl-8 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white" placeholder="เลือกเดือนประจำปี พ.ศ.">
-                </div>
-            </div>
-
-            <!-- Availability Results List -->
-            <div id="availabilityResults" class="mt-3" style="display: none;">
-                <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">วันว่างในเดือนนี้:</div>
-                <div id="availabilityDaysGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-height: 200px; overflow-y: auto; padding: 2px;">
-                    <!-- Days will be rendered here dynamically -->
-                </div>
-                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.65rem; justify-content: center;">
-                    <div style="display: flex; align-items: center; gap: 0.25rem;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span> ว่าง</div>
-                    <div style="display: flex; align-items: center; gap: 0.25rem;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span> มีการจอง</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Room Cards -->
         <div class="room-panel">
         <div class="room-card-wrapper">
             <?php foreach($rooms as $index => $room): 
@@ -787,6 +754,42 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
             <div id="calendar" class="relative z-10"></div>
         </div>
         
+        <!-- Check Room Availability Widget (Gantt Chart Navigation) -->
+        <div class="dash-card shadow-sm border border-slate-200/50 mt-6" style="padding: 1.5rem; border-radius: 1rem; background: var(--card-bg); transition: all 0.3s;">
+            <h3 class="font-bold text-primary" style="font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-search-location text-[var(--secondary)]"></i> ตรวจสอบวันว่างของห้อง (Gantt Chart)
+            </h3>
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-shrink-0 w-full md:w-1/3 flex flex-col gap-3">
+                    <!-- Dropdown Select Room -->
+                    <select id="availabilityRoomSelect" class="w-full text-sm font-bold text-primary p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer bg-white" style="transition: all 0.2s; font-family: inherit;">
+                        <option value="">-- เลือกห้องประชุม --</option>
+                        <?php foreach($rooms as $room): ?>
+                            <option value="<?= $room['id'] ?>"><?= htmlspecialchars($room['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <!-- Month Picker for Availability -->
+                    <div class="relative" id="availabilityMonthPickerContainer" style="display: none;">
+                        <i class="far fa-calendar-alt text-slate-400" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none;"></i>
+                        <input type="text" id="availabilityMonthPicker" class="w-full text-sm font-bold text-primary p-3 pl-10 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white" placeholder="เลือกเดือนประจำปี พ.ศ.">
+                    </div>
+                </div>
+
+                <!-- Availability Results List -->
+                <div id="availabilityResults" class="flex-grow" style="display: none;">
+                    <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">วันว่างในเดือนนี้:</div>
+                    <div id="availabilityDaysGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; padding: 4px;">
+                        <!-- Days will be rendered here dynamically -->
+                    </div>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem; font-size: 0.75rem; justify-content: center; font-weight: 600;">
+                        <div style="display: flex; align-items: center; gap: 0.35rem;"><span style="width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></span> ว่าง</div>
+                        <div style="display: flex; align-items: center; gap: 0.35rem;"><span style="width: 10px; height: 10px; border-radius: 50%; background: #ef4444;"></span> มีการจอง</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Bottom Cards -->
         <div class="grid grid-cols-1 gap-6 mt-6">
             <!-- Status / Timeline -->
@@ -929,6 +932,12 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
     .fc-event-main {
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    /* Hide event pills in month view — replaced by count badges */
+    .fc-dayGridMonth-view .fc-event,
+    .fc-dayGridMonth-view .fc-daygrid-more-link {
+        display: none !important;
     }
 
     /* ── Override fc-daygrid-day-top to hold total badge + date ── */
@@ -1151,7 +1160,6 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
 
     function reloadCalendarDayCounts() {
         if (!calendarInstance) return;
-        if (!isAdmin) return;
         if (calendarInstance.view.type !== 'dayGridMonth') return;
         
         let startStr = calendarInstance.view.activeStart.toISOString().slice(0, 10);
@@ -1397,12 +1405,10 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                 frame.style.minHeight = '80px';
 
                 // 1) Inject total badge placeholder into the top row (left side)
-                if (isAdmin) {
-                    let totalSpan = document.createElement('span');
-                    totalSpan.className = 'day-total-placeholder';
-                    totalSpan.dataset.date = dateStr;
-                    top.insertBefore(totalSpan, top.firstChild);
-                }
+                let totalSpan = document.createElement('span');
+                totalSpan.className = 'day-total-placeholder';
+                totalSpan.dataset.date = dateStr;
+                top.insertBefore(totalSpan, top.firstChild);
 
                 // 2) Holiday row (middle) — full width, centered
                 let holidayRow = document.createElement('div');
@@ -1414,14 +1420,12 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
                 top.insertAdjacentElement('afterend', holidayRow);
 
                 // 3) Status badges container (bottom) — start empty, filled by datesSet
-                if (isAdmin) {
-                    let countsDiv = document.createElement('div');
-                    countsDiv.className = 'day-counts';
-                    countsDiv.dataset.date = dateStr;
-                    countsDiv.style.display = 'none';  /* hidden until counts arrive */
-                    countsDiv.innerHTML = '<div class="day-counts-bottom"></div>';
-                    frame.appendChild(countsDiv);
-                }
+                let countsDiv = document.createElement('div');
+                countsDiv.className = 'day-counts';
+                countsDiv.dataset.date = dateStr;
+                countsDiv.style.display = 'none';  /* hidden until counts arrive */
+                countsDiv.innerHTML = '<div class="day-counts-bottom"></div>';
+                frame.appendChild(countsDiv);
             },
             datesSet: function(info) {
                 // Update Buddhist year in toolbar title
@@ -1874,7 +1878,7 @@ $base_link = ($_SESSION['user_data']['role'] ?? 'user') === 'admin' ? 'dashboard
 
                             btn.addEventListener('click', () => {
                                 if (typeof calendarInstance !== 'undefined' && calendarInstance) {
-                                    calendarInstance.gotoDate(key);
+                                    calendarInstance.changeView('resourceTimelineDay', key);
                                     MeetQueue.utils.notify('info', `วันที่ ${d}`, `ระบบนำท่านไปยังปฏิทินของวันที่ ${d} เรียบร้อยแล้ว`);
                                 }
                             });
