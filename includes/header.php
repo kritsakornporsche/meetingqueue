@@ -8,7 +8,6 @@ $titles = [
     'book' => 'หน้าหลัก > จองห้องประชุม',
     'results' => 'หน้าหลัก > สถานะการจอง',
     'reports' => 'หน้าหลัก > รายงานการใช้',
-    'requests' => 'จองห้องประชุม > รายการขอใช้',
     'approve_list' => 'จองห้องประชุม > รายการอนุมัติ',
     'external' => 'หน้าหลัก > บันทึกประชุมภายนอก',
     'rooms' => 'หน้าหลัก > ข้อมูลห้องประชุม'
@@ -32,7 +31,6 @@ $titles = [
                 'results'          => ['หน้าหลัก' => 'calendar', 'สถานะการจอง' => 'results'],
                 'status'           => ['หน้าหลัก' => 'calendar', 'สถานะการประชุม' => 'status'],
                 'reports'          => ['หน้าหลัก' => 'calendar', 'รายงานการใช้' => 'reports'],
-                'requests'         => ['จองห้องประชุม' => 'book', 'รายการขอใช้' => 'requests'],
                 'approve_list'     => ['จองห้องประชุม' => 'book', 'รายการอนุมัติ' => 'approve_list'],
                 'external'         => ['หน้าหลัก' => 'calendar', 'บันทึกประชุมภายนอก' => 'external'],
                 'rooms'            => ['หน้าหลัก' => 'calendar', 'ข้อมูลห้องประชุม' => 'rooms'],
@@ -137,9 +135,7 @@ $titles = [
                 <a href="dashboard.php?view=backup_restore" class="popup-nav-link <?php echo ($_GET['view'] ?? '') == 'backup_restore' ? 'active' : ''; ?>">
                     <i class="fas fa-database"></i><span>สำรอง/กู้คืนฐานข้อมูล</span>
                 </a>
-                <a href="dashboard.php?view=requests" class="popup-nav-link <?php echo ($_GET['view'] ?? '') == 'requests' ? 'active' : ''; ?>">
-                    <i class="fas fa-list-ul"></i><span>รายการขอใช้</span>
-                </a>
+
                 <a href="dashboard.php?view=approve_list" class="popup-nav-link <?php echo ($_GET['view'] ?? '') == 'approve_list' ? 'active' : ''; ?>">
                     <i class="fas fa-user-check"></i><span>รายการอนุมัติ</span>
                 </a>
