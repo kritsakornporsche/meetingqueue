@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'api/config.php';
 use App\Repository\BookingRepository;
 
@@ -59,10 +59,11 @@ function formatThaiDate($datetime, $months) {
         <h2 class="text-2xl font-bold text-primary flex items-center gap-2">
             <i class="fas fa-history text-[var(--secondary)]"></i> ประวัติการประชุม & แบบประเมิน
         </h2>
-        <div class="relative w-full sm:w-64">
+        <div class="search-input relative w-full sm:w-64" style="position: relative;">
+            <i class="fas fa-search" style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;"></i>
             <input type="text" id="searchHistory" onkeyup="filterHistory()" placeholder="ค้นหาการประชุม..." 
-                   class="w-full pr-4 py-2.5 rounded-xl border border-blue-400/30 focus:outline-none focus:border-blue-400 bg-white text-primary shadow-sm transition-all" style="padding-left: 2.75rem;">
-            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"></i>
+                   style="padding-left:2.5rem;padding-top:0.55rem;padding-bottom:0.55rem;font-size:0.9rem;" autocomplete="off"
+                   class="w-full rounded-[0.875rem] border border-blue-400/30 focus:outline-none focus:border-blue-400 bg-white text-primary shadow-sm transition-all">
         </div>
     </div>
 

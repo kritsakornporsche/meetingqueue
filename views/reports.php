@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'api/config.php';
 use App\Repository\BookingRepository;
 
@@ -313,10 +313,16 @@ $chartData = json_encode(array_values($roomStats));
             <input type="hidden" name="view" value="reports">
             <div class="filter-panel">
                 <div class="filter-panel-top">
+                    <div class="search-input" style="position: relative; flex:1; min-width:220px;">
+                        <i class="fas fa-search" style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;"></i>
+                        <input type="text" name="booker" placeholder="ค้นหาชื่อผู้จอง..." value="<?= htmlspecialchars($booker) ?>" style="padding-left:2.5rem;padding-top:0.55rem;padding-bottom:0.55rem;font-size:0.9rem;" autocomplete="off">
+                    </div>
+                    
                     <?php 
                         $filterCount = 0;
-                        if(!empty($booker)) $filterCount++;
                         if(!empty($roomId)) $filterCount++;
+                        if(!empty($_GET['start_date'])) $filterCount++;
+                        if(!empty($_GET['end_date'])) $filterCount++;
                     ?>
                     <button type="button" class="filter-toggle-btn <?= $filterCount > 0 ? 'active' : '' ?>" onclick="toggleAdvancedFilter()">
                         <i class="fas fa-sliders-h"></i> ตัวกรองเพิ่มเติม
@@ -334,10 +340,6 @@ $chartData = json_encode(array_values($roomStats));
                 </div>
                 
                 <div class="filter-panel-advanced">
-                    <div class="filter-group">
-                        <label><i class="fas fa-user-tie"></i>ชื่อผู้จอง</label>
-                        <input type="text" name="booker" placeholder="ชื่อผู้จอง..." value="<?= htmlspecialchars($booker) ?>">
-                    </div>
                     <div class="filter-group">
                         <label><i class="fas fa-door-open"></i>ห้องประชุม</label>
                         <select name="room_id">
