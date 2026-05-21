@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (($_SESSION['user_data']['role'] ?? 'user') !== 'admin') {
     exit('Unauthorized access');
 }
@@ -122,6 +122,65 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
             opacity: 0.5;
             font-size: 0.65rem;
         }
+
+        /* Status Shortcut Buttons Style */
+        .status-shortcut-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.55rem 1.1rem;
+            border-radius: 0.65rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid var(--border, rgba(15, 23, 42, 0.15));
+            background: var(--card, white);
+            color: var(--text-main, var(--primary));
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            user-select: none;
+        }
+        .status-shortcut-btn:hover {
+            background: var(--sidebar-bg, #fffdf2);
+            border-color: var(--secondary);
+            transform: translateY(-1px);
+        }
+        .status-shortcut-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        .status-shortcut-btn.active[data-status="pending"] {
+            background: #EAE4D3;
+            color: #6E4B3A;
+            border-color: #D2CAB7;
+            box-shadow: 0 4px 12px rgba(110, 75, 58, 0.15);
+        }
+        .status-shortcut-btn.active[data-status="approved"] {
+            background: #E6F4EA;
+            color: #1E8E3E;
+            border-color: rgba(30, 142, 62, 0.2);
+            box-shadow: 0 4px 12px rgba(30, 142, 62, 0.15);
+        }
+        .status-shortcut-btn.active[data-status="rejected"] {
+            background: #FCE8E6;
+            color: #D93025;
+            border-color: rgba(217, 48, 37, 0.2);
+            box-shadow: 0 4px 12px rgba(217, 48, 37, 0.15);
+        }
+        .status-shortcut-btn.active[data-status="completed"] {
+            background: #E8F0FE;
+            color: #1A73E8;
+            border-color: rgba(26, 115, 232, 0.2);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.15);
+        }
+        .status-shortcut-btn.active[data-status="cancelled"] {
+            background: #f1f5f9;
+            color: #475569;
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(71, 85, 105, 0.15);
+        }
     </style>
     <!-- Header Section (Borderless) -->
     <div class="flex flex-wrap items-center justify-between gap-6 px-4">
@@ -155,7 +214,16 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
                         <i class="fas fa-search" style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;"></i>
                         <input type="text" id="adminSearch" placeholder="ค้นหาหัวข้อ, ผู้จอง, ห้องประชุม..." style="padding-left:2.5rem;padding-top:0.55rem;padding-bottom:0.55rem;font-size:0.9rem;" autocomplete="off">
                     </div>
-                    <select id="adminStatusFilter" style="min-width:150px;padding-top:0.55rem;padding-bottom:0.55rem;font-size:0.9rem;">
+                    <!-- Status Filter Shortcuts -->
+                    <div class="flex items-center gap-2 flex-wrap" id="statusFilterShortcuts" style="flex-shrink:0;">
+                        <button type="button" class="status-shortcut-btn active" data-status="">ทั้งหมด</button>
+                        <button type="button" class="status-shortcut-btn" data-status="pending">รออนุมัติ</button>
+                        <button type="button" class="status-shortcut-btn" data-status="approved">อนุมัติแล้ว</button>
+                        <button type="button" class="status-shortcut-btn" data-status="rejected">ไม่อนุมัติ</button>
+                        <button type="button" class="status-shortcut-btn" data-status="completed">เสร็จสิ้น</button>
+                        <button type="button" class="status-shortcut-btn" data-status="cancelled">ยกเลิก</button>
+                    </div>
+                    <select id="adminStatusFilter" style="display: none;">
                         <option value="">สถานะทั้งหมด</option>
                         <option value="pending">รออนุมัติ</option>
                         <option value="approved">อนุมัติแล้ว</option>
@@ -279,6 +347,18 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
                     });
                 }
             });
+
+            // Shortcut button click listeners
+            document.querySelectorAll('#statusFilterShortcuts .status-shortcut-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const status = this.getAttribute('data-status');
+                    const selectEl = document.getElementById('adminStatusFilter');
+                    if (selectEl) {
+                        selectEl.value = status;
+                        selectEl.dispatchEvent(new Event('change'));
+                    }
+                });
+            });
         } catch (err) {
             console.error("Init failed:", err);
             const tableBody = document.getElementById('adminBookingTable');
@@ -398,6 +478,12 @@ $page_subtitle = 'หน้าจอสำหรับผู้ดูแลร�
         const clearBtn = document.getElementById('filterClearBtn');
         if (clearBtn) clearBtn.classList.toggle('visible', count > 0 || search !== '' || status !== '');
         
+        // Sync shortcut buttons active state
+        const statusVal = status || '';
+        document.querySelectorAll('#statusFilterShortcuts .status-shortcut-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-status') === statusVal);
+        });
+
         const chipsEl = document.getElementById('activeFilterChips');
         if (chipsEl) chipsEl.innerHTML = chips.join('');
     }

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'api/config.php';
 use App\Repository\RoomRepository;
 
@@ -9,6 +9,49 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_data']['role'] !== 'admin') 
 $repo = new RoomRepository();
 $rooms = $repo->getAll();
 ?>
+
+<style>
+    /* Status Shortcut Buttons Style */
+    .status-shortcut-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.55rem 1.1rem;
+        border-radius: 0.65rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid var(--border, rgba(0, 0, 0, 0.15));
+        background: var(--card, white);
+        color: var(--text-main, var(--primary));
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        user-select: none;
+    }
+    .status-shortcut-btn:hover {
+        background: var(--sidebar-bg, #fffdf2);
+        border-color: var(--secondary);
+        transform: translateY(-1px);
+    }
+    .status-shortcut-btn.active {
+        background: var(--primary, #2563EB);
+        color: white;
+        border-color: var(--primary, #2563EB);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+    .status-shortcut-btn.active[data-status="available"] {
+        background: #E6F4EA;
+        color: #1E8E3E;
+        border-color: rgba(30, 142, 62, 0.2);
+        box-shadow: 0 4px 12px rgba(30, 142, 62, 0.15);
+    }
+    .status-shortcut-btn.active[data-status="maintenance"] {
+        background: #FCE8E6;
+        color: #D93025;
+        border-color: rgba(217, 48, 37, 0.2);
+        box-shadow: 0 4px 12px rgba(217, 48, 37, 0.15);
+    }
+</style>
 
 <div class="flex flex-col gap-6 w-full animate-fade">
     <div class="flex flex-wrap justify-between items-center gap-4">
@@ -32,10 +75,14 @@ $rooms = $repo->getAll();
                 <div class="w-[1px] h-5 bg-[var(--secondary)]/20"></div>
 
                 <!-- Filter Dropdown -->
-                <div class="relative flex items-center">
-                    <i class="fas fa-filter absolute left-2 text-[var(--secondary)] text-xs opacity-70 pointer-events-none"></i>
-                    <select id="roomStatusFilter" onchange="filterRooms()" class="bg-transparent border-none focus:outline-none text-sm text-primary font-black cursor-pointer"
-                        style="padding-left: 32px !important; padding-right: 50px !important;">
+                <div class="relative flex items-center gap-2">
+                    <!-- Status Filter Shortcuts -->
+                    <div class="flex items-center gap-1.5 flex-wrap" id="roomStatusFilterShortcuts" style="flex-shrink:0;">
+                        <button type="button" class="status-shortcut-btn active" data-status="all">ทั้งหมด</button>
+                        <button type="button" class="status-shortcut-btn" data-status="available">พร้อมใช้งาน</button>
+                        <button type="button" class="status-shortcut-btn" data-status="maintenance">ปิดปรับปรุง</button>
+                    </div>
+                    <select id="roomStatusFilter" onchange="filterRooms()" style="display: none;">
                         <option value="all">สถานะทั้งหมด</option>
                         <option value="available">พร้อมใช้งาน</option>
                         <option value="maintenance">ปิดปรับปรุง</option>
@@ -272,6 +319,11 @@ function filterRooms() {
         noDataRow.style.display = 'none';
     }
     
+    // Sync shortcut buttons active state
+    document.querySelectorAll('#roomStatusFilterShortcuts .status-shortcut-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-status') === statusFilter);
+    });
+    
     // Refresh paginator
     if (window.roomPaginator) {
         window.roomPaginator.refresh();
@@ -286,6 +338,18 @@ document.addEventListener('DOMContentLoaded', () => {
             pageSize: 10
         });
     }
+
+    // Shortcut button click listeners
+    document.querySelectorAll('#roomStatusFilterShortcuts .status-shortcut-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const status = this.getAttribute('data-status');
+            const selectEl = document.getElementById('roomStatusFilter');
+            if (selectEl) {
+                selectEl.value = status;
+                selectEl.dispatchEvent(new Event('change'));
+            }
+        });
+    });
 });
 
 function escapeHtml(unsafe) {

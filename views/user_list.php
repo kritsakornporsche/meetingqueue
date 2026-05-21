@@ -1,3 +1,46 @@
+<style>
+    /* Status Shortcut Buttons Style */
+    .status-shortcut-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.55rem 1.1rem;
+        border-radius: 0.65rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid var(--border, rgba(0, 0, 0, 0.15));
+        background: var(--card, white);
+        color: var(--text-main, var(--primary));
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        user-select: none;
+    }
+    .status-shortcut-btn:hover {
+        background: var(--sidebar-bg, #fffdf2);
+        border-color: var(--secondary);
+        transform: translateY(-1px);
+    }
+    .status-shortcut-btn.active {
+        background: var(--primary, #2563EB);
+        color: white;
+        border-color: var(--primary, #2563EB);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+    .status-shortcut-btn.active[data-status="ADMIN"] {
+        background: #EAE4D3;
+        color: #6E4B3A;
+        border-color: #D2CAB7;
+        box-shadow: 0 4px 12px rgba(110, 75, 58, 0.15);
+    }
+    .status-shortcut-btn.active[data-status="USER"] {
+        background: #E8F0FE;
+        color: #1A73E8;
+        border-color: rgba(26, 115, 232, 0.2);
+        box-shadow: 0 4px 12px rgba(26, 115, 232, 0.15);
+    }
+</style>
+
 <div class="flex flex-col gap-6 w-full animate-fade">
     <!-- Header Section (Borderless) -->
     <div class="flex flex-wrap items-center justify-between gap-10">
@@ -19,13 +62,17 @@
                 <div class="w-[1px] h-5 bg-[var(--secondary)]/20"></div>
 
                 <!-- Filter Dropdown -->
-                <div class="relative flex items-center">
-                    <i class="fas fa-user-shield absolute left-2 text-[var(--secondary)] text-xs opacity-70 pointer-events-none"></i>
-                    <select id="userRoleFilter" onchange="filterUsers()" class="bg-white border-none focus:outline-none text-sm text-primary font-black cursor-pointer rounded-lg"
-                        style="padding-left: 32px !important; padding-right: 40px !important;">
-                        <option value="all" class="bg-white text-primary">สิทธิ์ทั้งหมด</option>
-                        <option value="ADMIN" class="bg-white text-primary">ADMIN</option>
-                        <option value="USER" class="bg-white text-primary">USER</option>
+                <div class="relative flex items-center gap-2">
+                    <!-- Status Filter Shortcuts -->
+                    <div class="flex items-center gap-1.5 flex-wrap" id="userRoleFilterShortcuts" style="flex-shrink:0;">
+                        <button type="button" class="status-shortcut-btn active" data-status="all">สิทธิ์ทั้งหมด</button>
+                        <button type="button" class="status-shortcut-btn" data-status="ADMIN">ADMIN</button>
+                        <button type="button" class="status-shortcut-btn" data-status="USER">USER</button>
+                    </div>
+                    <select id="userRoleFilter" onchange="filterUsers()" style="display: none;">
+                        <option value="all">สิทธิ์ทั้งหมด</option>
+                        <option value="ADMIN">ADMIN</option>
+                        <option value="USER">USER</option>
                     </select>
                 </div>
             </div>
@@ -113,6 +160,11 @@ function filterUsers() {
     } else if (noDataRow) {
         noDataRow.style.display = 'none';
     }
+    
+    // Sync shortcut buttons active state
+    document.querySelectorAll('#userRoleFilterShortcuts .status-shortcut-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-status') === roleFilter);
+    });
     
     // Refresh paginator if it exists
     if (window.userPaginator) {
@@ -234,5 +286,19 @@ async function syncUsers() {
 }
 
 // Initial load
-document.addEventListener('DOMContentLoaded', loadUsers);
+document.addEventListener('DOMContentLoaded', () => {
+    loadUsers();
+    
+    // Shortcut button click listeners
+    document.querySelectorAll('#userRoleFilterShortcuts .status-shortcut-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const status = this.getAttribute('data-status');
+            const selectEl = document.getElementById('userRoleFilter');
+            if (selectEl) {
+                selectEl.value = status;
+                selectEl.dispatchEvent(new Event('change'));
+            }
+        });
+    });
+});
 </script>
